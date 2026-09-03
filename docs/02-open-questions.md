@@ -22,5 +22,17 @@
 
 - Owner: `[H]` Aitor
 - Status: Partially resolved.
-- Decision: use the strongest feasible Chinese model already installed, Qwen3.8-27B IQ4_XS, for the first implementation.
-- Remaining question: additional model downloads require a later explicit decision if Qwen3.8 fails the acceptance gate.
+- Current measured candidate: the installed Qwen3.8-27B IQ4_XS writer. No comparative evidence establishes that it is the strongest available model for this task.
+- Remaining question: which additional candidate, if any, merits a controlled comparison after the semantic and style evaluation gaps are addressed? Any candidate must fit the local hardware and preserve the no-paid-service constraint.
+
+## OQ-005: Strict semantic draft labels
+
+- Owner: `[M]` Aitor
+- Current state: the corrected bank has 17 invalid candidates and 5 valid controls, all draft.
+- Decision needed: review temporal anchoring and unsupported-context cases, especially `SEMA-021` and `SEMA-022`, before using the bank as gold. Model disagreement does not authorize changing a label.
+
+## OQ-006: Desktop service interruption
+
+- Owner: `[M]` Aitor
+- Current state: the desktop-managed Ollama listener is `::` on port `11434`.
+- Decision needed: confirm a safe interruption of other Ollama work before restarting the application-owned service with loopback-only binding. No interruption has been assumed to be harmless.

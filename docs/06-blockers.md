@@ -24,5 +24,12 @@
 
 - Type: `[A]`, followed by `[M]` reference validation.
 - Status: Open.
-- Impact: The initial 20-case assisted mutation pass contained two imperfect draft controls. They were corrected and retained as invalid regression cases in the expanded 22-case bank. The corrected unassisted run is required before an acceptance claim.
-- Resolution: Complete the corrected mutation suite and final two-pass rewrite benchmark, disclose every false positive and false negative, and obtain human review. Never weaken a gate merely to obtain a pass.
+- Impact: The corrected unassisted 22-case run rejected 16/17 invalid cases and accepted 5/5 valid controls. Both auditors accepted unsupported context in `SEMA-022`. The strict semantic gate failed; the historical 20-case assisted pass cannot override this evidence.
+- Resolution: Review the draft semantic labels, preserve the failing regression, and validate any next control on new held-out examples. The final v10 rewrite comparison completed with 28/30 automatically accepted per run; two proofreading rejections and additional editorial defects remain. See `docs/10-validation.md`. Never weaken a gate merely to obtain a pass.
+
+## BLK-005: Desktop-managed Ollama listener
+
+- Type: `[M]`
+- Status: Open.
+- Impact: The live Ollama desktop application's listener is `::` on port `11434`, not loopback-only. Earlier task-terminal environment settings do not establish the replacement process's configuration. The benchmark uses synthetic text and the client still addresses `127.0.0.1`; private-document processing remains blocked.
+- Resolution: Coordinate a safe interruption of the application-owned server, configure loopback-only service binding with cloud inference disabled, and verify the actual listener. Do not change firewall rules, terminate unrelated applications or assume LAN reachability without evidence.

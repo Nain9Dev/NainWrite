@@ -12,6 +12,10 @@ NainWrite ES is a local, fail-closed rewriting agent for natural, clear and prof
 
 Automated acceptance is not proof of perfect equivalence. Legal, contractual, financial and other high-impact text requires human approval.
 
+Current validation is preliminary: the corrected unassisted semantic bank exposes one false acceptance (`SEMA-022`), and some valid rewrites still trigger proofreading review. The strict acceptance gate has not passed. See [measured validation results](docs/10-validation.md) before using the agent.
+
+Before supplying private text, verify both service listeners are loopback-only. The latest desktop-managed Ollama instance did not meet this check; the client using `127.0.0.1` does not by itself restrict the server's other interfaces.
+
 This version is intended for bounded text passages. It rejects prompts above 12000 UTF-8 bytes and incomplete length-limited responses. Long documents and automatic translation are not yet validated.
 
 ## Requirements
@@ -63,4 +67,5 @@ Benchmark reports are written under `artifacts/` and intentionally excluded from
 - [Traceability](docs/07-traceability.md)
 - [Runbook](docs/08-runbook.md)
 - [Primary-source research](docs/09-research.md)
+- [Measured validation results](docs/10-validation.md)
 - [Active specifications](specs/)

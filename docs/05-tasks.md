@@ -5,13 +5,15 @@ The detailed active handoff is maintained in `specs/003-strict-es-quality-gates/
 ## Current task
 
 - `[A]` Implement and verify the local Qwen3.8 Spanish rewriter: complete.
-- `[A]` Verify independent local proofreading and semantic quality gates: in progress.
+- `[A]` Implement and execute independent local proofreading and semantic quality gates: implementation and evaluation complete; strict model acceptance failed and remains open.
 
 ## Human gates
 
 - `[M]` Confirm target locale and tone: complete (`es-ES`, clear, direct and professional).
 - `[M]` Review and correct the 30 draft references.
 - `[M]` Review the 30 model outputs in the generated human-review sheet.
+- `[M]` Review the corrected semantic draft labels and the observed unsupported-context false acceptance.
+- `[M]` Coordinate safe isolation of the desktop-managed Ollama listener before private-document use.
 - `[H]` Approve ADR-001 if JSONL and fail-closed validation should become canonical.
 - `[H]` Approve or reject proposed ADR-002.
 - `[H]` Approve or reject proposed ADR-003 after reviewing its measured tradeoffs.

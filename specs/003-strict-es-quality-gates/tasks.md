@@ -2,12 +2,13 @@
 
 ## Active task
 
-- `[A]` `TASK-006`: Add and verify independent local quality gates.
+- `[A]` `TASK-006`: Implementation and evaluation checkpoint complete; strict model acceptance has failed and must remain open. Evidence-only publication follows implementation commit `de2dee2` on the same feature branch.
 
 ## Human gates
 
 - `[M]` Review model outputs and proposed gold references after automated verification.
 - `[H]` Approve or reject proposed ADR-003.
+- `[M]` Coordinate a safe interruption of the desktop-managed Ollama application before changing its wildcard listener.
 
 ## Handoff
 
@@ -25,6 +26,8 @@
 - Prompt v10 adds one constrained linguistic repair. Invariants and all independent gates are repeated; original proofreading evidence is retained.
 - Oversized prompts and length-limited generation now fail closed.
 - Independent code review identified four important issues: default HTTP proxy/redirect behavior, malformed proofreading findings treated as advisory, optional independent audit bypass, and mutation gates without valid controls. All four were fixed with regression tests; scoped re-review confirmed all four addressed without new breakage.
+- Implementation checkpoint committed and pushed as `de2dee2` on `naindev/strict-es-quality-gates`; `main` was not merged or changed.
+- Added curated validation evidence in `docs/10-validation.md`, with failures visible from the README and traceability. Raw reports and local tools remain ignored.
 
 ### Verified
 
@@ -40,24 +43,30 @@
 - The remaining v8 failures were a grammatical-form false rejection by Gemma and an incorrectly blocked explicitly protected lowercase technical literal.
 - Unit tests reproduce the two defects and pass after prompt v9 and protected-literal classification changes.
 - The third execution was interrupted before a report was saved. It is not counted as evidence.
-- After continuation, both local services were restarted. Ollama 0.33.2 is bound to loopback with cloud inference disabled for this process.
+- Earlier task-controlled services were restarted with process-local loopback and cloud-disabled settings. This is historical evidence, not a claim about the later desktop-managed replacement process (see below).
 - Completed historical v9 assisted 20-case run: 20/20 expected classifications, all 15 invalid cases rejected by both semantic auditors, duration 276.18 seconds. This is not evidence for the corrected 22-case bank.
 - First strict rewrite attempt stopped at case 15 after Ollama reported its model process exited with a CTRL+C signal. The cause of that external interruption is not established; memory exhaustion is not supported by this log.
-- A new strict v9 run with atomic checkpoints completed its first pass: 27/30 accepted; three LanguageTool rejections (`ESRW-003`, `ESRW-004`, `ESRW-014`). Its second pass is running.
+- A strict v9 run with atomic checkpoints completed its first pass with 27/30 accepted; three LanguageTool rejections (`ESRW-003`, `ESRW-004`, `ESRW-014`). Both completed passes are recorded below.
 - Full unit suite: 49 passed before input/output safety tests; both additional safety tests passed separately.
 - Complete v9 strict comparison: 27/30 accepted in each of two runs, no deterministic drift, exact stability, 761.75 seconds. The strict acceptance gate failed because of LanguageTool findings in `ESRW-003`, `ESRW-004` and `ESRW-014`.
 - V10 focused repair run: `ESRW-014` passed after a bounded linguistic repair; `ESRW-003` and `ESRW-004` still require review. No deterministic drift was observed.
-- Full suite after review fixes: 57 tests passed. One additional rewrite-checkpoint regression test was subsequently added and is pending the next full run.
+- Full suite after review fixes: 57 tests passed, followed by the additional rewrite-checkpoint regression and the complete 58-test run below.
 - Latest full suite: 58 passed. Both draft banks passed structural validation; compilation and whitespace checks passed.
 - Publication preflight: no credential-pattern match, model weight, runtime archive, generated report or local tool installation staged. Remote privacy reverified.
+- Corrected unassisted v10 semantic bank completed: 21/22 expected classifications, 16/17 invalid candidates semantically detected and rejected, 5/5 valid controls accepted, 273.85 seconds. Both auditors falsely accepted the unsupported context in `SEMA-022`. `REQ-046` is not satisfied.
+- Latest continuation: all 58 unit tests passed again; both structural validators and Python compilation passed.
+- Live service ownership check: Ollama is now managed by `ollama app.exe`, listening on `::` port `11434`. The earlier controlled Ollama terminal has exited. LanguageTool still listens only on `127.0.0.1:8082`. No LAN reachability or firewall test was performed; no desktop application was terminated.
+- The full v10 benchmark uses only synthetic bank text through `127.0.0.1`. First-pass editorial inspection found redundancy in accepted `ESRW-006` and an unimproved range construction in accepted `ESRW-011`; automatic acceptance must not be described as flawless writing.
+- Full v10 rewrite benchmark completed: 28/30 accepted in each of two runs, `ESRW-003` and `ESRW-004` still require review, exact text/status/issues stability, no deterministic invariant drift, 725.71 seconds. The strict gate failed. Artifact: `artifacts/rewrite-benchmark-20260903T214142Z.json` and its `.review.md` sheet.
+- Independent documentation/evidence review found no Critical or Important discrepancies. It verified semantic counts, earlier rewrite results, model/bank digests and the actual listener ownership; it was not a production or merge approval.
 
 ### Next
 
-- Finish the corrected unassisted 22-case mutation run (currently executing).
-- Complete the final strict 30-case rewrite benchmark twice, without weakening failed gates.
-- Publish this verified implementation checkpoint to the feature branch while retaining explicit pending acceptance gates.
-- Update architecture, runbook, traceability and reproducible evidence before publication.
+- Start the next session by verifying the remote feature-branch tip and reading `docs/10-validation.md`; do not inherit a production-acceptance claim from this checkpoint.
+- After human review of draft labels, specify the next semantic and negative-style control iteration, including held-out examples. Do not keep tuning a prompt solely to pass known examples.
+- After Aitor confirms the interruption, stop only the identified desktop-managed Ollama service, restart with loopback/cloud-disabled settings and verify the actual listener.
 
 ### Blocked
 
-- Gold and production acceptance remain blocked on human review.
+- Gold and production acceptance remain blocked on human review; the current strict semantic gate also has a known false acceptance.
+- Private-text processing is blocked until the desktop-managed Ollama listener is deliberately isolated and verified (`BLK-005`). A non-blocking question about the required interruption has been sent to Aitor; no approval has been assumed.

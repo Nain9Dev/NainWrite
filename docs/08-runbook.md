@@ -65,6 +65,8 @@ Get-NetTCPConnection -State Listen -LocalPort 11434,8082
 
 Both listeners must be loopback-only. A local endpoint is not an authentication boundary against other local applications; do not expose these ports through a proxy or tunnel.
 
+The latest observed desktop-managed Ollama listener was `::`, not loopback-only. Setting environment variables in a new terminal does not reconfigure an already running application-owned server. Coordinate its shutdown first and recheck the actual listener after startup; see `BLK-005` and [validation evidence](10-validation.md). Do not process private text while this check fails.
+
 The application HTTP transport explicitly ignores proxies and rejects redirects. The strict Python service rejects configurations that disable proofreading or the second auditor. These controls do not protect against a compromised local service or operating system.
 
 ## Installed proofreading dependency

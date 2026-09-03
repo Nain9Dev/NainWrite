@@ -16,7 +16,7 @@
 | REQ-012 | Python standard-library validator | Verified |
 | REQ-013 | Unit tests and CLI validation | Verified |
 | REQ-014 | Human review rubric | Documented; execution pending |
-| REQ-015 | Model acceptance gate | Preliminary automated gate passed; human approval pending |
+| REQ-015 | Model acceptance gate | Historical same-model gate passed; current independent strict gate failed; human approval pending |
 | REQ-016 to REQ-019 | Local model, structured output and prompt isolation | Implemented; unit and real Ollama tests passed |
 | REQ-020 to REQ-023 | es-ES rewrite and literal preservation contract | Implemented; deterministic benchmark checks passed |
 | REQ-024 and REQ-024A | Deterministic validation and bounded repair | Verified by unit tests and two real repairs across 60 results |
@@ -25,10 +25,11 @@
 | REQ-033 to REQ-037 | `test_language_tool.LanguageToolClientTests`; live loopback check and identity | Unit and local integration verified |
 | REQ-038 and REQ-039 | `LanguageIssueClassificationTests` including explicit lowercase protected literals | Unit verified; rule false positives remain possible |
 | REQ-040 | `test_fails_closed_when_required_proofreader_is_missing` | Unit verified |
-| REQ-041 to REQ-043 | Independent disagreement, invalid audit range and strict acceptance service tests | Unit verified; real comparison in progress |
+| REQ-041 to REQ-043 | Independent disagreement, invalid audit range and strict acceptance service tests; complete v10 comparison | Orchestration verified; 28/30 accepted in both runs, strict benchmark failed; model scores do not establish linguistic correctness |
 | REQ-044 | GenerationResult model/digest in every observed generation; report fields | Implemented; observed in local artifacts |
 | REQ-045 | `SemanticMutationBankTests` | 22 draft cases structurally verified; human labels pending |
-| REQ-046 and REQ-047 | Executable mutation evaluation, semantic-only detection counter and valid controls | Corrected unassisted bank pending real execution |
+| REQ-046 | Corrected unassisted 22-case bank, `semantic-audit-20260903T213432Z.json` | Not satisfied: 16/17 invalid candidates detected; `SEMA-022` falsely accepted |
+| REQ-047 | Same corrected unassisted bank | 5/5 valid controls accepted; preliminary labels await human review |
 | REQ-048 | Candidate runner and interruption persistence test | Unit verified |
 | REQ-049 and REQ-050 | `HumanReviewReportTests` and unchanged draft references | Labels unit verified; human approval pending |
 | REQ-051 | `AuditContractTests` | Unit verified |
@@ -37,7 +38,7 @@
 | REQ-054 | Atomic JSON replacement and interrupted mutation-run checkpoint tests | Unit verified; local partial report observed |
 | REQ-055 | Default-unassisted parser and evaluator call assertions | Unit verified |
 | REQ-056 | `test_lower_priority_rejection_prevents_rewrite_gate` | Unit verified |
-| REQ-057 and REQ-058 | `LanguageRepairTests`; unavailable-proofreader test | Unit verified; real repair evaluation pending |
+| REQ-057 and REQ-058 | `LanguageRepairTests`; unavailable-proofreader test; focused v10 run | Unit verified; real bounded repair fixed `ESRW-014`, retained review for `ESRW-003` and `ESRW-004` |
 | REQ-059 and REQ-060 | `OllamaLimitTests` | Unit verified; long-document processing intentionally unsupported |
 | REQ-061 | `LocalTransportTests`; proxy and redirect regression checks for the shared transport | Unit verified; both clients use the same explicit proxy-free opener |
 | REQ-062 | Missing issue-type and invalid offset tests | Unit verified; incomplete findings raise a controlled error |
