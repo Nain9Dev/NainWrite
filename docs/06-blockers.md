@@ -30,6 +30,13 @@
 ## BLK-005: Desktop-managed Ollama listener
 
 - Type: `[M]`
+- Status: Deferred by Aitor on 2026-09-04; isolation not verified.
+- Impact: The desktop application's listener is `::` on port `11434`, not loopback-only. Earlier task-terminal settings do not establish the replacement process's configuration. Aitor requested leaving Ollama unchanged and subsequently authorised local-model processing of the named draft. That request is not general approval for other private documents or proof of network isolation.
+- Resolution: Do not restart Ollama or change firewall rules under the current instruction. Any later isolation work requires a separately coordinated interruption and listener verification. Current document-workflow calls must continue to use proxy-free loopback transport.
+
+## BLK-006: Bilingual document workflow not implemented
+
+- Type: `[M]` design approval, followed by `[A]` implementation and verification.
 - Status: Open.
-- Impact: The live Ollama desktop application's listener is `::` on port `11434`, not loopback-only. Earlier task-terminal environment settings do not establish the replacement process's configuration. The benchmark uses synthetic text and the client still addresses `127.0.0.1`; private-document processing remains blocked.
-- Resolution: Coordinate a safe interruption of the application-owned server, configure loopback-only service binding with cloud inference disabled, and verify the actual listener. Do not change firewall rules, terminate unrelated applications or assume LAN reachability without evidence.
+- Impact: The current short-text service cannot yet accept a document path, preserve its full structure across sections, resume a job or generate a checked English version.
+- Resolution: Approve `specs/004-document-rewriting/spec.md` and `plan.md`, then implement with failing-first tests and inspect real local outputs. Do not claim that the two requested files have already been produced.

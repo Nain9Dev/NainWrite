@@ -43,3 +43,7 @@
 | REQ-061 | `LocalTransportTests`; proxy and redirect regression checks for the shared transport | Unit verified; both clients use the same explicit proxy-free opener |
 | REQ-062 | Missing issue-type and invalid offset tests | Unit verified; incomplete findings raise a controlled error |
 | REQ-063 | Strict configuration and minimum-auditor tests; service tests now supply both fake auditors | Unit verified; disabled gates cannot produce strict acceptance |
+| REQ-064 to REQ-069 | `specs/004-document-rewriting/spec.md`, file and structure requirements | Proposed; runtime and tests not implemented |
+| REQ-070 to REQ-075 | Same specification, editorial and terminology requirements | Proposed; interview intent recorded, no acceptance claim |
+| REQ-076 to REQ-081 | Same specification, bilingual stages and evidence | Proposed; English stage not implemented or quality-validated |
+| REQ-082 to REQ-087 | Same specification, resumption, local I/O and document-level checks | Proposed; written-design approval pending |

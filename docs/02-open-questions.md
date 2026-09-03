@@ -35,4 +35,10 @@
 
 - Owner: `[M]` Aitor
 - Current state: the desktop-managed Ollama listener is `::` on port `11434`.
-- Decision needed: confirm a safe interruption of other Ollama work before restarting the application-owned service with loopback-only binding. No interruption has been assumed to be harmless.
+- Decision on 2026-09-04: leave Ollama unchanged. Service-isolation work is deferred, not verified complete.
+
+## OQ-007: Written bilingual document design
+
+- Owner: `[M]` Aitor
+- Current state: the editorial interview is complete enough for the proposal in `specs/004-document-rewriting`.
+- Decision needed: approve the initial Markdown/TXT workflow, proposed `en-GB` variant, local resumable outputs and explicit draft/quality status before implementation.

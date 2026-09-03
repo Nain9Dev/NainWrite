@@ -64,9 +64,9 @@
 
 - Start the next session by verifying the remote feature-branch tip and reading `docs/10-validation.md`; do not inherit a production-acceptance claim from this checkpoint.
 - After human review of draft labels, specify the next semantic and negative-style control iteration, including held-out examples. Do not keep tuning a prompt solely to pass known examples.
-- After Aitor confirms the interruption, stop only the identified desktop-managed Ollama service, restart with loopback/cloud-disabled settings and verify the actual listener.
+- Aitor subsequently requested leaving Ollama unchanged. Do not restart or reconfigure it. The new document-workflow design and active handoff are in `specs/004-document-rewriting`.
 
 ### Blocked
 
 - Gold and production acceptance remain blocked on human review; the current strict semantic gate also has a known false acceptance.
-- Private-text processing is blocked until the desktop-managed Ollama listener is deliberately isolated and verified (`BLK-005`). A non-blocking question about the required interruption has been sent to Aitor; no approval has been assumed.
+- Server network isolation remains unverified (`BLK-005`). Aitor declined changing Ollama for now and later explicitly requested running the named draft through the existing local model. That request must not be generalised to other documents or treated as proof of isolation.
