@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from datetime import UTC, datetime
@@ -12,8 +13,17 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from spanish_rewriter.language_tool import (
+    DEFAULT_LANGUAGE_TOOL_ENDPOINT,
+    LanguageToolClient,
+)
+from spanish_rewriter.benchmark_reporting import all_results_accepted, write_json_report
 from spanish_rewriter.ollama_client import OllamaClient, OllamaError
-from spanish_rewriter.service import DEFAULT_MODEL, SpanishRewriteService
+from spanish_rewriter.service import (
+    DEFAULT_AUDIT_MODEL,
+    DEFAULT_MODEL,
+    SpanishRewriteService,
+)
 
 
 DETERMINISTIC_ISSUE_PREFIXES = (
@@ -33,7 +43,12 @@ def build_parser() -> argparse.ArgumentParser:
         default=ROOT / "benchmark" / "spanish_rewrite_cases.jsonl",
     )
     parser.add_argument("--model", default=DEFAULT_MODEL)
+    parser.add_argument("--audit-model", default=DEFAULT_AUDIT_MODEL)
     parser.add_argument("--ollama-url", default="http://127.0.0.1:11434")
+    parser.add_argument("--language-tool-url", default=DEFAULT_LANGUAGE_TOOL_ENDPOINT)
+    parser.add_argument(
+        "--language-tool-level", choices=("default", "picky"), default="default"
+    )
     parser.add_argument("--runs", type=int, default=2)
     parser.add_argument(
         "--case",
@@ -66,14 +81,15 @@ def render_human_review(report: dict) -> str:
     """Render a readable approval sheet for the first benchmark run."""
 
     lines = [
-        "# Human Review: Spanish Rewrite Benchmark",
+        "# Revisión humana: banco de reescritura en español",
         "",
-        f"- Model: `{report['model']}`",
+        f"- Modelo redactor: `{report['model']}`",
+        f"- Modelo auditor independiente: `{report['audit_model']}`",
         f"- Prompt: `{report['runs'][0][0]['result']['prompt_version']}`",
-        f"- Interpretation: `{report['interpretation']}`",
-        "- Locale: `es-ES`",
+        f"- Interpretación: `{report['interpretation']}`",
+        "- Variante: `es-ES`",
         "",
-        "Automated acceptance is not human approval. Review meaning, naturalness and professional tone.",
+        "La aceptación automática no equivale a aprobación humana. Revisa el significado, la naturalidad y el tono profesional.",
         "",
     ]
     for entry in report["runs"][0]:
@@ -83,30 +99,31 @@ def render_human_review(report: dict) -> str:
             [
                 f"## {entry['case_id']} - {entry['category']} - {entry['priority']}",
                 "",
-                f"- Automated status: `{result['status']}`",
-                f"- Semantic confidence: `{audit.get('confidence', 'not_audited')}`",
-                f"- Naturalness: `{audit.get('naturalness_score', 'not_audited')}/5`",
-                f"- Professional tone: `{audit.get('professional_tone_score', 'not_audited')}/5`",
-                f"- Issues: `{', '.join(result['issues']) if result['issues'] else 'none'}`",
+                f"- Estado automático: `{result['status']}`",
+                f"- Confianza semántica: `{audit.get('confidence', 'not_audited')}`",
+                f"- Naturalidad: `{audit.get('naturalness_score', 'not_audited')}/5`",
+                f"- Tono profesional: `{audit.get('professional_tone_score', 'not_audited')}/5`",
+                f"- Incidencias: `{', '.join(result['issues']) if result['issues'] else 'none'}`",
                 "",
-                "### Source",
+                "### Texto original",
                 "",
                 result["source_text"],
                 "",
-                "### Model output",
+                "### Reescritura generada por Qwen",
                 "",
                 result["rewritten_text"],
                 "",
-                "### Draft reference",
+                "### Referencia propuesta",
                 "",
                 entry["draft_reference"],
                 "",
-                "### Human decision",
+                "### Decisión humana",
                 "",
-                "- [ ] Approve model output",
-                "- [ ] Reject model output",
-                "- [ ] Approve draft reference as gold",
-                "- Notes:",
+                "- [ ] Aprobar la reescritura generada por Qwen",
+                "- [ ] Rechazar la reescritura generada por Qwen",
+                "- [ ] Aprobar la referencia propuesta como ejemplo gold",
+                "- [ ] Solicitar correcciones",
+                "- Notas:",
                 "",
             ]
         )
@@ -121,6 +138,7 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         cases = load_cases(args.bank.resolve())
+        bank_sha256 = hashlib.sha256(args.bank.read_bytes()).hexdigest()
     except (OSError, ValueError, json.JSONDecodeError) as error:
         print(f"Cannot load benchmark: {error}", file=sys.stderr)
         return 2
@@ -138,8 +156,18 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     client = OllamaClient(base_url=args.ollama_url)
-    service = SpanishRewriteService(client=client, model=args.model)
+    service = SpanishRewriteService(
+        client=client,
+        model=args.model,
+        independent_audit_model=args.audit_model,
+        proofreader=LanguageToolClient(
+            endpoint=args.language_tool_url,
+            level=args.language_tool_level,
+        ),
+    )
     started_at = datetime.now(UTC)
+    output = (args.output or ROOT / "artifacts" / f"rewrite-benchmark-{started_at.strftime('%Y%m%dT%H%M%SZ')}.json").resolve()
+    partial_output = output.with_suffix(".partial.json")
     run_results: list[list[dict]] = []
 
     try:
@@ -162,6 +190,12 @@ def main(argv: list[str] | None = None) -> int:
                         "result": result.to_dict(),
                     }
                 )
+                write_json_report(partial_output, {
+                    "complete": False,
+                    "started_at": started_at.isoformat(),
+                    "bank_sha256": bank_sha256,
+                    "runs": run_results + [current_run],
+                })
                 print(
                     f"run={run_number}/{args.runs} "
                     f"case={case_number}/{len(cases)} "
@@ -205,7 +239,8 @@ def main(argv: list[str] | None = None) -> int:
         for item in deterministic_comparisons
     ) if deterministic_comparisons else None
     automated_gate_passed = (
-        all_p0_accepted
+        all_results_accepted(run_results)
+        and all_p0_accepted
         and no_deterministic_drift
         and stable_across_runs is not False
     )
@@ -213,6 +248,9 @@ def main(argv: list[str] | None = None) -> int:
 
     report = {
         "schema_version": 1,
+        "complete": True,
+        "bank_sha256": bank_sha256,
+        "constraint_hints": True,
         "started_at": started_at.isoformat(),
         "completed_at": completed_at.isoformat(),
         "duration_seconds": (completed_at - started_at).total_seconds(),
@@ -222,7 +260,21 @@ def main(argv: list[str] | None = None) -> int:
             case.get("review_status") != "approved" for case in cases
         ) else "gold",
         "model": args.model,
+        "audit_model": args.audit_model,
         "model_digest": first_run[0]["result"]["model_digest"],
+        "audit_model_digest": (
+            first_run[0]["result"].get("independent_audit_generation") or {}
+        ).get("model_digest", "not_observed"),
+        "proofreader": {
+            "endpoint": args.language_tool_url,
+            "level": args.language_tool_level,
+            "software": (
+                first_run[0]["result"].get("proofreading") or {}
+            ).get("software_name", "not_observed"),
+            "version": (
+                first_run[0]["result"].get("proofreading") or {}
+            ).get("software_version", "not_observed"),
+        },
         "settings": {
             "locale": "es-ES",
             "temperature": 0,
@@ -242,6 +294,7 @@ def main(argv: list[str] | None = None) -> int:
             ),
             "p0_count": len(p0_results),
             "all_p0_accepted": all_p0_accepted,
+            "all_results_accepted": all_results_accepted(run_results),
             "no_deterministic_drift": no_deterministic_drift,
             "stable_across_runs": stable_across_runs,
             "automated_gate_passed": automated_gate_passed,
@@ -250,18 +303,9 @@ def main(argv: list[str] | None = None) -> int:
         "runs": run_results,
     }
 
-    output = args.output
-    if output is None:
-        timestamp = started_at.strftime("%Y%m%dT%H%M%SZ")
-        output = ROOT / "artifacts" / f"rewrite-benchmark-{timestamp}.json"
-    output = output.resolve()
     review_output = output.with_suffix(".review.md")
     report["human_review_file"] = str(review_output)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
+    write_json_report(output, report)
     review_output.write_text(render_human_review(report), encoding="utf-8")
     print(json.dumps(report["summary"], ensure_ascii=False), flush=True)
     print(f"report={output}", flush=True)

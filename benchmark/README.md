@@ -38,3 +38,17 @@ python -m unittest discover -s tests -v
 ```
 
 Structural validation does not assess naturalness or semantic equivalence. Those require the human review described in `review_rubric.md`.
+
+## Semantic mutation bank
+
+`semantic_mutations.jsonl` contains intentionally invalid candidates and valid controls. It verifies that semantic gates can reject changed meaning without becoming an always-rejecting classifier.
+
+The current draft has 22 pairs: 17 invalid candidates and 5 valid controls. Two initial controls were corrected after review identified a changed temporal anchor and an unsupported explanation of uncertainty. Their original candidates remain as invalid regression cases `SEMA-021` and `SEMA-022`; earlier 20-case passes must not be presented as passes on the corrected bank.
+
+The semantic runner omits authored semantic hints by default. Use `--with-hints` only for a separately labelled assisted measurement. A style or spelling rejection alone does not count as detecting a semantic mutation.
+
+Validate it with:
+
+```powershell
+python tools/validate_semantic_mutations.py
+```

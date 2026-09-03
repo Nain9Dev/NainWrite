@@ -9,6 +9,11 @@ from typing import Any
 from urllib.parse import urlparse
 
 from .models import GenerationResult
+from .local_http import open_local
+
+
+MAX_PROMPT_BYTES = 12000
+MAX_OUTPUT_TOKENS = 2048
 
 
 class OllamaError(RuntimeError):
@@ -44,6 +49,12 @@ class OllamaClient:
     ) -> GenerationResult:
         """Generate and parse one JSON object with deterministic settings."""
 
+        if len(prompt.encode("utf-8")) > MAX_PROMPT_BYTES:
+            raise OllamaError(
+                f"Prompt exceeds the local safety limit of {MAX_PROMPT_BYTES} UTF-8 bytes; shorten the input without dropping meaning"
+            )
+        if not 1 <= num_predict <= MAX_OUTPUT_TOKENS:
+            raise OllamaError(f"num_predict must be between 1 and {MAX_OUTPUT_TOKENS}")
         payload = {
             "model": model,
             "prompt": prompt,
@@ -59,6 +70,8 @@ class OllamaClient:
             },
         }
         response = self._request("/api/generate", payload)
+        if response.get("done_reason") == "length":
+            raise OllamaError("Model generation reached its length limit; the candidate is incomplete")
         raw_content = response.get("response")
         if not isinstance(raw_content, str):
             raise OllamaError("Ollama response did not contain a string response")
@@ -109,7 +122,7 @@ class OllamaClient:
             method="GET" if payload is None else "POST",
         )
         try:
-            with urllib.request.urlopen(request, timeout=self.timeout_seconds) as response:
+            with open_local(request, timeout=self.timeout_seconds) as response:
                 result = json.loads(response.read().decode("utf-8"))
         except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as error:
             raise OllamaError(f"Local Ollama request failed: {error}") from error

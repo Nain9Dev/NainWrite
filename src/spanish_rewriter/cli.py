@@ -7,8 +7,9 @@ import json
 import sys
 from pathlib import Path
 
+from .language_tool import DEFAULT_LANGUAGE_TOOL_ENDPOINT, LanguageToolClient
 from .ollama_client import OllamaClient, OllamaError
-from .service import DEFAULT_MODEL, SpanishRewriteService
+from .service import DEFAULT_AUDIT_MODEL, DEFAULT_MODEL, SpanishRewriteService
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -20,7 +21,12 @@ def build_parser() -> argparse.ArgumentParser:
     source.add_argument("--file", type=Path, help="UTF-8 source file.")
     parser.add_argument("--protected", action="append", default=[])
     parser.add_argument("--model", default=DEFAULT_MODEL)
+    parser.add_argument("--audit-model", default=DEFAULT_AUDIT_MODEL)
     parser.add_argument("--ollama-url", default="http://127.0.0.1:11434")
+    parser.add_argument("--language-tool-url", default=DEFAULT_LANGUAGE_TOOL_ENDPOINT)
+    parser.add_argument(
+        "--language-tool-level", choices=("default", "picky"), default="default"
+    )
     parser.add_argument(
         "--plain",
         action="store_true",
@@ -45,6 +51,11 @@ def main(argv: list[str] | None = None) -> int:
         service = SpanishRewriteService(
             client=OllamaClient(base_url=args.ollama_url),
             model=args.model,
+            independent_audit_model=args.audit_model,
+            proofreader=LanguageToolClient(
+                endpoint=args.language_tool_url,
+                level=args.language_tool_level,
+            ),
         )
         result = service.rewrite(source_text, protected_literals=args.protected)
     except (OllamaError, ValueError, OSError) as error:

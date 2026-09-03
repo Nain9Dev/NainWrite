@@ -39,6 +39,61 @@ class AuditResult:
     professional_tone_score: int
 
 
+@dataclass(frozen=True)
+class LanguageIssue:
+    """One structured LanguageTool finding."""
+
+    rule_id: str
+    issue_type: str
+    category_id: str
+    message: str
+    offset: int
+    length: int
+    replacements: list[str]
+
+
+@dataclass(frozen=True)
+class ProofreadingResult:
+    """Verified response from a local LanguageTool instance."""
+
+    software_name: str
+    software_version: str
+    language: str
+    issues: list[LanguageIssue]
+    duration_seconds: float
+
+
+@dataclass(frozen=True)
+class AuditEvidence:
+    """One model's evidence for a candidate audit."""
+
+    model: str
+    generation: GenerationResult
+    audit: AuditResult | None
+    validation_error: str | None = None
+
+
+@dataclass
+class CandidateEvaluationResult:
+    """Fail-closed evaluation of an existing rewrite candidate."""
+
+    status: str
+    source_text: str
+    candidate_text: str
+    issues: list[str]
+    protected_literals: list[str]
+    detected_invariants: list[Invariant]
+    proofreading: ProofreadingResult | None
+    blocking_language_issues: list[LanguageIssue]
+    advisory_language_issues: list[LanguageIssue]
+    ignored_language_issues: list[LanguageIssue]
+    audits: list[AuditEvidence]
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
 @dataclass
 class RewriteResult:
     """Complete fail-closed result for a rewrite request."""
@@ -54,8 +109,16 @@ class RewriteResult:
     prompt_version: str
     writer_generation: GenerationResult
     repair_generation: GenerationResult | None = None
+    language_repair_generation: GenerationResult | None = None
+    pre_repair_proofreading: ProofreadingResult | None = None
+    proofreading: ProofreadingResult | None = None
+    blocking_language_issues: list[LanguageIssue] = field(default_factory=list)
+    advisory_language_issues: list[LanguageIssue] = field(default_factory=list)
+    ignored_language_issues: list[LanguageIssue] = field(default_factory=list)
     audit: AuditResult | None = None
     audit_generation: GenerationResult | None = None
+    independent_audit: AuditResult | None = None
+    independent_audit_generation: GenerationResult | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
