@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.venv/
+.tools/
+.coverage
+htmlcov/
+*.log
+artifacts/*.json
+artifacts/*.review.md
