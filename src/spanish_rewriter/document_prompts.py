@@ -4,20 +4,22 @@ import json
 
 from .ollama_client import MAX_PROMPT_BYTES
 
-DOCUMENT_PROMPT_VERSION = "bilingual-document-v3"
+DOCUMENT_PROMPT_VERSION = "bilingual-document-v4"
 TERMINOLOGY = {
     "es-ES": {"asset": "activo", "conformance": "conformidad", "profile": "perfil",
               "check": "comprobación", "deliverable": "entregable", "milestone": "hito",
               "report": "informe", "reference validator": "validador de referencia",
               "gold set": "conjunto de referencia", "pipeline": "flujo de procesamiento",
               "runtime": "entorno de ejecución", "engine target": "motor de destino",
-              "upstream contribution": "contribución al proyecto de origen", "draft text": "Texto del borrador"},
+              "upstream contribution": "contribución al proyecto de origen", "draft text": "Texto del borrador",
+              "manifold analysis": "análisis manifold"},
     "en-GB": {"activo": "asset", "conformidad": "conformance", "perfil": "profile",
               "comprobación": "check", "entregable": "deliverable", "hito": "milestone",
               "informe": "report", "validador de referencia": "reference validator",
               "conjunto de referencia": "reference dataset", "flujo de procesamiento": "processing pipeline",
               "entorno de ejecución": "runtime", "motor de destino": "target engine",
-              "contribución al proyecto de origen": "upstream contribution", "Texto del borrador": "Draft text"},
+              "contribución al proyecto de origen": "upstream contribution", "Texto del borrador": "Draft text",
+              "análisis manifold": "manifold analysis"},
 }
 ITEM_SCHEMA = {"type": "object", "properties": {"id": {"type": "string"}, "text": {"type": "string"}},
                "required": ["id", "text"], "additionalProperties": False}

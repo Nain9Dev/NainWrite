@@ -8,6 +8,8 @@ An upstream contribution is planned, but acceptance is not guaranteed. [VERIFY: 
 
 The processing pipeline checks assets before delivery. A runtime can use the report if the target engine supports it.
 
+The manifold analysis is optional; omitting it does not prove that the mesh is valid.
+
 ### Texto revisado
 
 El informe solo se publicará cuando la persona responsable dé su aprobación por escrito.

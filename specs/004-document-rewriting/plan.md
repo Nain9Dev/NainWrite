@@ -160,6 +160,7 @@ The first full-document evaluation exposed artificial sentence boundaries around
 - Clean each editable structural region before safe segmentation, retaining both its exact original source span and its cleaned model text. Normalize horizontal spaces only at recorded note-removal joins; preserve code, structural delimiters, line endings and hard breaks. Reject ambiguous joins without spacing.
 - Proofread the resulting coherent sentence regions instead of synthetic fragments around omitted notes.
 - Extend the bounded bilingual glossary and calibrated style instructions for technical prose, without changing model identities, sampling or Ollama configuration.
+- Preserve the technical meaning of manifold analysis through both translation stages. The baseline round trip produced a generic variety analysis; add a contextual glossary pair and a synthetic negative/conditional example before the next full evaluation.
 - Detect inconsistent translations of identical source headings in final checks; do not silently choose a preferred translation.
 - Add failing-first tests, rerun the full suite and request a scoped independent review before the new real job. Reject resumption of the old parser version rather than rewriting its historical evidence.
 - Add bounded atomic-checkpoint retries for transient Windows file-reader locks. Reproduce with a synthetic held-open checkpoint before implementation; verify successful retry, exhausted failure, preserved prior state and cleanup of temporary files.

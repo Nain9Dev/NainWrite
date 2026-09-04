@@ -133,6 +133,8 @@ class DocumentTransformTests(unittest.TestCase):
 
     def test_technical_style_calibration_and_glossary(self):
         self.assertEqual('conjunto de referencia', TERMINOLOGY['es-ES']['gold set'])
+        self.assertEqual('análisis manifold', TERMINOLOGY['es-ES']['manifold analysis'])
+        self.assertEqual('manifold analysis', TERMINOLOGY['en-GB']['análisis manifold'])
         prompt = build_prompt('audit', 'es-ES', [{'id': 'p', 'text': 'A pipeline.'}], {}, [])
         self.assertIn('tubería', prompt)
         self.assertIn('literal calques', prompt)
