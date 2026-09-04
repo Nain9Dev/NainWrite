@@ -7,3 +7,4 @@ htmlcov/
 *.log
 artifacts/*.json
 artifacts/*.review.md
+*.rewritten/

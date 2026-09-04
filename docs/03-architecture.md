@@ -52,4 +52,32 @@ The default automatic gate requires semantic confidence of at least `0.95` and b
 
 A linguistic repair never applies LanguageTool replacement suggestions directly. It asks the writer for one new candidate grounded in the original source and preserves the pre-repair evidence. A repaired candidate must pass the same gates; an unavailable proofreader never triggers a repair.
 
-The measured configuration rejects prompts above 12000 UTF-8 bytes and requests at most 2048 output tokens within a 16384-token context. The prompt budget includes instructions, constraints and candidate text, so the source-text allowance is smaller and varies by stage. Length-limited responses are rejected. Whole-document segmentation and long-context acceptance remain unimplemented.
+The measured configuration rejects prompts above 12000 UTF-8 bytes and requests at most 2048 output tokens within a 16384-token context. The prompt budget includes instructions, constraints and candidate text, so the source-text allowance is smaller and varies by stage. Length-limited responses are rejected. The document workflow divides content instead of increasing this context.
+
+## Document workflow
+
+```mermaid
+flowchart TD
+    CLI[File-path CLI] --> Job[Document orchestrator]
+    Job --> Store[Local job store and process lock]
+    Store --> Input[Read-only source and atomic checkpoint]
+    Job --> Parser[Lossless span manifest and explicit cleanup]
+    Parser --> Batches[Bounded prose batches]
+    Batches --> ES[Qwen Spanish generation]
+    ES --> Checks[Literal checks and locale-specific LanguageTool]
+    Checks --> Audits[Qwen and Gemma audits]
+    Audits --> Repair[At most one grounded repair with repeated checks]
+    Repair --> Spanish[Complete Spanish candidate]
+    Spanish --> EN[English from Spanish with upstream review flags]
+    EN --> ChecksEN[Same checks with en-GB proofreading]
+    ChecksEN --> Assemble[Coverage and structural assembly]
+    Assemble --> Output[Immutable candidate files and separate review]
+    Input --> Resume[Validate hashes, configuration and saved evidence]
+    Resume --> Job
+```
+
+`document.py` owns parsing and deterministic assembly. `document_prompts.py` owns versioned bilingual instructions. `document_transform.py` owns bounded generation/checks/repair; `document_evidence.py` independently revalidates saved evidence. `document_job.py` orchestrates phases and status. Only `document_store.py` reads source files or persists local artifacts. The CLI captures arguments and presents progress; it does not implement editorial rules.
+
+Each batch contains at most 12 source spans and 1800 UTF-8 source bytes. Complete prompts are checked again, including context and candidate text. Whole neighbours up to 256 bytes are included; larger neighbours are explicitly outside context coverage. No text is silently truncated. Cross-section semantic equivalence is not exhaustively established by these bounded audits.
+
+Generated review-required candidates are local review artifacts, not external publication. Source-specific preparation ranges and documents never belong in the repository.

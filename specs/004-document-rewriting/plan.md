@@ -1,12 +1,12 @@
 # Bilingual Document Rewriting Plan
 
-Status: Proposed; implementation has not started.
+Status: Design approved by Aitor on 2026-09-04; implementation in progress.
 
 ## External prerequisites
 
 - `[A]` Existing Python runtime, Qwen writer, Gemma auditor and local LanguageTool.
 - `[A]` Read-only preflight of the exact installed model digests and available Spanish/English proofreading languages.
-- `[M]` Approval of this written technical design, including initial Markdown/TXT scope and proposed `en-GB` output.
+- `[M]` Approval of this written technical design, including initial Markdown/TXT scope and `en-GB` output: received on 2026-09-04.
 - `[H]` No new account, credential, paid resource or cloud inference is required.
 - `[A]` Ollama remains unchanged as requested. Calls use `127.0.0.1`; no claim of loopback-only server binding is made.
 
@@ -118,3 +118,37 @@ Both language files can be produced for review in one run. This is not the same 
 - A proposed repair changes content merely to satisfy a checker.
 - An implementation would require cloud processing, changing Ollama or writing customer text into Git.
 - The original changes during a job or resume state does not match the active configuration.
+
+## Execution detail
+
+The approved subsystem is tightly coupled, so implementation proceeds inline with an independent read-only code review. The existing dedicated feature branch is retained; no main-branch change or merge is included.
+
+### Task 1: Lossless manifest and bounded batches
+
+Files: create `src/spanish_rewriter/document.py` and `tests/test_document.py`.
+Interface: `parse_document(text, *, markdown=True, clean_notes=False, omit_lines=()) -> Manifest`; `Manifest.assemble(replacements) -> str`; `make_batches(manifest) -> list[list[Piece]]`.
+
+- [ ] Write round-trip, note range, protected-span, table, unsafe-format, long-paragraph and coverage tests.
+- [ ] Run `python -m unittest discover -s tests -p test_document.py -v`, observe missing-module failure, then implement and rerun.
+- [ ] Keep literal source spans and immutable separators. Batch multiple editable spans within the request budget to avoid one model load per table cell.
+
+### Task 2: Bilingual transformation and evidence
+
+Files: create `document_prompts.py`, `document_transform.py`, `tests/test_document_transform.py`; modify `language_tool.py` and its tests.
+Interface: `DocumentTransformer.transform(items, locale, context) -> dict`; configuration includes prompt version, exact model digests and proofreading settings.
+
+- [ ] Write failing tests for en-GB request/response identity, stable item IDs, missing/duplicate IDs, bounded prompts, protected literals and both audits.
+- [ ] Add explicit language routing without changing the existing Spanish default.
+- [ ] Generate bounded JSON arrays, run proofreading and two distinct model audits, keep all evidence and allow at most one grounded repair.
+
+### Task 3: Job store, orchestration and CLI
+
+Files: create `document_store.py`, `document_job.py`, `tools/rewrite_document.py`, `tests/test_document_job.py`.
+Interface: `start_job(input_path, transformer, ...) -> Path`; `run_job(job_dir, transformer, progress=...) -> dict`.
+
+- [ ] Write interruption/resume/config/source/tamper/collision tests and an end-to-end synthetic test before runtime changes.
+- [ ] Atomically checkpoint each phase and batch. Generate all Spanish blocks before starting English, which consumes only Spanish replacements.
+- [ ] Validate exact coverage and source identity before publishing separately named candidate files and reports. Retain unapproved status and upstream failures.
+- [ ] Run the full test suite, independent review, real synthetic inference, then the named private document outside Git.
+
+No extra installation or external service is required. Private cleanup ranges are supplied explicitly and retained only in local job state; there is no source-specific document content in the repository.

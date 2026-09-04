@@ -16,7 +16,18 @@ Current validation is preliminary: the corrected unassisted semantic bank expose
 
 Before supplying private text, verify both service listeners are loopback-only. The latest desktop-managed Ollama instance did not meet this check; the client using `127.0.0.1` does not by itself restrict the server's other interfaces.
 
-This version is intended for bounded text passages. It rejects prompts above 12000 UTF-8 bytes and incomplete length-limited responses. Long documents and automatic translation are not yet validated.
+The short-text API remains bounded. The document workflow segments UTF-8 Markdown/TXT, produces Spanish first and British English from that Spanish, and checkpoints completed batches. It rejects prompts above 12000 UTF-8 bytes and incomplete length-limited responses. Document quality remains subject to the separate evidence and human-review limitations below.
+
+## Rewrite a document
+
+```powershell
+python tools/rewrite_document.py --input "C:/path/draft.md" --both
+python tools/rewrite_document.py --resume "C:/path/draft.rewritten/job-id"
+```
+
+The command creates a unique job folder beside the original with separate `es-ES` and `en-GB` candidate files, `review.md`, `review.json` and `checkpoint.json`. The original is never overwritten. Exit `0` means automatic acceptance, `2` means completed candidates require review, and `1` means incomplete or invalid work. Human approval is never automatic.
+
+Use `--clean-notes` only when removing explicit `VERIFY`/`DAVID` preparation markers is intended; removed spans stay in the local report. `--omit-lines FIRST:LAST` records an explicit preparation range. Neither option performs fact-checking or fills missing fields. PDF, DOCX, HTML blocks and complex Markdown constructs are not supported in this slice. See the [document runbook](docs/08-runbook.md#rewrite-a-bilingual-document).
 
 ## Requirements
 

@@ -6,8 +6,8 @@ The active design handoff is maintained in `specs/004-document-rewriting/tasks.m
 
 - `[A]` Implement and verify the local Qwen3.8 Spanish rewriter: complete.
 - `[A]` Implement and execute independent local proofreading and semantic quality gates: implementation and evaluation complete; strict model acceptance failed and remains open.
-- `[A]` Design a resumable bilingual document workflow from a file path: written proposal prepared.
-- `[M]` Approve the written document-workflow design before runtime implementation and real document execution.
+- `[A]` Resumable bilingual document workflow: implemented, independent review and real-document validation in progress.
+- `[M]` Written document-workflow design: approved by Aitor on 2026-09-04.
 
 ## Human gates
 

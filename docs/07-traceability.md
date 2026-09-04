@@ -43,7 +43,22 @@
 | REQ-061 | `LocalTransportTests`; proxy and redirect regression checks for the shared transport | Unit verified; both clients use the same explicit proxy-free opener |
 | REQ-062 | Missing issue-type and invalid offset tests | Unit verified; incomplete findings raise a controlled error |
 | REQ-063 | Strict configuration and minimum-auditor tests; service tests now supply both fake auditors | Unit verified; disabled gates cannot produce strict acceptance |
-| REQ-064 to REQ-069 | `specs/004-document-rewriting/spec.md`, file and structure requirements | Proposed; runtime and tests not implemented |
-| REQ-070 to REQ-075 | Same specification, editorial and terminology requirements | Proposed; interview intent recorded, no acceptance claim |
-| REQ-076 to REQ-081 | Same specification, bilingual stages and evidence | Proposed; English stage not implemented or quality-validated |
-| REQ-082 to REQ-087 | Same specification, resumption, local I/O and document-level checks | Proposed; written-design approval pending |
+| REQ-064 | `DocumentJobTests.test_unsupported_format_and_invalid_utf8`, original-byte preservation test | Unit verified |
+| REQ-065 to REQ-067 | `DocumentTests`, round-trip, spans, stable IDs, long prose and protected-construct regressions | Unit verified for the supported conservative Markdown subset |
+| REQ-068 | Complete-prompt byte check, `test_oversized_prompt_is_rejected_before_model_call`, existing Ollama limit tests | Unit verified; no silent truncation |
+| REQ-069 | Missing/extra/empty replacement and saved duplicate coverage tests | Unit verified |
+| REQ-070 | Bilingual routing unit test; two-paragraph real smoke with unchanged good Spanish sentence | Finite integration evidence; not universal language correctness |
+| REQ-071 | Literal mutation tests and dual semantic audits; earlier semantic blind spot remains | Controls implemented; perfect preservation not established |
+| REQ-072 and REQ-073 | Cleanup range/disclosure and numbered-heading variant tests | Unit verified; explicit range selection requires editorial judgement |
+| REQ-074 and REQ-075 | Versioned glossary, whole bounded neighbours, data-only prompt contract | Implemented; cross-section terminology quality requires human review |
+| REQ-076 | Job routing test checks English input is the Spanish output; input/output hash checks | Unit and synthetic real integration verified |
+| REQ-077 | Distinct installed digest test, strict locale test and retained per-attempt audits/proofreading | Unit and synthetic real integration verified |
+| REQ-078 | Upstream review propagation and evidence-derived status tests | Unit verified |
+| REQ-079 | Bounded disagreement repair test and revalidated attempt evidence | Unit verified |
+| REQ-080 and REQ-081 | Complete/human approval assertions and interruption/no-English-output test | Unit verified |
+| REQ-082 | Atomic checkpoint, process lock and interruption/resume tests | Unit verified; real completed-job resume verified |
+| REQ-083 | Source/configuration/tamper/coverage and model/audit/locale evidence mutation tests | Unit verified; checksum is not authentication |
+| REQ-084 | Unique jobs, output collision and original preservation tests | Unit verified |
+| REQ-085 | File-path CLI help, real smoke execution and resume | Integration verified |
+| REQ-086 | Existing loopback proxy-free transport tests; unchanged live listeners | Clients local; server isolation explicitly unverified |
+| REQ-087 | Per-span global literal/structure/coverage checks, lexical terminology findings and coverage disclaimer | Implemented; finite batch audits are not exhaustive document semantic proof |

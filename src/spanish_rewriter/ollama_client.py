@@ -99,6 +99,12 @@ class OllamaClient:
             tokens_per_second=tokens_per_second,
         )
 
+    def get_fresh_model_digest(self, model: str) -> str:
+        """Resolve current server identity rather than reusing an alias cache."""
+
+        self._digest_cache.pop(model, None)
+        return self.get_model_digest(model)
+
     def get_model_digest(self, model: str) -> str:
         """Resolve and cache the installed model digest."""
 

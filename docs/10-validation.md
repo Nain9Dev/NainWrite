@@ -101,6 +101,22 @@ Reproduction commands and service setup are in [the runbook](08-runbook.md). Int
 3. `[M]` Define approved technical terminology, including whether `endpoint` must remain literal in this product's register.
 4. `[A]` Specify and test a next semantic-control iteration against the observed blind spot and new held-out examples; do not promote a prompt solely because it passes known development cases.
 5. `[H]` Approve or reject ADR-003 only after reviewing the measured failures and added latency.
-6. `[M]` Confirm a safe interruption of the desktop-managed Ollama application, then restart it with verified loopback-only binding and cloud inference disabled before processing private text.
+6. `[M]` Server-isolation changes are deferred by Aitor; leave the current Ollama instance unchanged. The named-draft exception does not establish general network isolation.
 
-Long documents, translation, unattended publication and blanket claims of error-free rewriting remain outside validated scope. GitHub preserves tracked source, synthetic banks and documentation, not local model weights, runtimes, private documents or ignored generated evidence.
+Unattended external publication and blanket claims of error-free rewriting remain outside validated scope. GitHub preserves tracked source, synthetic banks and documentation, not local model weights, runtimes, private documents or ignored generated evidence.
+
+## Bilingual document workflow: 2026-09-04
+
+The design was approved before implementation. Failing-first tests cover source-span parsing, protected values, Markdown round trips, cleanup evidence, bilingual routing, independent audits, checkpoints, interrupted execution, incompatible resume and immutable artifact collisions.
+
+- Current implementation verification: 89 tests passing, including the original 58; `git diff --check` and both draft-bank validators passing.
+- Independent review found five parser gaps, reproduced with synthetic tests and corrected: signs/currency/relative links, nested prefixes/emphasis/setext markers, invalid fence closing, protected-span splitting, and numbered-field cleanup guards.
+- A further saved-evidence finding prompted full revalidation of model digests, raw/parsed audit consistency, locale, proofreading classification and derived statuses. A regression also fixed accidental sharing of the final-attempt issue list with downstream upstream-status flags.
+- First real synthetic attempt failed with invalid audit confidence under bilingual prompt v1. The failure was not acceptance. Prompt v2 states numeric ranges explicitly and the runtime retains malformed audit responses as failed evidence.
+- The complete two-paragraph real smoke job under prompt v2 produced automatically accepted Spanish and British English candidates. It preserved the literal number, written-approval condition and exception. Its previously correct Spanish sentence stayed unchanged.
+- Local smoke evidence: `artifacts/document-smoke.rewritten/20260903T225111Z-36a5cd0e29`; successful resume under the stricter evidence validator performed no new generation. Summed model-call duration was 8.95 seconds for Spanish and 13.46 seconds for English, excluding other work and not a performance guarantee.
+- Independent review also closed reference-style Markdown link preservation by explicit rejection, and stale model-alias identity by fresh digest checks before and after each generation.
+- The named private document passed parsing preflight and is being processed in its own job directory outside Git. First execution stopped when the previously running LanguageTool service was unavailable after a session pause. Only that existing local corrector was started again, its loopback listener and both languages were verified, and the job resumed. Ollama was not restarted or configured by this task.
+- A new CLI regression verifies unavailable proofreading stops the job before private generation. Full private-document generation and editorial inspection remain in progress at this checkpoint.
+
+These finite tests do not resolve the earlier semantic benchmark false acceptance or establish human linguistic approval.

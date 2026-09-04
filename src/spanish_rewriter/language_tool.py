@@ -31,6 +31,7 @@ class LanguageToolClient:
         endpoint: str = DEFAULT_LANGUAGE_TOOL_ENDPOINT,
         timeout_seconds: float = 30.0,
         level: str = "default",
+        language: str = "es",
     ) -> None:
         parsed = urlparse(endpoint)
         if (
@@ -46,12 +47,15 @@ class LanguageToolClient:
         self.endpoint = endpoint
         self.timeout_seconds = timeout_seconds
         self.level = level
+        if language not in {"es", "es-ES", "en-GB"}:
+            raise ValueError("Supported proofreading languages: es, es-ES, en-GB")
+        self.language = "es" if language == "es-ES" else language
 
     def check(self, text: str) -> ProofreadingResult:
-        """Proofread one Spanish text and validate the service identity."""
+        """Proofread text in the configured language and validate service identity."""
 
         payload = urllib.parse.urlencode(
-            {"language": "es", "text": text, "level": self.level}
+            {"language": self.language, "text": text, "level": self.level}
         ).encode("utf-8")
         request = urllib.request.Request(
             self.endpoint,
@@ -89,10 +93,9 @@ class LanguageToolClient:
         if not isinstance(software, dict) or software.get("name") != "LanguageTool":
             raise LanguageToolError("Endpoint did not identify itself as LanguageTool")
         language = data.get("language")
-        if not isinstance(language, dict) or not str(language.get("code", "")).startswith(
-            "es"
-        ):
-            raise LanguageToolError("LanguageTool did not confirm Spanish checking")
+        allowed = {"es", "es-ES"} if self.language == "es" else {"en-GB"}
+        if not isinstance(language, dict) or language.get("code") not in allowed:
+            raise LanguageToolError(f"LanguageTool did not confirm {self.language} checking")
         matches = data.get("matches")
         if not isinstance(matches, list):
             raise LanguageToolError("LanguageTool response did not contain a match list")

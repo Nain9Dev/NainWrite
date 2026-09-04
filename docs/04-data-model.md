@@ -81,3 +81,45 @@ erDiagram
 Runtime statuses are separate from reference review state: `accepted` means that configured automatic checks passed; `review_required` means at least one check rejected or could not validate the candidate. Neither changes a reference from `draft` to gold.
 
 Reports also contain detected invariants, blocking/advisory/ignored language findings, generation timing and token counts. Reports are local artifacts and are not repository data or a persistence database.
+
+## Document jobs
+
+```mermaid
+erDiagram
+    DOCUMENT_JOB ||--|{ SOURCE_PIECE : orders
+    DOCUMENT_JOB ||--o{ REMOVAL_RANGE : records
+    DOCUMENT_JOB ||--|{ BATCH_RESULT : checkpoints
+    BATCH_RESULT ||--|{ ATTEMPT : retains
+    ATTEMPT ||--|{ AUDIT_EVIDENCE : requires
+    ATTEMPT ||--|| PROOFREADING_RESULT : checks
+    DOCUMENT_JOB ||--o{ OUTPUT_FILE : publishes
+    DOCUMENT_JOB {
+        string source_sha256
+        string configuration_sha256
+        string phase
+        boolean generation_complete
+        boolean human_approved
+    }
+    SOURCE_PIECE {
+        string id PK
+        int start
+        int end
+        string role
+        string sha256
+        boolean editable
+        boolean removed
+    }
+    BATCH_RESULT {
+        string locale
+        string status
+        object input_hashes
+        object output_hashes
+        object replacements
+    }
+    OUTPUT_FILE {
+        string locale
+        string filename
+    }
+```
+
+Offsets index Unicode source characters; each span and removal retains exact source text locally. The checkpoint envelope contains a SHA-256 of canonical state to detect corruption, not a cryptographic signature or protection against a malicious local writer. Resumption reconstructs the manifest and verifies source/configuration/model identity, coverage, candidate hashes, original audit responses, proofreading classifications and derived statuses. A process lock prevents simultaneous runners from modifying one job.

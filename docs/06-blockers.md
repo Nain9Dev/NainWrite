@@ -34,9 +34,9 @@
 - Impact: The desktop application's listener is `::` on port `11434`, not loopback-only. Earlier task-terminal settings do not establish the replacement process's configuration. Aitor requested leaving Ollama unchanged and subsequently authorised local-model processing of the named draft. That request is not general approval for other private documents or proof of network isolation.
 - Resolution: Do not restart Ollama or change firewall rules under the current instruction. Any later isolation work requires a separately coordinated interruption and listener verification. Current document-workflow calls must continue to use proxy-free loopback transport.
 
-## BLK-006: Bilingual document workflow not implemented
+## BLK-006: Bilingual document delivery validation
 
 - Type: `[M]` design approval, followed by `[A]` implementation and verification.
-- Status: Open.
-- Impact: The current short-text service cannot yet accept a document path, preserve its full structure across sections, resume a job or generate a checked English version.
-- Resolution: Approve `specs/004-document-rewriting/spec.md` and `plan.md`, then implement with failing-first tests and inspect real local outputs. Do not claim that the two requested files have already been produced.
+- Status: Design approved and runtime implemented; private-document execution in progress.
+- Impact: The file-path workflow passes unit and real synthetic bilingual tests, including resume. The requested long document still requires full generation and inspection before delivery.
+- Resolution: Finish the current local job, inspect both outputs and findings, and report actual completion separately from automatic quality and human approval.

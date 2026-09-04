@@ -1,6 +1,6 @@
 # Bilingual Document Rewriting Specification
 
-Status: Proposed; written-design approval pending.
+Status: Design approved by Aitor on 2026-09-04; implementation in progress.
 
 ## User-approved editorial intent
 
