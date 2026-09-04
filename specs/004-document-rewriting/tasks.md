@@ -2,7 +2,7 @@
 
 ## Active task
 
-- `[A]` `TASK-007`: Implement and verify the approved resumable bilingual file-path workflow.
+- `[A]` `TASK-007`: Implementation and finite evaluation of the approved resumable bilingual file-path workflow complete. Editorial acceptance remains open.
 - `[M]` Written design approved by Aitor on 2026-09-04. Human approval of generated documents remains separate.
 
 ## Handoff
@@ -22,7 +22,7 @@
 ### Verified
 
 - Runtime baseline is committed and pushed as `b054634b69248b972c8ba8fbd5a6fc6b1646738f` on `naindev/strict-es-quality-gates`. No main-branch change or merge.
-- Parser v2, bilingual prompt v3, job v2 and bounded Windows checkpoint-lock retries are committed and pushed as `4e908a113e04043c3a8831509727c820efd3a766`. Prompt v4 adds a contextual manifold-analysis glossary pair and a synthetic fixture extension; these follow-up changes are currently uncommitted. Current suite: 100 tests pass; `git diff --check` and both draft-bank validators pass.
+- Parser v2, bilingual prompt v3, job v2 and bounded Windows checkpoint-lock retries are committed and pushed as `4e908a113e04043c3a8831509727c820efd3a766`. Prompt v4 adds a contextual manifold-analysis glossary pair and a synthetic fixture extension, committed and pushed as `937eacd93835fa0f26b7bf20772d69c7407f09d7`. Latest verification: all 100 tests and both draft-bank validators pass. The closing documentation update records completion without changing runtime or generated evidence.
 - Real synthetic UTF-8 file produced complete es-ES and en-GB candidates with automatic acceptance. Local job: `artifacts/document-smoke.rewritten/20260903T225111Z-36a5cd0e29`. Resume verified without regenerating completed work.
 - First synthetic attempt under prompt v1 failed on an out-of-range audit confidence; v2 explicitly defines the range, and invalid audits now retain failed evidence instead of claiming acceptance.
 - Private-draft preflight: 22439 source bytes, 16902 clean-view bytes, 103 editable spans, 13 batches per language, 48 explicitly recorded removals with the selected preparation cleanup.
@@ -32,10 +32,13 @@
 - Added a CLI regression requiring proofreading availability before processing private text. The real job's first Spanish batch completed with two spelling findings, while both model audits passed; it correctly remains review-required.
 - Baseline Spanish inspection found artificial boundaries around removed notes, spacing defects, inconsistent repeated headings and literal technical calques despite positive model scores. Private editorial notes are kept beside the job, not in Git.
 - New failing-first tests and scoped independent review closed coherent cleanup, exact raw-source mapping, note groups, ambiguous word joins, inline code/link protection and Markdown hard-break preservation. Repeated original headings now report translation variants in both locales. The enlarged glossary/style calibration keeps the complete request limit; oversized repair diagnostics use an explicit summary, never clipped source text.
-- Refined parser preflight on the unchanged original: 92 editable spans, 14 batches per language, 48 removal ranges and exact original reconstruction. Real-model validation of this refinement is pending; the active baseline remains intact.
+- Refined parser preflight on the unchanged original: 92 editable spans, 14 batches per language, 48 removal ranges and exact original reconstruction. The subsequent complete real evaluation is recorded below; baseline evidence remains intact.
 - Windows error 5 was reproduced with a synthetic checkpoint held open by a reader. New bounded retry tests passed, including persistent failure preserving prior state; an actual Windows reader released after 150 ms verified recovery. The reader responsible for the real incident is not identified. No ACL, security-product or service changes were made.
 - Full baseline English inspection exposed a missed technical round-trip drift (manifold analysis becoming variety analysis). The contextual glossary was extended under prompt v4 with a failing-first test. The first v3 synthetic job was correctly invalidated after the synthetic fixture was extended during execution; it is not acceptance evidence. Fresh v4 smoke completed in `tests/fixtures/document-technical-style.rewritten/20260904T090435Z-30d7572685`: 8/8 spans per language, no global structural/literal findings, coherent cleanup, repeated headings consistent, meaningful qualifiers preserved and the good Spanish sentence unchanged. It remains review-required because LanguageTool flags `manifold`; English inherits that finding. No spelling gate was bypassed.
-- Fresh full private job is active in exec session `31367`, directory `C:/Users/aitor/Downloads/nlnet-borrador-base-EN-v0.rewritten/20260904T090725Z-5aeb7aab56`. It uses parser v2, prompt v4 and job v2, with the same local models and exact source/cleanup ranges. Resume with the current `tools/rewrite_document.py`. Do not change its input, parser, prompts, configuration or model identities while it runs; use stdout progress instead of holding its checkpoint open.
+- The refined full private job completed on 2026-09-04 at 11:51:48 Europe/Madrid in `C:/Users/aitor/Downloads/nlnet-borrador-base-EN-v0.rewritten/20260904T090725Z-5aeb7aab56`. It uses parser v2, prompt v4 and job v2, with the same local models and exact source/cleanup ranges. Both complete candidate files and `review.json`/`review.md` exist and were inspected. No generation process remains active; do not reuse the expired exec session/cell identifiers.
+- Refined result: 92/92 spans in each locale, preserved structure, 48 cleanup ranges, unchanged original SHA-256 `01e7258c0a59591aa0c9518b36d080ad673f1696d7d09983a57222afde0586cb`. All 14 batches per language are review-required, with 46 final batch issue entries per language; English counts include upstream findings. Seven global Spanish literal findings, one English literal finding and one Spanish lexical terminology flag remain. Counts are not independent error totals.
+- Complete editorial inspection confirms coherent cleanup, consistent repeated headings and the corrected manifold-analysis round trip. Deliverable-state drift, technical scope narrowing and unnatural/redundant wording remain; both semantic auditors missed the two inspected source-to-Spanish meaning changes. Two English final Gemma audits also contain invalid confidence values and remain failures. Private detailed observations are beside the outputs, never in Git.
+- After the user resumed the task, completed-job CLI revalidation initially returned 1 because LanguageTool had stopped. Started only the existing corrector hidden, PID 27028; verified `127.0.0.1:8082`. Ollama remains PID 9984 on `::11434`, unchanged by this task. Repeated resume returned 2 (complete, review-required), printed no generation batches, and left all checkpoint/output/report hashes unchanged. Original hash was independently rechecked.
 
 - Starting implementation checkpoint: `39ee99843ea61f3490943e1381271bce8a9c707c`, branch `naindev/strict-es-quality-gates`; worktree was clean before these design documents.
 - At the design baseline, the service had no file parser, document segmentation, checkpoint orchestration or English translation stage.
@@ -47,12 +50,13 @@
 
 ### Next
 
-- Complete the active fresh private job and inspect both outputs and all findings. Never force old state to resume under changed versions.
-- Keep the actual document and all generated outputs outside Git; only synthetic fixtures belong in tests.
-- Continue the active local draft run, inspect both outputs and all findings, then complete measured-validation documentation and deliver the files.
+- Deliver the latest two complete candidate files and separate editorial notes with their review-required status. Do not present them as ready for submission.
+- `[A]` Next quality iteration: specify source-grounded editorial corrections and held-out negative controls for changed state, narrowed terminology and unnatural wording before runtime changes. Preserve the completed evidence; never manually edit checkpoint text or relabel an old job as approved.
+- `[M]` Review corrected Spanish and then its English translation. Source claims, missing fields and authorship assertions remain outside factual verification.
+- Keep the actual document and all generated outputs outside Git; only synthetic fixtures belong in tests. Ollama remains unchanged.
 
 ### Blocked / not yet delivered
 
-- Baseline files are complete but have confirmed editorial defects. Refinement passes unit checks and scoped code review, and has completed a finite real synthetic evaluation with an unresolved technical-spelling flag. The refined full private-document run is in progress; no final linguistic approval is claimed.
+- Baseline and refined files are complete, but both have confirmed editorial defects. Runtime verification is complete; error-free professional rewriting and semantic preservation are not achieved. The unresolved work is editorial/semantic correction and subsequent review, not generation or a lost checkpoint.
 - The earlier strict semantic benchmark still has a known false acceptance; this design must not inherit a claim of production acceptance.
 - Ollama must remain unchanged. The latest user request authorizes processing the named document through the existing local model; it does not establish server network isolation or blanket safety for other private documents.

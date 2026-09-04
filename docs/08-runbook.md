@@ -128,13 +128,15 @@ Review a candidate against the source even if it differs from the proposed refer
 From the repository root, with the existing local services running:
 
 ```powershell
-python tools/rewrite_document.py --input "C:/path/draft.md" --both
+python -X utf8 tools/rewrite_document.py --input "C:/path/draft.md" --both
 ```
 
-The first supported formats are UTF-8 `.md` and `.txt`. Both languages are generated: natural professional `es-ES`, then formal natural `en-GB` from the assembled Spanish candidate. The command prints a unique job folder and a resume command immediately. It does not install, restart or reconfigure Ollama.
+The first supported formats are UTF-8 `.md` and `.txt`. Both languages are generated with a natural professional target: `es-ES`, then `en-GB` from the assembled Spanish candidate. Actual prose may fail that target; see the measured failures in `docs/10-validation.md`. The command prints a unique job folder and a resume command immediately. It does not install, restart or reconfigure Ollama. `-X utf8` also keeps console output readable on Windows.
+
+From another working directory, supply the absolute path to `tools/rewrite_document.py` as well as the input path. The CLI resolves its own package path. Keep quotes around paths containing spaces.
 
 ```powershell
-python tools/rewrite_document.py --resume "C:/path/draft.rewritten/job-id"
+python -X utf8 tools/rewrite_document.py --resume "C:/path/draft.rewritten/job-id"
 ```
 
 Resume with the exact original input and model/prompt configuration. Changed inputs, incompatible configuration, corrupted evidence and output collisions are rejected. A running job locks its directory; operating-system process termination releases the lock. Completed batches are not regenerated. Keep the entire job directory for recovery; Git excludes `*.rewritten/` and is not a backup of private documents.

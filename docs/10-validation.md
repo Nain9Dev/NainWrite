@@ -109,7 +109,7 @@ Unattended external publication and blanket claims of error-free rewriting remai
 
 The design was approved before implementation. Failing-first tests cover source-span parsing, protected values, Markdown round trips, cleanup evidence, bilingual routing, independent audits, checkpoints, interrupted execution, incompatible resume and immutable artifact collisions.
 
-- Current implementation verification: 89 tests passing, including the original 58; `git diff --check` and both draft-bank validators passing.
+- Initial document implementation verification: 89 tests passing, including the original 58; `git diff --check` and both draft-bank validators passing. Refined completion evidence follows below.
 - Independent review found five parser gaps, reproduced with synthetic tests and corrected: signs/currency/relative links, nested prefixes/emphasis/setext markers, invalid fence closing, protected-span splitting, and numbered-field cleanup guards.
 - A further saved-evidence finding prompted full revalidation of model digests, raw/parsed audit consistency, locale, proofreading classification and derived statuses. A regression also fixed accidental sharing of the final-attempt issue list with downstream upstream-status flags.
 - First real synthetic attempt failed with invalid audit confidence under bilingual prompt v1. The failure was not acceptance. Prompt v2 states numeric ranges explicitly and the runtime retains malformed audit responses as failed evidence.
@@ -135,4 +135,30 @@ The complete baseline now has 103/103 retained spans in both languages, structur
 
 The first refined synthetic job under prompt v3 was invalidated because its synthetic input fixture was extended while that job was still running. The end-of-job source check rejected the changed input; no complete output was published or counted as accepted. The private original was not involved in that modification. A fresh v4 fixture job is being evaluated with its source frozen.
 
-The completed v4 synthetic job `tests/fixtures/document-technical-style.rewritten/20260904T090435Z-30d7572685` covers all 8 retained spans in both locales, with no global literal or structural findings. Inspection confirmed coherent note removal, matching repeated headings, the retained technical manifold term, the literal 12, incomplete-dataset qualification, optionality/negation and an unchanged acceptable Spanish sentence. The automatic result remains review-required: Spanish LanguageTool flags the borrowed technical word `manifold`, and English inherits that unresolved flag. Both model audits gave their highest style scores; this is not a human-equivalence approval. The full private draft is now running in a fresh v4 job, separate from its defective baseline.
+The completed v4 synthetic job `tests/fixtures/document-technical-style.rewritten/20260904T090435Z-30d7572685` covers all 8 retained spans in both locales, with no global literal or structural findings. Inspection confirmed coherent note removal, matching repeated headings, the retained technical manifold term, the literal 12, incomplete-dataset qualification, optionality/negation and an unchanged acceptable Spanish sentence. The automatic result remains review-required: Spanish LanguageTool flags the borrowed technical word `manifold`, and English inherits that unresolved flag. Both model audits gave their highest style scores; this is not a human-equivalence approval. A separate fresh v4 full-document run subsequently completed as recorded below.
+
+### Completed refined private-document evaluation
+
+The second complete job finished on 2026-09-04 at 11:51:48 Europe/Madrid. Its private directory is recorded in the active specification handoff, not published as a document fixture. The original, outputs, raw audits and editorial observations remain outside Git. It used `document-spans-v2`, `bilingual-document-v4`, `bilingual-job-v2` and the unchanged model digests listed above; runtime commit `937eacd93835fa0f26b7bf20772d69c7407f09d7` is pushed to the existing feature branch.
+
+| Check | Observed result | Interpretation |
+|---|---|---|
+| Generation | 14/14 batches per locale; both complete candidate files exist | Workflow complete, not approved prose |
+| Coverage and structure | 92/92 retained editable spans per locale; structural integrity true | Supported structural assembly verified |
+| Source and cleanup | Original digest unchanged; 48 recorded removal ranges | No original-file modification; omitted preparation content remains in local evidence |
+| Automatic status | 0/14 accepted per locale; 46 final batch issue entries per locale | Review required; issue counts include repeated/upstream findings and are not independent errors |
+| Global literal checks | Seven Spanish findings, one English finding | Acronym translation/expansion needs individual review, not a blanket exemption |
+| Global terminology checks | One Spanish lexical flag; no repeated-heading translation variants | Lexical checks are not a complete terminology or style audit |
+| Audit validity | Two English final Gemma audits have out-of-range confidence | Retained as invalid; not converted to acceptance |
+| Completed-job resume | Exit 2; no new batch generation; checkpoint, candidate and report hashes unchanged | Idempotent completion and saved evidence revalidated |
+| Current local tests | 100 unit tests pass; 30 rewrite and 22 semantic draft cases structurally valid | Software contracts pass; draft references remain unapproved |
+
+Full inspection of both candidates found improved note-removal spacing, consistent repeated labels and preservation of the corrected technical manifold-analysis term through English. It also found a change from a populated deliverable to one being populated, and narrowing of a general benchmark-hosting concept to performance testing. Both Spanish final model audits for these batches reported equivalence, top style scores and confidence 0.98/1.0. English faithfully propagated the flawed Spanish concepts. This is a semantic-control blind spot despite the overall job already being review-required for other findings.
+
+Further Spanish defects include colloquial agreement, redundant processing terminology, vague technical destinations and overly literal glossary application. English retains some redundancies. A source-language label remains in the Spanish title. Private editorial notes identify exact passages without overwriting model-generated evidence. The retained disclosure and factual assertions were not externally verified; empty fields remain empty. No submission, publication or human approval is implied.
+
+The 165 retained model calls comprise 110 Qwen calls (2362.21 seconds total model-call duration) and 55 Gemma calls (283.20 seconds), including writing, audits and repairs. Their summed duration is about 44.1 minutes, excluding non-model work. This one run is not a performance guarantee or a controlled model-speed comparison.
+
+After a later task interruption, completed-job revalidation first returned exit 1 because LanguageTool was no longer listening. The complete artifacts remained intact. Only the existing local corrector was started again, hidden, and its `127.0.0.1:8082` listener was verified; a second revalidation returned exit 2 without artifact changes. Ollama's existing process and `::11434` listener were unchanged. This recovery does not establish unattended service startup or server network isolation.
+
+The finite implementation/evaluation task is complete, but REQ-070/REQ-071 editorial acceptance and BLK-006 remain open. The next iteration needs specified source-grounded corrections and negative style/semantic controls, including held-out examples. Preserve failures and original evidence; do not silently edit checkpoints, suppress terminology rules or equate confident model scores with linguistic correctness.

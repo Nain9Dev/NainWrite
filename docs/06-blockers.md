@@ -36,7 +36,7 @@
 
 ## BLK-006: Bilingual document delivery validation
 
-- Type: `[M]` design approval, followed by `[A]` implementation and verification.
-- Status: Design approved and runtime implemented; private-document execution in progress.
-- Impact: The file-path workflow passes unit and real synthetic bilingual tests, including resume. The requested long document still requires full generation and inspection before delivery.
-- Resolution: Finish the current local job, inspect both outputs and findings, and report actual completion separately from automatic quality and human approval.
+- Type: `[A]` editorial correction and verification, followed by `[M]` human review. Design approval was already received.
+- Status: Implementation, scoped code review and finite execution complete; editorial acceptance open.
+- Impact: The refined long document has 92/92 retained spans per locale, preserved structure and an unchanged original. All 14 batches per language require review. Inspection found deliverable-state drift and technical scope narrowing that both semantic auditors missed, alongside unnatural prose. A complete file is not ready for submission.
+- Resolution: Preserve the completed local evidence, specify and test source-grounded corrections and negative style/semantic controls, and evaluate the resulting Spanish before its English translation. Do not waive spelling findings or reinterpret model confidence as human approval. See `docs/10-validation.md`.

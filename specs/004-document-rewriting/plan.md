@@ -1,6 +1,6 @@
 # Bilingual Document Rewriting Plan
 
-Status: Design approved by Aitor on 2026-09-04; implementation in progress.
+Status: Design approved by Aitor on 2026-09-04; implementation and finite evaluation complete. Editorial acceptance remains open.
 
 ## External prerequisites
 
@@ -84,13 +84,13 @@ erDiagram
 
 Source spans and candidate text remain local. Manifest identity and output assembly must not depend on model-generated section numbering. A resuming job validates stored state as data; it never executes it.
 
-## Proposed interface
+## Implemented interface
 
-These commands are a design, not currently available commands:
+These commands are available from the repository root with the existing local services running:
 
 ```powershell
-python tools/rewrite_document.py --input "C:/path/draft.md" --both
-python tools/rewrite_document.py --resume "C:/path/draft.rewritten/job-id"
+python -X utf8 tools/rewrite_document.py --input "C:/path/draft.md" --both
+python -X utf8 tools/rewrite_document.py --resume "C:/path/draft.rewritten/job-id"
 ```
 
 Default output is a new job directory beside the source. It contains separate `es-ES` and `en-GB` files, a review report and resumable state. Names include a draft/review marker when required. No input or prior result is overwritten. An explicit output-directory option supports keeping generated files elsewhere.
@@ -128,34 +128,34 @@ The approved subsystem is tightly coupled, so implementation proceeds inline wit
 Files: create `src/spanish_rewriter/document.py` and `tests/test_document.py`.
 Interface: `parse_document(text, *, markdown=True, clean_notes=False, omit_lines=()) -> Manifest`; `Manifest.assemble(replacements) -> str`; `make_batches(manifest) -> list[list[Piece]]`.
 
-- [ ] Write round-trip, note range, protected-span, table, unsafe-format, long-paragraph and coverage tests.
-- [ ] Run `python -m unittest discover -s tests -p test_document.py -v`, observe missing-module failure, then implement and rerun.
-- [ ] Keep literal source spans and immutable separators. Batch multiple editable spans within the request budget to avoid one model load per table cell.
+- [x] Write round-trip, note range, protected-span, table, unsafe-format, long-paragraph and coverage tests.
+- [x] Run `python -m unittest discover -s tests -p test_document.py -v`, observe missing-module failure, then implement and rerun.
+- [x] Keep literal source spans and immutable separators. Batch multiple editable spans within the request budget to avoid one model load per table cell.
 
 ### Task 2: Bilingual transformation and evidence
 
 Files: create `document_prompts.py`, `document_transform.py`, `tests/test_document_transform.py`; modify `language_tool.py` and its tests.
 Interface: `DocumentTransformer.transform(items, locale, context) -> dict`; configuration includes prompt version, exact model digests and proofreading settings.
 
-- [ ] Write failing tests for en-GB request/response identity, stable item IDs, missing/duplicate IDs, bounded prompts, protected literals and both audits.
-- [ ] Add explicit language routing without changing the existing Spanish default.
-- [ ] Generate bounded JSON arrays, run proofreading and two distinct model audits, keep all evidence and allow at most one grounded repair.
+- [x] Write failing tests for en-GB request/response identity, stable item IDs, missing/duplicate IDs, bounded prompts, protected literals and both audits.
+- [x] Add explicit language routing without changing the existing Spanish default.
+- [x] Generate bounded JSON arrays, run proofreading and two distinct model audits, keep all evidence and allow at most one grounded repair.
 
 ### Task 3: Job store, orchestration and CLI
 
 Files: create `document_store.py`, `document_job.py`, `tools/rewrite_document.py`, `tests/test_document_job.py`.
 Interface: `start_job(input_path, transformer, ...) -> Path`; `run_job(job_dir, transformer, progress=...) -> dict`.
 
-- [ ] Write interruption/resume/config/source/tamper/collision tests and an end-to-end synthetic test before runtime changes.
-- [ ] Atomically checkpoint each phase and batch. Generate all Spanish blocks before starting English, which consumes only Spanish replacements.
-- [ ] Validate exact coverage and source identity before publishing separately named candidate files and reports. Retain unapproved status and upstream failures.
-- [ ] Run the full test suite, independent review, real synthetic inference, then the named private document outside Git.
+- [x] Write interruption/resume/config/source/tamper/collision tests and an end-to-end synthetic test before runtime changes.
+- [x] Atomically checkpoint each phase and batch. Generate all Spanish blocks before starting English, which consumes only Spanish replacements.
+- [x] Validate exact coverage and source identity before publishing separately named candidate files and reports. Retain unapproved status and upstream failures.
+- [x] Run the full test suite, independent review, real synthetic inference, then the named private document outside Git.
 
 No extra installation or external service is required. Private cleanup ranges are supplied explicitly and retained only in local job state; there is no source-specific document content in the repository.
 
 ## Measured editorial refinement
 
-The first full-document evaluation exposed artificial sentence boundaries around removed notes and literal technical calques. The current job is not mutated. A new parser/prompt version will be tested and run as a new job after the baseline finishes.
+The first full-document evaluation exposed artificial sentence boundaries around removed notes and literal technical calques. The baseline was not mutated. The following refinements were implemented, tested and evaluated in a separate completed job; remaining editorial defects and semantic drift are recorded in `docs/10-validation.md`.
 
 - Clean each editable structural region before safe segmentation, retaining both its exact original source span and its cleaned model text. Normalize horizontal spaces only at recorded note-removal joins; preserve code, structural delimiters, line endings and hard breaks. Reject ambiguous joins without spacing.
 - Proofread the resulting coherent sentence regions instead of synthetic fragments around omitted notes.

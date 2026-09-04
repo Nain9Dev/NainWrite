@@ -1,6 +1,6 @@
 # Bilingual Document Rewriting Specification
 
-Status: Design approved by Aitor on 2026-09-04; implementation in progress.
+Status: Design approved by Aitor on 2026-09-04; implementation and finite evaluation complete. Editorial acceptance remains open.
 
 ## User-approved editorial intent
 
@@ -13,9 +13,9 @@ Status: Design approved by Aitor on 2026-09-04; implementation in progress.
 - Use the local models. Do not change or restart Ollama.
 - Produce professional, natural Spanish from Spain first, then professional, natural English from that Spanish version.
 
-The latest request asks for both files in one workflow. The proposed implementation generates both as candidates and records automated checks separately; it never manufactures human approval of the Spanish intermediate result.
+The latest request asks for both files in one workflow. The implemented workflow generates both as candidates and records automated checks separately; it never manufactures human approval of the Spanish intermediate result.
 
-## Proposed implementation boundary
+## Approved implementation boundary
 
 Initial inputs are UTF-8 Markdown and plain text (`.md`, `.txt`), including the supplied Markdown draft. PDF, DOCX, scans, OCR, complex layout conversion and universal file-format support are not part of this slice. English defaults to `en-GB`, proposed for consistent spelling in the European proposal; Spanish uses `es-ES`.
 
@@ -83,3 +83,5 @@ Unfilled budget, contact and decision fields remain unfilled. Rewriting does not
 6. The supplied document is processed locally only after design approval. Both outputs and the complete real report are inspected; every failure is disclosed. No generated document enters Git.
 
 This is a finite evaluation of a configured workflow, not proof of perfect semantic equivalence or a universally optimal model.
+
+The completed refined private-document evaluation covers 92/92 retained spans in both locales with preserved structure. All 14 batches per language remain review-required. Inspection found a changed deliverable state and a narrowed technical meaning despite favourable semantic audits, so the editorial and preservation targets of REQ-070 and REQ-071 are not fully satisfied. See `docs/10-validation.md`; successful orchestration is not editorial acceptance.

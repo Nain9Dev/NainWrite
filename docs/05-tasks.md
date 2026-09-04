@@ -6,7 +6,7 @@ The active design handoff is maintained in `specs/004-document-rewriting/tasks.m
 
 - `[A]` Implement and verify the local Qwen3.8 Spanish rewriter: complete.
 - `[A]` Implement and execute independent local proofreading and semantic quality gates: implementation and evaluation complete; strict model acceptance failed and remains open.
-- `[A]` Resumable bilingual document workflow: implemented, independent review and real-document validation in progress.
+- `[A]` Resumable bilingual document workflow: implementation, scoped independent review and finite real-document evaluation complete. Both candidate files exist; editorial acceptance failed and remains open.
 - `[M]` Written document-workflow design: approved by Aitor on 2026-09-04.
 
 ## Human gates
@@ -24,4 +24,5 @@ The active design handoff is maintained in `specs/004-document-rewriting/tasks.m
 
 - `[M]` Promote approved references from draft to gold.
 - `[A]` Re-run the versioned gold benchmark after human approval.
-- `[A]` Implement the separately specified Spanish-to-English document stage after approval of `specs/004-document-rewriting`; candidate generation and human approval remain separate.
+- `[A]` Specify a source-grounded editorial correction iteration for the observed deliverable-state drift, narrowed technical meaning and unnatural prose. Add synthetic negative controls before runtime changes; retain the current complete evidence and never repair by silently editing checkpoints.
+- `[M]` Review both language candidates after correction; code-test success and high auditor scores are not linguistic approval.
