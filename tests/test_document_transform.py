@@ -5,7 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 from spanish_rewriter.document_transform import DocumentTransformer
-from spanish_rewriter.document_prompts import build_prompt
+from spanish_rewriter.document_prompts import build_prompt, TERMINOLOGY
 from spanish_rewriter.models import GenerationResult, ProofreadingResult
 from spanish_rewriter.ollama_client import OllamaClient
 
@@ -130,6 +130,28 @@ class DocumentTransformTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             service._generate('writer', 'test prompt', {})
         self.assertNotIn('/api/generate', calls)
+
+    def test_technical_style_calibration_and_glossary(self):
+        self.assertEqual('conjunto de referencia', TERMINOLOGY['es-ES']['gold set'])
+        prompt = build_prompt('audit', 'es-ES', [{'id': 'p', 'text': 'A pipeline.'}], {}, [])
+        self.assertIn('tubería', prompt)
+        self.assertIn('literal calques', prompt)
+
+    def test_bounded_repair_feedback_fits_full_prompt(self):
+        items = [dict(id=f'p{i:05d}', text='x' * 150, role='prose') for i in range(12)]
+        candidates = [dict(id=i['id'], text='y' * 400) for i in items]
+        prompt = build_prompt('repair', 'es-ES', items,
+                              dict(previous='x' * 256, next='y' * 256), candidates, ['z' * 850])
+        self.assertLessEqual(len(prompt.encode('utf-8')), 12000)
+        client = FakeClient()
+        client.audit_failure = True
+        # Long diagnostics are replaced by an explicit summary, never clipped text.
+        import spanish_rewriter.document_transform as module
+        from unittest.mock import patch
+        with patch.object(module, 'audit_issues', return_value=['specific failure ' * 35]):
+            transformer(client).transform([dict(id='p', text='A report.')], 'es-ES', {})
+        repair = next(data for _, data, _ in client.calls if data['task'] == 'repair')
+        self.assertLess(len(str(repair['findings']).encode('utf-8')), 900)
 
 
 if __name__ == '__main__':

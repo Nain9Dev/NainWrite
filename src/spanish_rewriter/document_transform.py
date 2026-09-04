@@ -100,7 +100,7 @@ class DocumentTransformer:
             if not issues:
                 break
             # A bounded repair message never includes unbounded service diagnostics.
-            findings = issues if len(str(issues).encode("utf-8")) <= 1600 else [
+            findings = issues if len(str(issues).encode("utf-8")) <= 900 else [
                 "One or more literal, grammar, meaning or style checks failed. Recheck every item against source."]
         replacements = {v["id"]: v["text"] for v in candidate}
         return {"replacements": replacements, "status": "review_required" if issues else "accepted",

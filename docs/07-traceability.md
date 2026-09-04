@@ -39,7 +39,7 @@
 | REQ-055 | Default-unassisted parser and evaluator call assertions | Unit verified |
 | REQ-056 | `test_lower_priority_rejection_prevents_rewrite_gate` | Unit verified |
 | REQ-057 and REQ-058 | `LanguageRepairTests`; unavailable-proofreader test; focused v10 run | Unit verified; real bounded repair fixed `ESRW-014`, retained review for `ESRW-003` and `ESRW-004` |
-| REQ-059 and REQ-060 | `OllamaLimitTests` | Unit verified; long-document processing intentionally unsupported |
+| REQ-059 and REQ-060 | `OllamaLimitTests` | Unit verified; direct oversized requests remain unsupported; the document workflow uses separate bounded segmentation |
 | REQ-061 | `LocalTransportTests`; proxy and redirect regression checks for the shared transport | Unit verified; both clients use the same explicit proxy-free opener |
 | REQ-062 | Missing issue-type and invalid offset tests | Unit verified; incomplete findings raise a controlled error |
 | REQ-063 | Strict configuration and minimum-auditor tests; service tests now supply both fake auditors | Unit verified; disabled gates cannot produce strict acceptance |
@@ -49,16 +49,16 @@
 | REQ-069 | Missing/extra/empty replacement and saved duplicate coverage tests | Unit verified |
 | REQ-070 | Bilingual routing unit test; two-paragraph real smoke with unchanged good Spanish sentence | Finite integration evidence; not universal language correctness |
 | REQ-071 | Literal mutation tests and dual semantic audits; earlier semantic blind spot remains | Controls implemented; perfect preservation not established |
-| REQ-072 and REQ-073 | Cleanup range/disclosure and numbered-heading variant tests | Unit verified; explicit range selection requires editorial judgement |
+| REQ-072 and REQ-073 | Cleanup range/disclosure, coherent note removal, hard-break/code/link protection and numbered-heading variant tests | Unit verified; explicit range selection requires editorial judgement |
 | REQ-074 and REQ-075 | Versioned glossary, whole bounded neighbours, data-only prompt contract | Implemented; cross-section terminology quality requires human review |
 | REQ-076 | Job routing test checks English input is the Spanish output; input/output hash checks | Unit and synthetic real integration verified |
 | REQ-077 | Distinct installed digest test, strict locale test and retained per-attempt audits/proofreading | Unit and synthetic real integration verified |
 | REQ-078 | Upstream review propagation and evidence-derived status tests | Unit verified |
 | REQ-079 | Bounded disagreement repair test and revalidated attempt evidence | Unit verified |
 | REQ-080 and REQ-081 | Complete/human approval assertions and interruption/no-English-output test | Unit verified |
-| REQ-082 | Atomic checkpoint, process lock and interruption/resume tests | Unit verified; real completed-job resume verified |
+| REQ-082 | Atomic checkpoint, bounded Windows reader-lock retries, process lock and interruption/resume tests | Unit verified; real completed-job resume and synthetic Windows reader-lock recovery verified |
 | REQ-083 | Source/configuration/tamper/coverage and model/audit/locale evidence mutation tests | Unit verified; checksum is not authentication |
 | REQ-084 | Unique jobs, output collision and original preservation tests | Unit verified |
 | REQ-085 | File-path CLI help, real smoke execution and resume | Integration verified |
 | REQ-086 | Existing loopback proxy-free transport tests; unchanged live listeners | Clients local; server isolation explicitly unverified |
-| REQ-087 | Per-span global literal/structure/coverage checks, lexical terminology findings and coverage disclaimer | Implemented; finite batch audits are not exhaustive document semantic proof |
+| REQ-087 | Per-span global literal/structure/coverage checks, lexical terminology findings, repeated-source-heading variant test and coverage disclaimer | Implemented; finite batch audits are not exhaustive document semantic proof |

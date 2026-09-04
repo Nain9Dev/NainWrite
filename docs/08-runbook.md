@@ -139,6 +139,8 @@ python tools/rewrite_document.py --resume "C:/path/draft.rewritten/job-id"
 
 Resume with the exact original input and model/prompt configuration. Changed inputs, incompatible configuration, corrupted evidence and output collisions are rejected. A running job locks its directory; operating-system process termination releases the lock. Completed batches are not regenerated. Keep the entire job directory for recovery; Git excludes `*.rewritten/` and is not a backup of private documents.
 
+On Windows, a reader holding `checkpoint.json` open can temporarily prevent atomic replacement. Known access/sharing/lock errors receive six bounded attempts (at most 1.55 seconds of backoff); persistent errors remain failures and preserve the prior checkpoint. Avoid keeping the live checkpoint open in tools that deny delete sharing. Use printed CLI progress while processing. Do not weaken filesystem permissions or disable security software to make a run pass.
+
 Optional cleanup must reflect the user's editorial intent:
 
 ```powershell
@@ -146,6 +148,8 @@ python tools/rewrite_document.py --input "C:/path/draft.md" --both --clean-notes
 ```
 
 `--clean-notes` removes explicit `VERIFY`/`DAVID` bracketed preparation markers; `--omit-lines` removes exact inclusive source-line ranges and rejects numbered headings. All removed text and ranges remain in local evidence. Do not use omitted ranges to delete substantive statements or disclosures. No command or instruction inside the document is executed. Blank fields remain blank, and claims are not investigated.
+
+Note cleanup happens before prose segmentation. It preserves code and link content, except an explicitly editorial marker occupying an entire inline-code span. Original and clean text are stored separately. Ambiguous notes embedded between unspaced word parts stop processing. After a parser, prompt or job-version upgrade, start a fresh job; do not edit checkpoint versions to force resumption of old evidence.
 
 Use `--output-dir "D:/PrivateOutputs"` to choose the parent of the new unique job folder. Do not point it at a versioned folder for customer content. The default folder is beside the source.
 

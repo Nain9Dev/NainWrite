@@ -6,7 +6,7 @@ from .document import BATCH_BYTES, MAX_ITEMS, literal_issues, make_batches, pars
 from .document_evidence import validate_transformation
 from .document_store import canonical, digest, job_lock, new_job_dir, publish, read_input, read_state, save_state
 
-JOB_VERSION = "bilingual-job-v1"
+JOB_VERSION = "bilingual-job-v2"
 LOCALES = ("es-ES", "en-GB")
 
 
@@ -93,6 +93,13 @@ def _global_checks(manifest, replacements, locale):
     for variants in (("conformidad", "conformancia"), ("activo", "asset")) if locale == "es-ES" else ():
         if all(v in text for v in variants):
             terminology.append("possible_terminology_inconsistency:" + "/".join(variants))
+    headings = {}
+    for piece in manifest.editable:
+        if piece.role == "heading":
+            headings.setdefault(piece.text, []).append(piece.id)
+    for ids in headings.values():
+        if len({replacements[block] for block in ids}) > 1:
+            terminology.append("inconsistent_heading:" + ",".join(ids))
     return {"retained_editable_blocks": len(manifest.editable), "covered_blocks": len(replacements),
             "coverage_complete": set(replacements) == {p.id for p in manifest.editable},
             "structural_integrity": not any("inline_structure" in issue for issue in issues),
@@ -133,6 +140,7 @@ def _finish(job, state, manifest):
         for index, result in enumerate(state["results"][locale], 1):
             lines.append(f"- Bloque {index}: {result['status']}. " + "; ".join(result["issues"]))
         lines += ["", f"Cobertura: {checks[locale]['covered_blocks']}/{checks[locale]['retained_editable_blocks']} fragmentos.",
+                  "Hallazgos globales: " + ("; ".join(checks[locale]['literal_findings'] + checks[locale]['terminology_findings']) or "ninguno en las comprobaciones implementadas") + ".",
                   "Comprobación semántica limitada a bloques y contexto adyacente; no es una prueba exhaustiva del documento.", ""]
     lines += ["## Límites", "", "Las comprobaciones no acreditan la veracidad de las afirmaciones, la vigencia de los datos ni la exactitud de las declaraciones de autoría. Los campos vacíos siguen pendientes.",
               "", f"Rangos de preparación eliminados: {len(manifest.removals)}. El detalle y la evidencia completa están en review.json.", ""]

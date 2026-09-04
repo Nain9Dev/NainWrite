@@ -99,6 +99,51 @@ class DocumentTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 parse_document(source)
 
+    def test_notes_are_cleaned_before_sentence_segmentation(self):
+        source = 'La propuesta [VERIFY: confirmar] depende de la aprobación.\r\nSe evaluará [DAVID: comprobar].\r\n'
+        manifest = parse_document(source, clean_notes=True)
+        expected = 'La propuesta depende de la aprobación.\r\nSe evaluará.\r\n'
+        self.assertEqual(expected, manifest.assemble({p.id: p.text for p in manifest.editable}))
+        self.assertEqual(['La propuesta depende de la aprobación.', 'Se evaluará.'],
+                         [p.text for p in manifest.editable])
+        self.assertEqual(source, ''.join(p.original_text for p in manifest.pieces))
+
+    def test_cleanup_preserves_tables_code_and_hard_breaks(self):
+        source = '| Item | La entrega [VERIFY: fecha] depende del permiso. |\r\n\r\nTexto [DAVID: confirmar], continuación.  \r\n```txt\r\n[VERIFY: literal code]\r\n```\r\n'
+        manifest = parse_document(source, clean_notes=True)
+        result = manifest.assemble({p.id: p.text for p in manifest.editable})
+        self.assertIn('| Item | La entrega depende del permiso. |\r\n', result)
+        self.assertIn('Texto, continuación.  \r\n', result)
+        self.assertIn('[VERIFY: literal code]', result)
+        self.assertEqual(source, ''.join(p.original_text for p in manifest.pieces))
+
+    def test_multiple_notes_and_ambiguous_word_join(self):
+        manifest = parse_document('Una [VERIFY: uno] [DAVID: dos] propuesta.', clean_notes=True)
+        self.assertEqual('Una propuesta.', manifest.assemble({p.id: p.text for p in manifest.editable}))
+        with self.assertRaises(ValueError):
+            parse_document('pre[VERIFY: duda]sentación', clean_notes=True)
+
+    def test_cleanup_note_groups_cannot_create_hard_breaks(self):
+        for source, expected in [
+            ('Text [VERIFY: one] \nNext line.\n', 'Text \nNext line.\n'),
+            ('Text [VERIFY: one]  \nNext line.\n', 'Text  \nNext line.\n'),
+            ('A [VERIFY: one] [DAVID: two].', 'A.'),
+            ('Word [VERIFY: one]\r\n', 'Word\r\n'),
+        ]:
+            with self.subTest(source=source):
+                manifest = parse_document(source, clean_notes=True)
+                self.assertEqual(expected, manifest.assemble({p.id: p.text for p in manifest.editable}))
+                self.assertEqual(source, ''.join(p.original_text for p in manifest.pieces))
+
+    def test_cleanup_retains_notes_inside_non_editorial_inline_code_and_links(self):
+        for source in ['Use `value [VERIFY: literal] suffix`.',
+                       '| Value | `value [VERIFY: literal] suffix` |\n',
+                       'Read [guide](./path-[VERIFY: literal]).']:
+            with self.subTest(source=source):
+                manifest = parse_document(source, clean_notes=True)
+                self.assertEqual(source, manifest.assemble({p.id: p.text for p in manifest.editable}))
+                self.assertEqual([], manifest.removals)
+
 
 if __name__ == '__main__':
     unittest.main()

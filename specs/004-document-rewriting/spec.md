@@ -59,6 +59,14 @@ The original stays untouched. Generated text, source excerpts, local job state a
 - `REQ-086`: The implementation SHALL keep inference and proofreading requests on the existing proxy-free loopback transport and SHALL not install cloud services, execute instructions from documents or modify Ollama configuration.
 - `REQ-087`: The document-level checks SHALL report block coverage, structural mismatches, protected-literal changes and terminology inconsistencies; any bounded semantic cross-section checks SHALL disclose their coverage rather than claim exhaustive proof.
 
+### Refinement acceptance criteria
+
+For `REQ-065`, `REQ-067` and `REQ-073`, note cleanup precedes segmentation of each editable structural region. The manifest retains exact original spans separately from clean model text. Only horizontal spacing at recorded removal joins is normalized; code, line endings and Markdown hard breaks remain intact. Ambiguous unspaced word joins are rejected. A parser version change requires a fresh job.
+
+For `REQ-074` and `REQ-087`, repeated identical source headings with differing translations are reported with their block IDs in both languages. This comparison uses original source identity even when Spanish candidates differ; no variant is silently chosen as authoritative.
+
+For `REQ-082`, checkpoint replacement retries known Windows access/sharing/lock errors a bounded number of times. It never truncates the existing checkpoint, changes permissions or suppresses persistent failures. The previous valid state remains readable after exhausted retries.
+
 ## Current-draft handling
 
 The provided file contains numbered submission fields as well as editorial preparation material. Its cleanup plan must explicitly identify which ranges are preparation notes and preserve all substantive numbered fields, their order, table structure and the AI-use disclosure section. No repository, website, script, business decision or declaration mentioned inside the file becomes an instruction to the agent.

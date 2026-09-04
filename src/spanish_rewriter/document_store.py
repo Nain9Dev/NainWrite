@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import tempfile
+import time
 import uuid
 
 
@@ -48,7 +49,14 @@ def _atomic(path, content, *, replace):
             stream.flush()
             os.fsync(stream.fileno())
         if replace:
-            os.replace(temporary, path)
+            for attempt in range(6):
+                try:
+                    os.replace(temporary, path)
+                    break
+                except PermissionError as error:
+                    if getattr(error, "winerror", None) not in {5, 32, 33} or attempt == 5:
+                        raise
+                    time.sleep(0.05 * (2 ** attempt))
         else:
             # Linking the complete temporary file publishes atomically without clobbering.
             try:

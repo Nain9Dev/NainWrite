@@ -4,14 +4,20 @@ import json
 
 from .ollama_client import MAX_PROMPT_BYTES
 
-DOCUMENT_PROMPT_VERSION = "bilingual-document-v2"
+DOCUMENT_PROMPT_VERSION = "bilingual-document-v3"
 TERMINOLOGY = {
     "es-ES": {"asset": "activo", "conformance": "conformidad", "profile": "perfil",
               "check": "comprobación", "deliverable": "entregable", "milestone": "hito",
-              "report": "informe", "reference validator": "validador de referencia"},
+              "report": "informe", "reference validator": "validador de referencia",
+              "gold set": "conjunto de referencia", "pipeline": "flujo de procesamiento",
+              "runtime": "entorno de ejecución", "engine target": "motor de destino",
+              "upstream contribution": "contribución al proyecto de origen", "draft text": "Texto del borrador"},
     "en-GB": {"activo": "asset", "conformidad": "conformance", "perfil": "profile",
               "comprobación": "check", "entregable": "deliverable", "hito": "milestone",
-              "informe": "report", "validador de referencia": "reference validator"},
+              "informe": "report", "validador de referencia": "reference validator",
+              "conjunto de referencia": "reference dataset", "flujo de procesamiento": "processing pipeline",
+              "entorno de ejecución": "runtime", "motor de destino": "target engine",
+              "contribución al proyecto de origen": "upstream contribution", "Texto del borrador": "Draft text"},
 }
 ITEM_SCHEMA = {"type": "object", "properties": {"id": {"type": "string"}, "text": {"type": "string"}},
                "required": ["id", "text"], "additionalProperties": False}
@@ -35,9 +41,12 @@ translation calques, robotic framing and needless repetition within sentences wi
 summarising or deleting information. Keep good Spanish unchanged when it needs no improvement.
 Useful contrasts and technical detail are not defects. Do not add introductory conclusions.
 Use the glossary only in its relevant technical sense. Keep terminology consistent.
-For Spanish: use natural formal Spanish from Spain, correct accents and agreement; avoid
-English calques such as 'sentarse junto a', 'a través del cual' when a simpler faithful phrase
-works. Prefer clear verbs to chains of abstract nouns. Do not force all sentences to change.
+For Spanish: write as a native professional editor from Spain, with correct agreement.
+Avoid literal calques: a software pipeline is not a 'tubería'; a gold set is not a
+'conjunto dorado'; contributing upstream is not 'contribuir aguas arriba'. Describe
+technical relationships directly. A dataset being populated means examples are added,
+not that it is complete or validated. Prefer clear verbs to abstract noun chains.
+For repeated headings, use the same faithful translation. Never invent missing context.
 For English: translate the provided Spanish, not another original; use idiomatic formal
 British English, restrained tone and precise technical wording, without copying Spanish syntax.
 """
@@ -62,7 +71,7 @@ def build_prompt(task, locale, items, context, candidate, findings=None):
     payload = {"task": task, "target_locale": locale, "source_items": items,
                "neighbour_context": context, "terminology": TERMINOLOGY[locale],
                "candidate_items": candidate, "findings": findings or []}
-    prompt = _RULES + instruction + "\nDATA_JSON:\n" + json.dumps(payload, ensure_ascii=False)
+    prompt = _RULES + instruction + "\nDATA_JSON:\n" + json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
     if len(prompt.encode("utf-8")) > MAX_PROMPT_BYTES:
         raise ValueError("Complete document prompt exceeds the local UTF-8 budget")
     return prompt

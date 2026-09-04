@@ -8,7 +8,7 @@ from collections import Counter
 from dataclasses import asdict, dataclass
 
 
-PARSER_VERSION = "document-spans-v1"
+PARSER_VERSION = "document-spans-v2"
 BATCH_BYTES = 1800
 MAX_ITEMS = 12
 _LITERALS = re.compile(
@@ -47,6 +47,7 @@ class Piece:
     start: int
     end: int
     text: str
+    original_text: str
     role: str
     editable: bool
     removed: bool = False
@@ -68,7 +69,8 @@ class Manifest:
 
     def to_dict(self) -> dict:
         return {"parser_version": PARSER_VERSION, "source_sha256": self.source_sha256,
-                "pieces": [dict(asdict(p), sha256=p.digest) for p in self.pieces],
+                "pieces": [dict(asdict(p), sha256=p.digest, original_sha256=sha(p.original_text))
+                           for p in self.pieces],
                 "removals": self.removals}
 
     def assemble(self, replacements: dict[str, str]) -> str:
@@ -116,35 +118,80 @@ def parse_document(text: str, *, markdown: bool = True, clean_notes: bool = Fals
                 raise ValueError("Cleanup cannot erase a numbered document field")
             omitted.add(index)
 
-    def append(start, end, role, editable=False, removed=False):
+    def append(start, end, role, editable=False, removed=False, rendered=None, record=True):
         if start >= end:
             return
-        piece = Piece(f"p{len(pieces):05d}", start, end, text[start:end], role, editable, removed)
+        original = text[start:end]
+        piece = Piece(f"p{len(pieces):05d}", start, end,
+                      original if rendered is None else rendered, original, role, editable, removed)
         pieces.append(piece)
-        if removed:
+        if removed and record:
             removals.append({"start": start, "end": end, "text": piece.text,
                              "line": text.count("\n", 0, start) + 1, "reason": role})
 
-    def prose(start, end, role):
-        for left, right in _split(text, start, end, BATCH_BYTES):
-            raw = text[left:right]
+    def content(start, end, role):
+        notes = list(_NOTES.finditer(text, start, end)) if clean_notes else []
+        code = list(re.finditer(r"`+[^`\r\n]+`+", text[start:end]))
+        links = list(_LINK.finditer(text, start, end))
+        notes = [note for note in notes
+                 if not any(start + span.start() < note.end() and note.start() < start + span.end()
+                            and (start + span.start(), start + span.end()) != note.span() for span in code)
+                 and not any(span.start() < note.end() and note.start() < span.end() for span in links)]
+        groups = []
+        for note in notes:
+            if groups and not text[groups[-1][1]:note.start()].strip(" \t"):
+                groups[-1] = (groups[-1][0], note.end())
+            else:
+                groups.append(note.span())
+        deleted = set()
+        ranges = []
+        for note_start, note_end in groups:
+            left, right = note_start, note_end
+            if left > start and right < end and text[left - 1].isalnum() and text[right].isalnum():
+                raise ValueError("Ambiguous word join around an editorial note")
+            while left > start and text[left - 1] in " \t":
+                left -= 1
+            while right < end and text[right] in " \t":
+                right += 1
+            if right < end and text[right] in ".,;:!?)]}":
+                pass
+            elif right == end or text[right] in "\r\n":
+                # Preserve existing trailing spaces, including deliberate hard breaks.
+                right = note_end
+            elif left < note_start:
+                left = note_start
+            else:
+                left, right = note_start, note_end
+            if ranges and left <= ranges[-1][1]:
+                ranges[-1] = (ranges[-1][0], max(right, ranges[-1][1]))
+            else:
+                ranges.append((left, right))
+        for left, right in ranges:
+            deleted.update(range(left, right))
+            removals.append({"start": left, "end": right, "text": text[left:right],
+                             "line": text.count("\n", 0, left) + 1, "reason": "editorial_marker"})
+        positions = [i for i in range(start, end) if i not in deleted]
+        cleaned = "".join(text[i] for i in positions)
+        if not cleaned:
+            append(start, end, "editorial_marker", removed=True, record=False)
+            return
+        segments = []
+        for left, right in _split(cleaned, 0, len(cleaned), BATCH_BYTES):
+            raw = cleaned[left:right]
             leading = len(raw) - len(raw.lstrip())
             trailing = len(raw) - len(raw.rstrip())
             if not raw.strip():
-                append(left, right, "whitespace")
+                segments.append((left, right, "whitespace", False))
                 continue
-            append(left, left + leading, "whitespace")
-            append(left + leading, right - trailing, role, True)
-            append(right - trailing, right, "whitespace")
-
-    def content(start, end, role):
+            segments.extend([(left, left + leading, "whitespace", False),
+                             (left + leading, right - trailing, role, True),
+                             (right - trailing, right, "whitespace", False)])
+        segments = [segment for segment in segments if segment[0] < segment[1]]
         cursor = start
-        notes = list(_NOTES.finditer(text, start, end)) if clean_notes else []
-        for note in notes:
-            prose(cursor, note.start(), role)
-            append(note.start(), note.end(), "editorial_marker", removed=True)
-            cursor = note.end()
-        prose(cursor, end, role)
+        for index, (left, right, segment_role, editable) in enumerate(segments):
+            boundary = end if index == len(segments) - 1 else positions[right]
+            append(cursor, boundary, segment_role, editable, rendered=cleaned[left:right])
+            cursor = boundary
 
     offset = 0
     fence = None

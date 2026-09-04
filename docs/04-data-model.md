@@ -106,6 +106,9 @@ erDiagram
         int end
         string role
         string sha256
+        string original_sha256
+        string original_text
+        string text
         boolean editable
         boolean removed
     }
@@ -123,3 +126,5 @@ erDiagram
 ```
 
 Offsets index Unicode source characters; each span and removal retains exact source text locally. The checkpoint envelope contains a SHA-256 of canonical state to detect corruption, not a cryptographic signature or protection against a malicious local writer. Resumption reconstructs the manifest and verifies source/configuration/model identity, coverage, candidate hashes, original audit responses, proofreading classifications and derived statuses. A process lock prevents simultaneous runners from modifying one job.
+
+In parser v2, `original_text` always matches the exact source slice. `text` is the cleaned model input, which can exclude recorded preparation notes inside that slice. Concatenating all original slices reproduces the complete source; assembling replacements produces the cleaned candidate. This prevents artificial sentence fragments while retaining a lossless audit trail. Old manifests are intentionally incompatible.

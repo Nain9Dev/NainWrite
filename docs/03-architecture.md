@@ -61,7 +61,7 @@ flowchart TD
     CLI[File-path CLI] --> Job[Document orchestrator]
     Job --> Store[Local job store and process lock]
     Store --> Input[Read-only source and atomic checkpoint]
-    Job --> Parser[Lossless span manifest and explicit cleanup]
+    Job --> Parser[Original spans and coherent note-cleaned text]
     Parser --> Batches[Bounded prose batches]
     Batches --> ES[Qwen Spanish generation]
     ES --> Checks[Literal checks and locale-specific LanguageTool]
@@ -70,7 +70,7 @@ flowchart TD
     Repair --> Spanish[Complete Spanish candidate]
     Spanish --> EN[English from Spanish with upstream review flags]
     EN --> ChecksEN[Same checks with en-GB proofreading]
-    ChecksEN --> Assemble[Coverage and structural assembly]
+    ChecksEN --> Assemble[Coverage, structure and repeated-heading checks]
     Assemble --> Output[Immutable candidate files and separate review]
     Input --> Resume[Validate hashes, configuration and saved evidence]
     Resume --> Job
@@ -81,3 +81,5 @@ flowchart TD
 Each batch contains at most 12 source spans and 1800 UTF-8 source bytes. Complete prompts are checked again, including context and candidate text. Whole neighbours up to 256 bytes are included; larger neighbours are explicitly outside context coverage. No text is silently truncated. Cross-section semantic equivalence is not exhaustively established by these bounded audits.
 
 Generated review-required candidates are local review artifacts, not external publication. Source-specific preparation ranges and documents never belong in the repository.
+
+Parser v2 removes approved editorial markers within each prose region before segmentation. Exact original text and cleaned model text have separate hashes. Only spacing directly affected by removal is normalized; protected code/links and existing line-ending suffixes remain intact. Identical original headings are compared across both completed languages; variants require review, not automatic replacement. A new parser/prompt/job version requires a new job instead of migrating prior model evidence.

@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
-from spanish_rewriter.document_job import start_job, run_job, _validate_results
+from spanish_rewriter.document_job import start_job, run_job, _validate_results, _global_checks
 from spanish_rewriter.document import parse_document, make_batches
 from spanish_rewriter.document_store import read_state, save_state
 from test_document_transform import transformer, FakeClient
@@ -137,6 +137,19 @@ class DocumentJobTests(unittest.TestCase):
                 save_state(job, state)
                 with self.assertRaises(ValueError):
                     _validate_results(state, make_batches(parse_document(self.source.read_text(encoding='utf-8'))))
+
+    def test_identical_source_headings_report_translation_variants(self):
+        manifest = parse_document('### Draft text\nOne claim.\n### Draft text\nAnother claim.\n')
+        headings = [p.id for p in manifest.editable if p.role == 'heading']
+        values = {p.id: p.text for p in manifest.editable}
+        for locale, variants in [('es-ES', ['Texto provisional', 'Texto preliminar']),
+                                 ('en-GB', ['Draft text', 'Provisional text'])]:
+            values.update(zip(headings, variants))
+            findings = _global_checks(manifest, values, locale)['terminology_findings']
+            self.assertTrue(any('inconsistent_heading' in item for item in findings))
+            self.assertTrue(all(any(block in item for item in findings) for block in headings))
+        values.update(dict.fromkeys(headings, 'Draft text'))
+        self.assertEqual([], _global_checks(manifest, values, 'en-GB')['terminology_findings'])
 
 
 if __name__ == '__main__':

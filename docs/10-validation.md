@@ -120,3 +120,13 @@ The design was approved before implementation. Failing-first tests cover source-
 - A new CLI regression verifies unavailable proofreading stops the job before private generation. Full private-document generation and editorial inspection remain in progress at this checkpoint.
 
 These finite tests do not resolve the earlier semantic benchmark false acceptance or establish human linguistic approval.
+
+### Document editorial refinement
+
+Inspection of the baseline Spanish pass exposed artificial sentence fragments at note-removal boundaries, spacing defects, inconsistent translations of repeated labels and literal technical calques. Positive scores from both auditors did not reliably identify these defects. The baseline job remains immutable evidence, not a flawless language result.
+
+Parser v2 retains original and cleaned text separately and removes preparation notes before segmentation. Failing-first tests cover coherent sentences, exact source reconstruction, adjacent notes, ambiguous word joins, protected inline code/links and preservation of existing Markdown hard breaks. Scoped independent review initially reproduced three remaining cleanup defects; all three were corrected and closed with additional synthetic checks.
+
+Job v2 reports repeated-source-heading translation variants for each locale. Prompt v3 adds a contextual technical glossary and concrete calque examples without changing local models, their sampling configuration or Ollama. Repair diagnostics above 900 bytes use an explicit summary to retain the full 12000-byte request check. At this checkpoint, 100 unit tests and both draft-bank structural validators pass. Real-model validation of the refinement is still pending.
+
+The running baseline encountered Windows access-denied error 5 during atomic checkpoint replacement. Saved evidence retained all 13 Spanish batches and 7 English batches; the job resumed at English batch 8 using an exact export of its committed runtime, not the changed parser. A synthetic held-open reader reproduced error 5, and releasing that reader allowed replacement. This establishes the locking mechanism, not the identity of the reader involved in the real incident. New bounded retries cover Windows errors 5/32/33; unit tests preserve prior state after persistent failure, and a real synthetic Windows reader released after 150 ms demonstrated successful recovery. No permissions, antivirus or Ollama settings were changed.
