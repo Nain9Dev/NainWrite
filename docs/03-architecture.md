@@ -117,6 +117,25 @@ Specification 005 adds `document_revision.py` for pure edit mapping, `document_r
 
 Edits are scoped to unambiguous retained prose spans. Structural or ambiguous cross-boundary changes fail closed and require smaller wording edits or a new source job. These bounds preserve evidence identity; they are not a claim to support arbitrary document editing. Both English branches consume an immutable Spanish snapshot and are separately compared against the original. Positive audits still do not establish exhaustive cross-section equivalence.
 
+## External auditor baseline
+
+```mermaid
+flowchart LR
+    Public[Hash-pinned public corpus] --> Import[Offline bounded selection]
+    Import --> Sample[40 labelled evaluation pairs]
+    Import --> Reserve[40 untouched reserve pairs]
+    Sample --> Review[Unchanged review-only service; labels withheld]
+    Review --> Store[Immutable per-case evidence]
+    Store --> Compare[Offline validation and per-auditor metrics]
+    Sample --> Blind[Unlabelled independent human-review sheet]
+```
+
+The optional Parquet decoder is isolated from the rewriting runtime. Corpus
+selection and comparison live in `independent_evaluation.py`; public snapshot
+decoding and CLI argument handling do not alter document-generation services.
+The reserve has no inference route in this task. Human review and external
+semantic agreement do not automatically approve a Spanish document revision.
+
 ## Reproducible editorial calibration
 
 ```mermaid

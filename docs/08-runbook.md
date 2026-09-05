@@ -1,5 +1,44 @@
 # Runbook
 
+## Reproduce the external auditor baseline
+
+This is evaluation-only. It does not rewrite documents or change Ollama. See
+`docs/12-independent-evaluation.md` for provenance and interpretation limits.
+Use Python 3.12 on this workstation for the isolated optional Parquet reader.
+
+```powershell
+python -m pip install --index-url https://pypi.org/simple --only-binary=:all: --no-deps --target .tools/benchmark-deps pyarrow==25.0.1
+New-Item -ItemType Directory -Force artifacts/external-pawsx
+Invoke-WebRequest -Uri 'https://huggingface.co/datasets/google-research-datasets/paws-x/resolve/4cd8187c404bda33cb1f62b49b001115862acf37/es/test-00000-of-00001.parquet' -OutFile artifacts/external-pawsx/es-test.parquet
+python tools/prepare_external_evaluation.py --parquet artifacts/external-pawsx/es-test.parquet --output-dir artifacts/external-pawsx/frozen-v1
+python tools/evaluate_corporate.py --bank artifacts/external-pawsx/frozen-v1/evaluation.json --output-dir artifacts/external-auditors.rewritten
+python tools/compare_auditors.py --bank artifacts/external-pawsx/frozen-v1/evaluation.json --job artifacts/external-auditors.rewritten/JOB_ID
+```
+
+The import checks the exact snapshot hash before decoding. Do not reinstall the
+reader if already present. No corpus loading scripts, remote inference or global
+Python changes are required. The main rewriting runtime remains standard-library
+only. Public network requests above download only public corpus/package files.
+
+Substitute the printed job ID. Existing evaluation exit 2 means its combined
+quality gate failed; the external corpus has no corporate-style labels, so use
+the separate `auditor-comparison.json` for semantic measurement. Exit 1 means
+incomplete/error. Resume interrupted evaluation with the same bank and `--resume
+JOB`; do not hand-edit checkpoints or delete failed records to retry them.
+
+`compare_auditors.py` validates completed immutable evidence offline. Changed
+source/runtime prompts need a new versioned evaluation, not rewritten evidence.
+It cannot compare incomplete jobs or a reserve partition. Keep the reserve
+unexamined until a subsequent protocol explicitly freezes its use.
+
+Give the independent reader only `independent-review.md` from the frozen sample
+directory. Keep a separate editable copy for their answers; do not overwrite the
+generated template. Do not include corpus labels or model decisions until ratings
+are recorded. This semantic sheet is not the later corporate-style pilot.
+
+All corpus text, review sheets, reports and decoder files remain ignored. Publish
+only source, tests and technical documentation, even in the private repository.
+
 ## Validate the draft bank
 
 Run from the repository root:

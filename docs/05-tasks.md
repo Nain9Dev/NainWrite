@@ -1,8 +1,11 @@
 # Project Tasks
 
-The active handoff is maintained in `specs/006-corporate-calibration/tasks.md`. Completed trilingual implementation evidence remains in `specs/005-approved-trilingual-workflow/tasks.md`, historical bilingual evidence in `specs/004-document-rewriting/tasks.md`, and earlier strict-gate failures in `specs/003-strict-es-quality-gates/tasks.md`.
+The active handoff is maintained in `specs/007-independent-auditor-evaluation/tasks.md`. Corporate calibration history remains in `specs/006-corporate-calibration/tasks.md`, trilingual implementation evidence in `specs/005-approved-trilingual-workflow/tasks.md`, historical bilingual evidence in `specs/004-document-rewriting/tasks.md`, and earlier strict-gate failures in `specs/003-strict-es-quality-gates/tasks.md`.
 
 ## Current task
+
+- `[A]` External semantic baseline and per-auditor comparison: specification 007.
+- `[M]` Independent reader availability confirmed; actual blind ratings pending.
 
 - `[A]` Implement and verify the local Qwen3.8 Spanish rewriter: complete.
 - `[A]` Implement and execute independent local proofreading and semantic quality gates: implementation and evaluation complete; strict model acceptance failed and remains open.

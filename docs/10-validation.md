@@ -1,5 +1,72 @@
 # Local Validation Evidence
 
+## External auditor baseline: 2026-09-05
+
+Specification 007 executed the unchanged v10 document review-only path against
+40 hash-selected PAWS-X Spanish test pairs, balanced by external label. Another
+40 sentence-disjoint pairs remain unexamined. Provenance, selection, exclusions
+and primary research references are recorded in `docs/12-independent-evaluation.md`.
+
+Completed local job:
+`artifacts/external-auditors.rewritten/20260905T130759Z-79153014ce`.
+The offline comparison validates every retained case and the final result before
+reporting metrics. No external pair was generated or repaired by the writer.
+
+| Auditor | Detects external non-equivalence | Accepts external equivalence (semantic bit only) | Disagrees on equivalent label | Strict auditor acceptance |
+| --- | --- | --- | --- | --- |
+| Qwen local fast2 | 20/20 | 5/20 | 15/20 | 5/40 |
+| Gemma 4 | 20/20 | 6/20 | 14/20 | 4/40 |
+| Conservative semantic pair | 20/20 | 3/20 | 17/20 | Not a production policy |
+
+There were 5/40 pairwise disagreements, no missing decisions, no invalid audit
+contracts and no execution errors. The complete existing pipeline accepted 0/40;
+all candidates require review. CLI exit 2 correctly retained the failed aggregate
+gate. This aggregate is not corporate-style accuracy: that annotation does not
+exist in PAWS-X. Model generation durations totalled 254.55 seconds for Qwen and
+218.77 seconds for Gemma, including loading; they are not sustained performance
+benchmarks or total workflow wall time.
+
+No false equivalence was observed relative to the 20 negative external labels.
+The Wilson 95% interval is nevertheless 0–16.1% for each model and their semantic
+combination. Equivalent-label disagreement intervals are 53.1–88.8% for Qwen,
+48.1–85.5% for Gemma and 64.0–94.8% for the combination. These descriptive intervals
+are not corporate deployment guarantees, and annotation uncertainty is additional.
+
+### Label validity finding
+
+The `false_drift` metric means disagreement with an external inherited label,
+not a human-verified auditor mistake. Post-run inspection of the first four
+externally positive cases identified material confounds: EXT-002 changes an
+imperative into a past-tense action and adds an actor; EXT-008 attaches a clock
+time to the crimes instead of the execution. Both retain a positive inherited
+label. EXT-003 raises a writing-versus-direction attachment ambiguity, and EXT-007
+changes aspect/wording. These are observations for adjudication, not relabelled
+gold. The original 40 labels and all model outputs remain unchanged.
+
+Consequently this is an external stress baseline, not a reliable estimate of
+strict corporate equivalence accuracy and not evidence that one auditor is
+better. It gives no before/after improvement estimate. Aitor confirmed an
+independent reader is available; their blind judgement of the sample is pending.
+Do not weaken the semantic gate to match a questionable inherited label.
+
+### Software and preservation evidence
+
+- 165 unit/integration tests pass; both historical bank validators pass.
+- Independent code review found no Critical/Important issues. Two Minor issues
+  (recorded comparison thresholds and normalized-duplicate test coverage) were
+  corrected and re-reviewed; the reviewer reran all 12 new tests successfully.
+- Import preparation was rerun and retained byte-identical evaluation/reserve
+  hashes; the blind sheet omits external labels, model names and audit scores.
+- The only new dependency is official PyArrow 25.0.1 in ignored
+  `.tools/benchmark-deps`, solely for the pinned public Parquet snapshot. No model,
+  Ollama, GPU, global Python or inference-service settings were changed.
+- The private original still hashes to
+  `01e7258c0a59591aa0c9518b36d080ad673f1696d7d09983a57222afde0586cb`.
+  No private document was reprocessed and no Spanish approval or English
+  generation was performed. Server isolation remains explicitly unverified.
+
+## Historical assessments
+
 Assessment date: 2026-09-03. Interpretation: preliminary, not production approval.
 
 ## Current decision

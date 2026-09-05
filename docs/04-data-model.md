@@ -182,6 +182,37 @@ An editable-copy change revokes current translation authority. Old snapshots, re
 
 ## Calibration evidence
 
+External evaluation adds corpus provenance and partition identity to the retained
+bank without changing the existing review evidence contract.
+
+```mermaid
+erDiagram
+    CORPUS_SNAPSHOT ||--|{ FROZEN_PARTITION : selects
+    FROZEN_PARTITION ||--|{ EXTERNAL_CASE : contains
+    EXTERNAL_CASE ||--o| CASE_RECORD : evaluates
+    CORPUS_SNAPSHOT {
+        string source_url
+        string revision
+        string snapshot_sha256
+        string licence_url
+    }
+    FROZEN_PARTITION {
+        string partition
+        string bank_sha256
+        string seed
+        boolean human_approved
+    }
+    EXTERNAL_CASE {
+        integer external_id
+        string source
+        string candidate
+        boolean expected_equivalent
+    }
+```
+
+External semantic labels have no associated corporate-style approval. Only the
+evaluation partition is used in the baseline; the reserve remains unexamined.
+
 ```mermaid
 erDiagram
     CALIBRATION_RUN ||--|{ CASE_RECORD : retains

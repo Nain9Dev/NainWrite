@@ -48,3 +48,11 @@
 - Status: Design approved on 2026-09-04; implementation/testing requested.
 - Decision: editable es-ES first, explicit approval of the reviewed revision, then independent en-GB and en-US translations with original-source crosschecks. See `specs/005-approved-trilingual-workflow/spec.md` and `docs/11-editorial-profile.md`.
 - Separate pending action: review and approve an actual Spanish revision. Design approval is not document approval.
+
+## OQ-009: Independent reader and corporate holdout
+
+- Owner: `[M]` Aitor and an independent reader.
+- Availability confirmed by Aitor on 2026-09-05. Actual ratings remain pending.
+- PAWS-X closes external semantic-label sourcing, not corporate es-ES naturalness.
+  The blind sheet and subsequent corporate pilot protocol are described in
+  `docs/12-independent-evaluation.md`.

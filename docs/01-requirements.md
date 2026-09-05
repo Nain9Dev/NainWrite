@@ -8,6 +8,7 @@ Requirements are maintained in the versioned specifications:
 - `specs/004-document-rewriting/spec.md`: `REQ-064` through `REQ-087`, approved bilingual document workflow and resumable local evidence.
 - `specs/005-approved-trilingual-workflow/spec.md`: `REQ-088` through `REQ-099`, approved corporate profile, editable Spanish, revision-specific translation authority and independent en-GB/en-US outputs.
 - `specs/006-corporate-calibration/spec.md`: `REQ-100` through `REQ-104`, reproducible editorial findings, semantic calibration, finite evaluation and private-repository delivery.
+- `specs/007-independent-auditor-evaluation/spec.md`: `REQ-105` through `REQ-109`, independently sourced semantic evaluation, frozen reserve, auditor comparison and separate human editorial gates.
 
 ## Current requirement status
 

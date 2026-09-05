@@ -79,3 +79,8 @@
 | REQ-102 | Editorial evidence recomputation, suppression rejection and configuration-change resume tests | Unit verified; prior prompt/evidence jobs require their original runtime |
 | REQ-103 | `CalibrationTests`: label isolation, immutable records, changed bank/configuration, interruption, error and style/semantic classification | Unit verified; finite model run evidence recorded in active handoff |
 | REQ-104 | Explicit staged-file review, privacy exclusions, full suite, bank validators and remote commit verification | Publication evidence recorded in specification-006 handoff |
+| REQ-105 | Pinned Parquet SHA check before decoding; immutable manifest and original IDs | Actual import verified; licence/provenance/limits in docs/12 |
+| REQ-106 | `test_reproducible_balanced_sentence_disjoint_selection`, normalized overlap and invalid-data tests | 40-case balanced sample plus 40-case unexamined reserve frozen before inference |
+| REQ-107 | `test_external_metadata_and_labels_never_reach_models`; unchanged existing review-only validation | Labels withheld; runtime prompt/model settings unchanged |
+| REQ-108 | Error/abstention/disagreement/style/threshold tests; offline tamper rejection | Per-auditor and conservative semantic metrics separate from strict acceptance |
+| REQ-109 | `test_blind_packet_omits_labels_models_and_scores_and_quotes_source`; independent review protocol | Reader available; actual ratings and corporate es-ES approval pending |

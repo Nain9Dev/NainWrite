@@ -1,5 +1,20 @@
 # Blockers
 
+## BLK-008: Independent corporate editorial acceptance
+
+- Type: `[M]` independent reader and owner adjudication.
+- Status: Reader availability confirmed; actual ratings pending.
+- Evidence: The 40-case external baseline completed without execution or contract
+  errors. Both models detect all 20 external non-equivalence labels, but their
+  conservative combination disagrees with 17/20 equivalence labels. Inspected
+  translations include material meaning changes despite inherited positive labels.
+- Impact: Neither high negative-class detection nor these apparent false-positive
+  rates establish corporate es-ES accuracy. Labels require independent judgement;
+  no prompt or threshold should be tuned to force agreement with disputed labels.
+- Next: Complete the blinded external semantic sheet, retain original labels and
+  separate adjudications, then lock the corporate wording-only pilot described in
+  `docs/12-independent-evaluation.md`. Spanish document approval remains separate.
+
 ## BLK-001: Gold reference approval
 
 - Type: `[M]`
