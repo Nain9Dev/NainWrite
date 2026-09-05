@@ -14,6 +14,8 @@ Automated acceptance is not proof of perfect equivalence. Legal, contractual, fi
 
 Current validation is preliminary: the corrected unassisted semantic bank exposes one false acceptance (`SEMA-022`), and some valid rewrites still trigger proofreading review. The strict acceptance gate has not passed. See [measured validation results](docs/10-validation.md) before using the agent.
 
+The current document baseline passes 153 software tests. Its latest known-control run detects all six deliberate meaning changes but requests review for one valid control because an auditor lists correct translations as critical changes. The Spanish smoke corrects the targeted calques and repetition; broader editorial acceptance remains open. This is a functional workflow for reviewed documents, with measured limitations rather than a guarantee of perfect prose.
+
 Before supplying private text, verify both service listeners are loopback-only. The latest desktop-managed Ollama instance did not meet this check; the client using `127.0.0.1` does not by itself restrict the server's other interfaces.
 
 The short-text API remains bounded. The document workflow segments UTF-8 Markdown/TXT, produces editable Spanish first and pauses for explicit revision approval. British and American English are then generated independently from the same approved Spanish, with additional original-source checks. Completed batches are checkpointed. Prompts above 12000 UTF-8 bytes and incomplete length-limited responses are rejected. See the [active delivery handoff](specs/006-corporate-calibration/tasks.md) for verified versus pending work.

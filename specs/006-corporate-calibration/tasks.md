@@ -3,7 +3,7 @@
 ## Current
 
 - `[A]` Implementation and independent review complete. Final selected configuration is `trilingual-editorial-v10`, `corporate-style-v3`, `trilingual-review-v2`, evaluator `corporate-evaluation-v2`.
-- Publication is explicitly authorized by Aitor on 2026-09-05; publish reviewed source and documentation to the existing private feature branch.
+- Publication explicitly authorized by Aitor on 2026-09-05 is complete for the implementation: commit `e1c21bdd8fb084207176a3f276efbb49ddf241a2` pushed to `naindev/strict-es-quality-gates`; local and remote SHA verified identical. Final validation is recorded below and in `docs/10-validation.md`, delivered in the subsequent documentation-only commit.
 - Editorial acceptance is still open. No evidence establishes maximum possible quality or error-free rewriting.
 
 ## Done
@@ -29,10 +29,14 @@
 - Original private draft and prior artifacts remain unchanged. Only the stopped existing LanguageTool installation was restarted; Ollama settings and existing process were not modified.
 - GitHub identity and private visibility verified. Reviewed publication paths have no detected common credential patterns or oversized files. Inputs, outputs, weights, credentials, local tools and generated reports are excluded. This is a bounded inspection, not an exhaustive security certification.
 
+## Final live verification
+
+- Fresh v10 evaluation is complete: 6/6 invalid detected, 5/6 good controls accepted, no semantic false positives or execution/contract errors; spurious Gemma critical-change comments on accurate translations keep the strict gate failed. Run: `artifacts/corporate-calibration.rewritten/20260905T124605Z-32a9abe957`.
+- Fresh v10 Spanish smoke is complete and paused normally (CLI exit 3), 8/8 spans. Revision `81ab4b4ec1e69371dad8ba64b397acbc06e6c4a32fb7a9c2c5dcf54fd04f5e3f` matches the inspected v8 wording; the revision review retains the proper-name spelling finding and spurious Gemma critical-change comments on correct wording improvements. Run: `artifacts/corporate-v10-smoke.rewritten/20260905T124819Z-8c2c935b03`.
+
 ## Next
 
-- Finish the already-running fresh v10 known-control evaluation and Spanish smoke; record their actual results.
-- Commit and push the reviewed implementation, verify remote SHA, then publish final validation documentation.
+- `[A]` Before further prompt/model changes, specify a separately reviewed evaluation corpus and compare alternatives. Current evidence supports improvement and functional review, not maximum possible quality.
 - `[M]` Obtain actual Spanish revision approval before translating a user document. Synthetic unit approvals exercise both English branches but do not count as Aitor's approval.
 
 ## Remaining limits

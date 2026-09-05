@@ -47,3 +47,7 @@
 - Status: Open after finite specification-005 testing.
 - Impact: The 12-case draft control experiment detected 5/6 semantic mutations, missed one scope change and had one length-limit execution error on a valid control. The new Spanish document correctly pauses for approval, but still contains a literal calque and unnecessary framing despite maximum model style scores. It is not ready for approval or a claim of perfect writing.
 - Resolution: Preserve these failures, specify targeted style/technical-scope calibration with new controls and re-evaluate. Do not authorise actual English generation until Aitor reviews the corrected Spanish revision. Unit-test synthetic approvals do not satisfy that gate.
+
+### Specification-006 follow-up: 2026-09-05
+
+The selected document configuration fixes the three observed Spanish wording defects and detects 6/6 known semantic mutations in the fresh run. The software suite passes 153 tests and reviewed source is published. Editorial acceptance remains open: one valid known control receives spurious audit findings despite the auditor describing the translations as accurate; new style controls can also receive false semantic rejections; the separate short-text unsupported-context failure remains unresolved. Human review and broader independent calibration are still needed. See `specs/006-corporate-calibration/tasks.md` and the selected functional baseline in `docs/10-validation.md`.
