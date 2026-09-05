@@ -162,3 +162,55 @@ The 165 retained model calls comprise 110 Qwen calls (2362.21 seconds total mode
 After a later task interruption, completed-job revalidation first returned exit 1 because LanguageTool was no longer listening. The complete artifacts remained intact. Only the existing local corrector was started again, hidden, and its `127.0.0.1:8082` listener was verified; a second revalidation returned exit 2 without artifact changes. Ollama's existing process and `::11434` listener were unchanged. This recovery does not establish unattended service startup or server network isolation.
 
 The finite implementation/evaluation task is complete, but REQ-070/REQ-071 editorial acceptance and BLK-006 remain open. The next iteration needs specified source-grounded corrections and negative style/semantic controls, including held-out examples. Preserve failures and original evidence; do not silently edit checkpoints, suppress terminology rules or equate confident model scores with linguistic correctness.
+
+## Approved trilingual workflow evaluation: 2026-09-04
+
+Specification 005 records the approved corporate profile, editable Spanish and explicit revision-specific translation authority. Both English variants consume the same approved Spanish snapshot and have separate original-source crosschecks. The unit suite exercises synthetic approval events; no actual newly generated Spanish document has been approved by Aitor.
+
+### Software verification and integration findings
+
+The original 100-test baseline passed. After interruption, 133 tests passed on the recovered implementation. Independent review found that an editable paragraph could become a Markdown horizontal rule. The first correction covered long markers but missed short Setext underlines, which the reviewer reproduced. The applicable syntax is documented in [CommonMark 0.31.2 section 4.3](https://spec.commonmark.org/0.31.2/#setext-headings), checked on 2026-09-04. The second correction passed focused regressions and independent scoped re-review; that checkpoint passed 137 tests in 3.485 seconds with no remaining Important/Critical task-review findings.
+
+The whole-change review then identified empty heading/list markers still accepted as prose and a missing user-visible outdated-translation notice. Failing regressions reproduced both defects, including empty constructs inside retained heading/list prefixes. A bounded correction preserves normal wording edits, table-cell symbols and hashtags, rejects those structural edits, and displays the application service's stale revision identities without changing approval rules. The corrected full suite passes 139 tests in 3.431 seconds. The final scoped review is recorded in the active handoff. These software fixes do not change the frozen model experiment below.
+
+Live integration also exposed a gap in the original mocked transformer tests: the actual LanguageTool client accepted `en-US` as a requested locale but still validated every English response against `en-GB`. A failing real-client/mock-HTTP test reproduced it; exact configured-locale validation fixed it. The resumed actual `en-US` control then passed. This failure is not hidden by the earlier unit-test count.
+
+The user interrupted the running evaluation. Seven complete case artifacts survived. The old process was gone and LanguageTool had stopped; only its existing installation was restarted hidden and verified at `127.0.0.1:8082`. Ollama PID 9984 and its `::11434` listener were unchanged. Saved bank/configuration/review evidence was revalidated before continuing; completed cases were not regenerated.
+
+### Frozen review-only controls
+
+The draft bank contains six invalid and six valid semantic pairs. Four development cases target prior failure classes; eight cases were excluded from this iteration's prompt implementation instructions. This small self-authored bank is neither approved gold nor a representative accuracy estimate.
+
+| Result | Count | Interpretation |
+|---|---|---|
+| Invalid pairs semantically detected | 5/6 | Both-model agreement is not required to reject; Qwen alone caught two of these changes |
+| Invalid pairs falsely accepted | 1/6 | CORP-003 narrowed conformance-test hosting to performance tests; both auditors accepted it |
+| Valid controls automatically accepted | 5/6 | Includes real en-GB and en-US proofreading plus local model audits |
+| Valid controls semantically rejected | 0/6 | The remaining valid case was an execution failure, not a semantic rejection |
+| Execution failures | 1/12 | CORP-008 reached the model output-length limit; incomplete output was rejected |
+
+CORP-008's error was explicitly recorded from the observed exception after resumption; no complete/raw audit response was fabricated. The experiment finished evaluating the remaining cases. Complete attempted-case coverage does not mean all calls succeeded. Spelling/style rejections and invalid responses are not counted as semantic detection.
+
+Evidence: `artifacts/corporate-controls.rewritten/20260904T140728Z-9c76f87384/results.json` and `review.md`, with immutable per-case files. Prompt `trilingual-editorial-v5`, evidence contract `trilingual-review-v1`, and the existing model identities stayed fixed. Bank file SHA-256: `5afbbfa42a693c09ca492ffca5add3f8ba3a456e5fb7eba06325cdc1c28d0102`. No prompt tuning occurred in response to the measured control outcomes.
+
+### Real Spanish document pause
+
+The synthetic corporate fixture produced an es-ES candidate in `artifacts/corporate-smoke.rewritten/20260904T144219Z-55c9093396`. All 8 retained prose spans were assembled; the good Spanish sentence, headings, number, written-approval condition and protected product name were preserved on inspection. Source SHA-256 remains `e85043b31ee94451d126961fcd35f8f183e7cec5d0be42c0b54c05b520f2a73c`.
+
+The workflow stopped at `awaiting_spanish_approval`, `human_approved=false`, with zero British/American generation results. Spanish revision SHA-256: `51181dd6c83a2683c783acfdbd8be52e7a5c113c3fa9ce54e9e1cd7d23c4ec71`. Resume returned the explicit CLI exit code 3 without model progress or changed checkpoint/output/report hashes. Human approval was not simulated for this real-model run.
+
+Automatic status remains `review_required`: LanguageTool flags two technical loanword occurrences and one synthetic proper name. No exception was introduced to obtain acceptance. Editorial inspection also found a literal populated-state calque and retention of an unnecessary framing clause. Both revision auditors nevertheless returned positive equivalence and maximum style scores. The proposed corrections remain in separate local editorial observations; generated text is unchanged.
+
+The approval mechanism is exercised, but the requested editorial quality is not fully achieved. Real English document generation remains pending an actually reviewed and approved Spanish revision. Earlier strict-benchmark and private-draft semantic/style failures remain open.
+
+## Corporate calibration and repository delivery: 2026-09-05
+
+Specification 006 adds deterministic es-ES editorial findings to generation, bounded repair, exact revision review and saved-evidence reconstruction. Initial regressions reproduced automatic acceptance of the populated-data calque and empty emphasis despite perfect fake model scores. The new findings flag wording for review; they do not rewrite text themselves or turn style objections into semantic drift.
+
+Prompt v6 made all six known semantic mutations detectable, including the previously missed scope narrowing. It also introduced a false rejection of the valid 'not all' / 'some not' pair. The retained run `artifacts/corporate-controls.rewritten/20260905T000255Z-bc7d0a4147` records 6/6 invalid detections, 5/6 valid acceptances and zero execution errors. Prompt v7 explicitly distinguished literal quantifier meaning from inferred pragmatic implications: the new full run `artifacts/corporate-calibration.rewritten/20260905T000555Z-86ea57246c` detected 6/6 invalid cases and accepted 6/6 valid controls without errors. These are development regressions, not held-out accuracy estimates.
+
+The v7 synthetic document replaced the populated-data calque and removed empty emphasis, while retaining the unchanged good sentence and original constraints. It still produced a redundant conformance-test definition. That new defect was added as a failing regression and corrected through prompt v8 and editorial-rule v3. The v7 generated output remains unchanged in `artifacts/corporate-v7-smoke.rewritten/20260905T000848Z-fc8dff0d55`.
+
+Independent code review found that the evaluator could hide semantic false positives on style controls, pass with one invalid auditor contract, and regenerate a published case after a checkpoint interruption. It also found an unhandled single-quoted expression. All four were reproduced before correction. Re-review closed them; the evaluator now counts these failures explicitly and recovers validated published records before inference. At that checkpoint, the full suite passed 153 tests in 3.622 seconds. Final live evaluation uses prompt v8, editorial rules v3, evidence contract v2 and evaluator v2. Its final results are recorded in the active specification-006 handoff.
+
+Private repository visibility was rechecked before delivery. The pending tracked/untracked source set was inspected for common credential patterns and oversized files; generated artifacts, private input/output folders, credential file types, weights and local review scratch are ignored. This bounded scan is not an exhaustive security audit and does not make repository privacy equivalent to safe secret storage. Ollama configuration was unchanged; only the stopped existing LanguageTool installation was restarted hidden. No cloud inference, new dependency or paid service was used.

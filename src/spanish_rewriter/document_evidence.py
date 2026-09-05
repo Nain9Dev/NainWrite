@@ -3,6 +3,7 @@
 from dataclasses import asdict
 
 from .document import literal_issues, protected_literals
+from .document_editorial import editorial_issues
 from .language_tool import partition_proofreading_issues
 from .models import LanguageIssue
 from .service import AuditValidationError, audit_issues, parse_audit
@@ -39,8 +40,10 @@ def _validate(result, items, locale, config, upstream_review):
         candidate = [{"id": v["id"], "text": v["text"].strip()} for v in values]
         issues = [f"{source['id']}:{issue}" for source, target in zip(items, candidate)
                   for issue in literal_issues(source["text"], target["text"])]
+        issues.extend(f"{target['id']}:{issue}" for target in candidate
+                      for issue in editorial_issues(target['text'], locale))
         proof = attempt["proofreading"]
-        allowed = {"es", "es-ES"} if locale == "es-ES" else {"en-GB"}
+        allowed = {"es", "es-ES"} if locale == "es-ES" else {locale}
         if proof["language"] not in allowed or proof["software_name"] != "LanguageTool":
             raise ValueError("Saved proofreading identity mismatch")
         proof_issues = [LanguageIssue(**value) for value in proof["issues"]]

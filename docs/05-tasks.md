@@ -1,6 +1,6 @@
 # Project Tasks
 
-The active design handoff is maintained in `specs/004-document-rewriting/tasks.md`. The earlier quality-gate implementation and unresolved acceptance evidence remain in `specs/003-strict-es-quality-gates/tasks.md`.
+The active handoff is maintained in `specs/006-corporate-calibration/tasks.md`. Completed trilingual implementation evidence remains in `specs/005-approved-trilingual-workflow/tasks.md`, historical bilingual evidence in `specs/004-document-rewriting/tasks.md`, and earlier strict-gate failures in `specs/003-strict-es-quality-gates/tasks.md`.
 
 ## Current task
 
@@ -8,6 +8,8 @@ The active design handoff is maintained in `specs/004-document-rewriting/tasks.m
 - `[A]` Implement and execute independent local proofreading and semantic quality gates: implementation and evaluation complete; strict model acceptance failed and remains open.
 - `[A]` Resumable bilingual document workflow: implementation, scoped independent review and finite real-document evaluation complete. Both candidate files exist; editorial acceptance failed and remains open.
 - `[M]` Written document-workflow design: approved by Aitor on 2026-09-04.
+- `[A]` TASK-008: approved corporate profile and revision-gated trilingual workflow implementation, finite evaluation and independent review complete; editorial acceptance remains open. See active handoff.
+- `[M]` Three-language design and corporate editorial profile: approved on 2026-09-04. Actual generated Spanish revision approval is still separate.
 
 ## Human gates
 
@@ -24,5 +26,5 @@ The active design handoff is maintained in `specs/004-document-rewriting/tasks.m
 
 - `[M]` Promote approved references from draft to gold.
 - `[A]` Re-run the versioned gold benchmark after human approval.
-- `[A]` Specify a source-grounded editorial correction iteration for the observed deliverable-state drift, narrowed technical meaning and unnatural prose. Add synthetic negative controls before runtime changes; retain the current complete evidence and never repair by silently editing checkpoints.
-- `[M]` Review both language candidates after correction; code-test success and high auditor scores are not linguistic approval.
+- `[A]` Specify the next source-grounded corporate calibration iteration from specification-005 failures, with new style and technical-scope controls. Preserve historical evidence; never repair by silently editing checkpoints.
+- `[M]` Review Spanish before approving either English translation; code-test success and high auditor scores are not linguistic approval.

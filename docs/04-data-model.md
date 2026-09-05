@@ -128,3 +128,85 @@ erDiagram
 Offsets index Unicode source characters; each span and removal retains exact source text locally. The checkpoint envelope contains a SHA-256 of canonical state to detect corruption, not a cryptographic signature or protection against a malicious local writer. Resumption reconstructs the manifest and verifies source/configuration/model identity, coverage, candidate hashes, original audit responses, proofreading classifications and derived statuses. A process lock prevents simultaneous runners from modifying one job.
 
 In parser v2, `original_text` always matches the exact source slice. `text` is the cleaned model input, which can exclude recorded preparation notes inside that slice. Concatenating all original slices reproduces the complete source; assembling replacements produces the cleaned candidate. This prevents artificial sentence fragments while retaining a lossless audit trail. Old manifests are intentionally incompatible.
+
+## Spanish revisions and translation authority
+
+```mermaid
+erDiagram
+    EDITORIAL_JOB ||--|| EDITABLE_COPY : tracks
+    EDITORIAL_JOB ||--|{ SPANISH_REVISION : retains
+    SPANISH_REVISION ||--|{ REVISION_REVIEW : requires
+    SPANISH_REVISION ||--o| TRANSLATION_APPROVAL : authorises
+    TRANSLATION_APPROVAL ||--o{ TRANSLATION_RESULT : permits
+    TRANSLATION_RESULT ||--|{ ORIGINAL_CROSSCHECK : requires
+    EDITABLE_COPY {
+        string current_sha256
+        string file_path
+    }
+    SPANISH_REVISION {
+        string sha256 PK
+        string source_sha256
+        string configuration_sha256
+        object replacements
+        string automatic_status
+    }
+    TRANSLATION_APPROVAL {
+        string revision_sha256 FK
+        string evidence_identity
+        boolean review_acknowledged
+    }
+    TRANSLATION_RESULT {
+        string revision_sha256 FK
+        string locale
+        string automatic_status
+        string filename
+    }
+    REVISION_REVIEW {
+        object input_hashes
+        object output_hashes
+        object proofreading
+        object audits
+        string status
+    }
+    ORIGINAL_CROSSCHECK {
+        object original_hashes
+        object candidate_hashes
+        object audits
+        string status
+    }
+```
+
+This is the conceptual specification-005 model; serialized fields are versioned by the runtime. Review-only evidence has no synthetic writer generation: it records actual candidate bytes, checks and audit responses. Approval is local workflow authority tied to a revision, not an authenticated signature or a guarantee that a named person approved it. A local attacker able to rewrite state remains outside the corruption-detection threat model.
+
+An editable-copy change revokes current translation authority. Old snapshots, reviews and translations remain available, but are not the current document version. Completion, automatic quality, human translation approval and stale-history status must not be conflated.
+
+## Calibration evidence
+
+```mermaid
+erDiagram
+    CALIBRATION_RUN ||--|{ CASE_RECORD : retains
+    CASE_RECORD ||--o| REVIEW_EVIDENCE : records
+    CALIBRATION_RUN {
+        string bank_sha256
+        object configuration
+        string review_status
+        boolean complete
+        boolean quality_gate_passed
+        object summary
+    }
+    CASE_RECORD {
+        string id
+        object authored_case
+        array deterministic_drift
+        string execution_error
+    }
+    REVIEW_EVIDENCE {
+        object candidate_hashes
+        array editorial_findings
+        object proofreading
+        array audits
+        string status
+    }
+```
+
+Each record holds either complete review evidence or an explicit local model execution error. Per-case files are immutable; checkpoint state allows validated completed records to be reused. `complete` means all cases were attempted, whereas `quality_gate_passed` requires all expected semantic/style outcomes and no execution errors. The fixed draft review status is never gold approval. Configuration includes the editorial-rule version as well as prompt/model identities.

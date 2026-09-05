@@ -16,18 +16,20 @@ Current validation is preliminary: the corrected unassisted semantic bank expose
 
 Before supplying private text, verify both service listeners are loopback-only. The latest desktop-managed Ollama instance did not meet this check; the client using `127.0.0.1` does not by itself restrict the server's other interfaces.
 
-The short-text API remains bounded. The document workflow segments UTF-8 Markdown/TXT, produces Spanish first and British English from that Spanish, and checkpoints completed batches. It rejects prompts above 12000 UTF-8 bytes and incomplete length-limited responses. Document quality remains subject to the separate evidence and human-review limitations below.
+The short-text API remains bounded. The document workflow segments UTF-8 Markdown/TXT, produces editable Spanish first and pauses for explicit revision approval. British and American English are then generated independently from the same approved Spanish, with additional original-source checks. Completed batches are checkpointed. Prompts above 12000 UTF-8 bytes and incomplete length-limited responses are rejected. See the [active delivery handoff](specs/006-corporate-calibration/tasks.md) for verified versus pending work.
 
 ## Rewrite a document
 
 ```powershell
-python tools/rewrite_document.py --input "C:/path/draft.md" --both
+python tools/rewrite_document.py --input "C:/path/draft.md"
 python tools/rewrite_document.py --resume "C:/path/draft.rewritten/job-id"
 ```
 
-The command creates a unique job folder beside the original with separate `es-ES` and `en-GB` candidate files, `review.md`, `review.json` and `checkpoint.json`. The original is never overwritten. Exit `0` means automatic acceptance, `2` means completed candidates require review, and `1` means incomplete or invalid work. Human approval is never automatic.
+The command creates a unique job folder beside the original and stops with an editable `es-ES` copy and separate review. After reviewing the exact revision, use `--resume JOB --approve-spanish SHA256` to authorise both English variants. Review-required Spanish additionally needs explicit `--acknowledge-review`; that never clears its findings. The original and previous revisions are retained. Later Spanish edits invalidate current approval and mark earlier translations outdated.
 
-Use `--clean-notes` only when removing explicit `VERIFY`/`DAVID` preparation markers is intended; removed spans stay in the local report. `--omit-lines FIRST:LAST` records an explicit preparation range. Neither option performs fact-checking or fills missing fields. PDF, DOCX, HTML blocks and complex Markdown constructs are not supported in this slice. See the [document runbook](docs/08-runbook.md#rewrite-a-bilingual-document).
+Exit `3` is a normal approval pause; `0` means three-version completion and automatic acceptance, `2` means completed candidates require review, and `1` means an error. Human approval is never automatic. Unit tests use synthetic approvals; actual document approval belongs to the user.
+
+Use `--clean-notes` only when removing explicit `VERIFY`/`DAVID` preparation markers is intended; removed spans stay in local evidence. `--omit-lines FIRST:LAST` records an explicit preparation range. Neither option performs fact-checking or fills missing fields. PDF, DOCX, HTML blocks and complex Markdown constructs are not supported. Editing is wording-only and rejects ambiguous span ownership or structural changes. See the [document runbook](docs/08-runbook.md#rewrite-a-document-with-spanish-approval).
 
 ## Requirements
 
@@ -64,11 +66,15 @@ Exit code `0` means every configured automated gate passed. Exit code `2` means 
 python -m unittest discover -s tests -v
 python tools/validate_bank.py
 python tools/validate_semantic_mutations.py
+python tools/evaluate_corporate.py --bank benchmark/corporate_review_controls.json
+python tools/evaluate_corporate.py --bank benchmark/corporate_calibration_controls.json
 python tools/run_semantic_audit_benchmark.py
 python tools/run_rewrite_benchmark.py --runs 2
 ```
 
 Benchmark reports are written under `artifacts/` and intentionally excluded from Git because they are generated and may contain supplied text.
+
+The document path uses its own versioned corporate instructions and reproducible es-ES editorial checks. Its calibration must not be confused with the historical short-text API benchmark. Tests passing establish software behavior; draft synthetic model results do not guarantee flawless writing. The [runbook](docs/08-runbook.md) explains resumption, version compatibility and review-required outputs.
 
 ## Documentation
 

@@ -6,6 +6,8 @@ This directory contains the first draft benchmark for professional Spanish rewri
 
 - `spanish_rewrite_cases.jsonl`: 30 independent cases.
 - `review_rubric.md`: human evaluation instructions and acceptance rules.
+- `corporate_review_controls.json`: twelve fixed document-audit regressions from specification 005.
+- `corporate_calibration_controls.json`: twelve new paired semantic/style controls for specification 006. The semantic examples were frozen before live evaluation; style examples deliberately test the implemented wording rules. Neither bank is approved gold.
 
 ## Important status boundary
 

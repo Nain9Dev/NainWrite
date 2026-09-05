@@ -40,3 +40,10 @@
 - Status: Implementation, scoped code review and finite execution complete; editorial acceptance open.
 - Impact: The refined long document has 92/92 retained spans per locale, preserved structure and an unchanged original. All 14 batches per language require review. Inspection found deliverable-state drift and technical scope narrowing that both semantic auditors missed, alongside unnatural prose. A complete file is not ready for submission.
 - Resolution: Preserve the completed local evidence, specify and test source-grounded corrections and negative style/semantic controls, and evaluate the resulting Spanish before its English translation. Do not waive spelling findings or reinterpret model confidence as human approval. See `docs/10-validation.md`.
+
+## BLK-007: Trilingual editorial acceptance
+
+- Type: `[A]` calibration and verification, then `[M]` exact Spanish revision approval.
+- Status: Open after finite specification-005 testing.
+- Impact: The 12-case draft control experiment detected 5/6 semantic mutations, missed one scope change and had one length-limit execution error on a valid control. The new Spanish document correctly pauses for approval, but still contains a literal calque and unnecessary framing despite maximum model style scores. It is not ready for approval or a claim of perfect writing.
+- Resolution: Preserve these failures, specify targeted style/technical-scope calibration with new controls and re-evaluate. Do not authorise actual English generation until Aitor reviews the corrected Spanish revision. Unit-test synthetic approvals do not satisfy that gate.

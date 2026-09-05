@@ -55,6 +55,18 @@ class LanguageToolClientTests(unittest.TestCase):
             LanguageToolClient(language="auto")
 
     @patch("spanish_rewriter.language_tool.open_local")
+    def test_explicit_american_english_and_wrong_locale(self, urlopen):
+        payload = {"software": {"name": "LanguageTool", "version": "test"},
+                   "language": {"code": "en-US"}, "matches": []}
+        urlopen.return_value = FakeResponse(payload)
+        self.assertEqual("en-US", LanguageToolClient(language="en-US").check("A report.").language)
+        self.assertIn(b"language=en-US", urlopen.call_args.args[0].data)
+        payload["language"]["code"] = "en-GB"
+        urlopen.return_value = FakeResponse(payload)
+        with self.assertRaises(LanguageToolError):
+            LanguageToolClient(language="en-US").check("A report.")
+
+    @patch("spanish_rewriter.language_tool.open_local")
     def test_rejects_a_match_without_its_issue_type(self, urlopen) -> None:
         urlopen.return_value = FakeResponse({
             "software": {"name": "LanguageTool", "version": "test"},

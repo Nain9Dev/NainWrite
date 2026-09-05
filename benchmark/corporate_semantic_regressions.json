@@ -1,0 +1,19 @@
+{
+  "version": "corporate-semantic-regressions-v1",
+  "review_status": "draft",
+  "purpose": "Known unsupported-context failure from the separate short-text pipeline, evaluated here through document review. Passing does not revalidate the unchanged short-text pipeline.",
+  "cases": [
+    {
+      "id": "REG-001", "locale": "es-ES", "expected_equivalent": false,
+      "source": "No está claro si debe actualizarse el informe o el anexo.",
+      "candidate": "La redacción no permite determinar si la actualización corresponde al informe o al anexo.",
+      "reason": "Attributes uncertainty to wording although the source does not explain its cause."
+    },
+    {
+      "id": "REG-002", "locale": "es-ES", "expected_equivalent": true,
+      "source": "No está claro si debe actualizarse el informe o el anexo.",
+      "candidate": "No se sabe con claridad si hay que actualizar el informe o el anexo.",
+      "reason": "Retains the uncertainty and alternatives without introducing a cause."
+    }
+  ]
+}

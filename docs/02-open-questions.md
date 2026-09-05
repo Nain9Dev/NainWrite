@@ -40,5 +40,11 @@
 ## OQ-007: Written bilingual document design
 
 - Owner: `[M]` Aitor
-- Current state: the editorial interview is complete enough for the proposal in `specs/004-document-rewriting`.
-- Decision needed: approve the initial Markdown/TXT workflow, proposed `en-GB` variant, local resumable outputs and explicit draft/quality status before implementation.
+- Status: Resolved; Aitor approved the initial design on 2026-09-04. Implemented evaluation and unresolved editorial failures are recorded in `specs/004-document-rewriting/tasks.md`.
+
+## OQ-008: Corporate profile and three-language approval flow
+
+- Owner: `[M]` Aitor
+- Status: Design approved on 2026-09-04; implementation/testing requested.
+- Decision: editable es-ES first, explicit approval of the reviewed revision, then independent en-GB and en-US translations with original-source crosschecks. See `specs/005-approved-trilingual-workflow/spec.md` and `docs/11-editorial-profile.md`.
+- Separate pending action: review and approve an actual Spanish revision. Design approval is not document approval.

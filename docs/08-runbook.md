@@ -35,7 +35,7 @@ Use `--plain` only when the caller handles a non-zero exit. Exit code `0` means 
 
 ## Start the local services on the measured workstation
 
-Use separate terminals and keep them open. These commands do not configure autostart or change machine-wide environment variables.
+The existing desktop-managed Ollama process must be left unchanged on Aitor's workstation. Reuse it; do not launch a second instance or treat the example below as a current instruction to change its configuration. Only start the existing LanguageTool installation if its port is free and it is stopped. The Ollama example is for a separately authorized future installation. These examples do not establish unattended startup.
 
 Ollama terminal:
 
@@ -62,6 +62,20 @@ Verify before processing a document:
 ollama list
 Get-NetTCPConnection -State Listen -LocalPort 11434,8082
 ```
+
+## Repeat the document calibration
+
+The evaluator accepts a draft synthetic JSON bank with at most 100 cases and 1800 UTF-8 bytes per source/candidate. It sends only source, candidate and locale to the auditors, withholding expected outcomes and explanations.
+
+```powershell
+python -X utf8 tools/evaluate_corporate.py --bank benchmark/corporate_review_controls.json
+python -X utf8 tools/evaluate_corporate.py --bank benchmark/corporate_calibration_controls.json
+python -X utf8 tools/evaluate_corporate.py --bank benchmark/corporate_calibration_controls.json --resume "C:/path/to/experiment"
+```
+
+Each run prints a unique local directory. Keep the complete directory to resume; changed banks/configurations or inconsistent artifacts are rejected. Complete error records remain failures; a new experiment is needed to retry them. Exit `0` means all finite expected controls passed, `2` means at least one control or execution failed, and `1` means the evaluator stopped before completing. None approves a customer document. Semantic detection, editorial detection and execution failures are scored separately.
+
+Prompt `trilingual-editorial-v10`, editorial rules `corporate-style-v3` and evidence contract `trilingual-review-v2` require fresh document jobs relative to specification 005. Retain old jobs with their compatible runtime; never edit their checkpoint version fields. Narrow editorial flags cover populated-data calques, empty emphasis formulas and the observed redundant conformance-test definition. Quoted expressions, code/links and geographic population uses are excluded; other awkward prose can still escape the checks. Evaluator version `corporate-evaluation-v2` also fails on invalid auditor contracts and semantic false positives among style controls; a published case is recovered if the process stopped before saving its checkpoint.
 
 Both listeners must be loopback-only. A local endpoint is not an authentication boundary against other local applications; do not expose these ports through a proxy or tunnel.
 
@@ -123,15 +137,17 @@ Review a candidate against the source even if it differs from the proposed refer
 - On an Ollama error, retain the partial report and inspect the local service log. Do not convert missing audit evidence into acceptance.
 - Prompts above 12000 UTF-8 bytes, including instructions and all constraints, fail before inference. Length-limited outputs also fail. Do not silently crop or split a complex source to bypass this limit; document-level segmentation requires a separate validated design.
 
-## Rewrite a bilingual document
+## Rewrite a document with Spanish approval
 
 From the repository root, with the existing local services running:
 
 ```powershell
-python -X utf8 tools/rewrite_document.py --input "C:/path/draft.md" --both
+python -X utf8 tools/rewrite_document.py --input "C:/path/draft.md"
 ```
 
-The first supported formats are UTF-8 `.md` and `.txt`. Both languages are generated with a natural professional target: `es-ES`, then `en-GB` from the assembled Spanish candidate. Actual prose may fail that target; see the measured failures in `docs/10-validation.md`. The command prints a unique job folder and a resume command immediately. It does not install, restart or reconfigure Ollama. `-X utf8` also keeps console output readable on Windows.
+The supported formats are UTF-8 `.md` and `.txt`. New specification-005 jobs generate and review `es-ES`, publish an editable copy and separate findings, then stop for approval. No English generation is permitted at this stage. The command prints a unique job folder, Spanish revision SHA-256 and a resume command. It does not install, restart or reconfigure Ollama. `-X utf8` keeps Windows console output readable.
+
+Review the Spanish against the original, not merely for fluency. You may edit the printed editable file, preserving its structure. Then resume to review the exact edited text without rewriting your edits:
 
 From another working directory, supply the absolute path to `tools/rewrite_document.py` as well as the input path. The CLI resolves its own package path. Keep quotes around paths containing spaces.
 
@@ -139,14 +155,26 @@ From another working directory, supply the absolute path to `tools/rewrite_docum
 python -X utf8 tools/rewrite_document.py --resume "C:/path/draft.rewritten/job-id"
 ```
 
-Resume with the exact original input and model/prompt configuration. Changed inputs, incompatible configuration, corrupted evidence and output collisions are rejected. A running job locks its directory; operating-system process termination releases the lock. Completed batches are not regenerated. Keep the entire job directory for recovery; Git excludes `*.rewritten/` and is not a backup of private documents.
+Once the displayed revision and findings have actually been reviewed, the operator explicitly authorises that exact Spanish revision for translation:
+
+```powershell
+python -X utf8 tools/rewrite_document.py --resume "C:/path/draft.rewritten/job-id" --approve-spanish "EXACT_REVIEWED_SHA256"
+```
+
+If automatic review still has findings, the command refuses to continue unless the operator additionally supplies `--acknowledge-review`. This acknowledgement authorises translation of review-required content; it does not clear findings, approve final prose, or assert equivalence. Do not use it to conceal known errors. Design approval is not authorisation to execute this command on an unseen document.
+
+Both `en-GB` and `en-US` are generated independently from the immutable approved Spanish snapshot. Each receives its exact locale's proofreading, audits against Spanish, and separate checks against the retained original. Proper names need not change between variants. If the editable Spanish later changes, current translation authority is invalidated; previous outputs remain retained but outdated. The CLI identifies the older Spanish revision hashes whose translations are outdated; keep those artifacts as history, not as current translations.
+
+Resume with the exact original input and model/prompt configuration. Changed originals, incompatible configuration, corrupted evidence and output collisions are rejected. A running job locks its directory; operating-system process termination releases the lock. Completed validated batches are not regenerated. Keep the entire job directory for recovery; Git excludes `*.rewritten/` and is not a backup of private documents. Historical specification-004 jobs require their original runtime; never edit a checkpoint to force migration to this workflow.
+
+Editing is deliberately conservative: changes must belong unambiguously to retained prose spans. Changed structural markers, code, line separators, unsupported syntax, duplicate-span ambiguity or unresolved long-span boundary crossings stop with guidance to make smaller wording edits or start a new source job. This is not a general document-restructuring editor. The generated baseline and revision snapshots are immutable; edit only the designated copy.
 
 On Windows, a reader holding `checkpoint.json` open can temporarily prevent atomic replacement. Known access/sharing/lock errors receive six bounded attempts (at most 1.55 seconds of backoff); persistent errors remain failures and preserve the prior checkpoint. Avoid keeping the live checkpoint open in tools that deny delete sharing. Use printed CLI progress while processing. Do not weaken filesystem permissions or disable security software to make a run pass.
 
 Optional cleanup must reflect the user's editorial intent:
 
 ```powershell
-python tools/rewrite_document.py --input "C:/path/draft.md" --both --clean-notes --omit-lines 3:8
+python tools/rewrite_document.py --input "C:/path/draft.md" --clean-notes --omit-lines 3:8
 ```
 
 `--clean-notes` removes explicit `VERIFY`/`DAVID` bracketed preparation markers; `--omit-lines` removes exact inclusive source-line ranges and rejects numbered headings. All removed text and ranges remain in local evidence. Do not use omitted ranges to delete substantive statements or disclosures. No command or instruction inside the document is executed. Blank fields remain blank, and claims are not investigated.
@@ -155,6 +183,6 @@ Note cleanup happens before prose segmentation. It preserves code and link conte
 
 Use `--output-dir "D:/PrivateOutputs"` to choose the parent of the new unique job folder. Do not point it at a versioned folder for customer content. The default folder is beside the source.
 
-Exit codes: `0` = complete and automatically accepted; `2` = complete review-required candidates; `1` = incomplete or invalid job. Every generated document remains a candidate until reviewed by a person. Inspect both language files and `review.md`; `review.json` contains full per-attempt findings, actual model digests and cleanup spans.
+Exit codes: `3` = normal pause awaiting Spanish approval; `0` = all three versions complete and automatically accepted; `2` = complete review-required candidates; `1` = incomplete or invalid job. The legacy `--both` option cannot bypass approval. Every generated document remains a candidate until reviewed by a person. Inspect the printed revision-specific report and files; local machine-readable evidence retains actual model digests and findings.
 
-Common Markdown headings, lists, tables with outer pipes, inline code/links and fenced code are covered. Reference-style links, unsupported HTML, unsafe multiline constructs and oversized protected spans stop processing. This is not a universal Markdown renderer or a PDF/DOCX converter. The CLI checks that both proofreading languages are available before private generation. If LanguageTool is stopped, start its existing local installation using the separate instructions above; do not restart Ollama.
+Common Markdown headings, lists, tables with outer pipes, inline code/links and fenced code are covered. Reference-style links, unsupported HTML, unsafe multiline constructs and oversized protected spans stop processing. This is not a universal Markdown renderer or a PDF/DOCX converter. The CLI checks that the configured proofreading languages are available before private generation. If LanguageTool is stopped, start its existing local installation using the separate instructions above; do not restart Ollama.

@@ -75,6 +75,49 @@ def publish(job, name, content):
     _atomic(Path(job) / name, content, replace=False)
 
 
+def _artifact_path(job, name):
+    if not isinstance(name, str) or Path(name).name != name or (Path(job) / name).is_symlink():
+        raise ValueError("Invalid job artifact path")
+    return Path(job) / name
+
+
+def verify_artifact(job, name, expected):
+    """Verify an immutable artifact without silently recreating missing history."""
+    if _artifact_path(job, name).read_bytes() != expected.encode("utf-8"):
+        raise ValueError(f"Saved artifact differs: {name}")
+
+
+def verify_artifact_hash(job, name, expected_hash):
+    """Check immutable report bytes before an approval or resumed model call."""
+    if hashlib.sha256(_artifact_path(job, name).read_bytes()).hexdigest() != expected_hash:
+        raise ValueError(f"Saved report artifact differs: {name}")
+
+
+def read_editable(job, name):
+    """Read exact editable UTF-8 bytes through the local persistence boundary."""
+    return read_input(_artifact_path(job, name))
+
+
+def read_published_json(job, name):
+    """Recover an atomically published record after an interrupted checkpoint save."""
+    path = _artifact_path(job, name)
+    try:
+        raw = path.read_text(encoding='utf-8')
+    except FileNotFoundError:
+        return None
+    result = json.loads(raw)
+    if not isinstance(result, dict):
+        raise ValueError('Published JSON record must be an object')
+    return result
+
+
+def initialize_editable(job, name, baseline):
+    """Create the editable copy once, never replacing pre-existing user edits."""
+    path = _artifact_path(job, name)
+    if not path.exists():
+        publish(job, name, baseline)
+
+
 def save_state(job, state):
     envelope = {"sha256": digest(state), "state": state}
     _atomic(Path(job) / "checkpoint.json", canonical(envelope), replace=True)

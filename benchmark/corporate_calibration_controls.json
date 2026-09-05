@@ -1,0 +1,19 @@
+{
+  "version": "corporate-calibration-v1",
+  "review_status": "draft",
+  "purpose": "New synthetic paired controls frozen before prompt evaluation; labels are provisional and withheld from models.",
+  "cases": [
+    {"id":"CAL-001","locale":"es-ES","expected_equivalent":false,"source":"The register contains entries. It has not been audited.","candidate":"Se están incorporando entradas al registro. No se ha auditado.","reason":"A present state became ongoing work."},
+    {"id":"CAL-002","locale":"es-ES","expected_equivalent":true,"source":"The register contains entries. It has not been audited.","candidate":"El registro contiene entradas. Todavía no se ha auditado.","reason":"Current state and pending audit preserved."},
+    {"id":"CAL-003","locale":"es-ES","expected_equivalent":false,"source":"The review assesses accessibility, not response time. Hosting the review tools is included.","candidate":"La revisión evalúa la accesibilidad, no el tiempo de respuesta. Se incluye el alojamiento de las herramientas de rendimiento.","reason":"Accessibility tool scope was narrowed to performance."},
+    {"id":"CAL-004","locale":"es-ES","expected_equivalent":true,"source":"The review assesses accessibility, not response time. Hosting the review tools is included.","candidate":"La revisión evalúa la accesibilidad, no el tiempo de respuesta. Se incluye el alojamiento de las herramientas de revisión.","reason":"The same tools and hosting scope are preserved."},
+    {"id":"CAL-005","locale":"en-GB","expected_equivalent":false,"source":"La organización puede suspender el piloto; no está obligada a hacerlo.","candidate":"The organisation must suspend the pilot.","reason":"Permission became obligation and the exception disappeared."},
+    {"id":"CAL-006","locale":"en-GB","expected_equivalent":true,"source":"La organización puede suspender el piloto; no está obligada a hacerlo.","candidate":"The organisation may suspend the pilot but is not required to do so.","reason":"Permission and lack of obligation preserved."},
+    {"id":"CAL-007","locale":"en-US","expected_equivalent":false,"source":"El análisis excluye los datos personales, aunque estén anonimizados.","candidate":"The analysis excludes personal data unless it is anonymized.","reason":"A concession became an exception permitting the excluded data."},
+    {"id":"CAL-008","locale":"en-US","expected_equivalent":true,"source":"El análisis excluye los datos personales, aunque estén anonimizados.","candidate":"The analysis excludes personal data, even if it is anonymized.","reason":"The exclusion includes anonymized data."},
+    {"id":"CAL-009","locale":"es-ES","expected_equivalent":true,"expected_style_acceptable":false,"source":"La base de datos contiene registros.","candidate":"La base de datos está poblada.","reason":"Meaning preserved but the populated-data calque is unsuitable for the chosen corporate profile."},
+    {"id":"CAL-010","locale":"es-ES","expected_equivalent":true,"expected_style_acceptable":true,"source":"La base de datos contiene registros.","candidate":"La base de datos contiene registros.","reason":"Already suitable prose should pass."},
+    {"id":"CAL-011","locale":"es-ES","expected_equivalent":true,"expected_style_acceptable":false,"source":"El equipo revisará el alcance.","candidate":"Cabe destacar que el equipo revisará el alcance.","reason":"Unnecessary emphasis should require editorial review without being counted as factual drift."},
+    {"id":"CAL-012","locale":"es-ES","expected_equivalent":true,"expected_style_acceptable":true,"source":"El equipo revisará el alcance.","candidate":"El equipo revisará el alcance.","reason":"Direct professional wording is already suitable."}
+  ]
+}

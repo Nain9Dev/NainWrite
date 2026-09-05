@@ -4,6 +4,7 @@ from dataclasses import asdict
 import re
 
 from .document import literal_issues, protected_literals, sha
+from .document_editorial import EDITORIAL_VERSION, editorial_issues
 from .document_prompts import DOCUMENT_PROMPT_VERSION, DOCUMENT_SCHEMA, TERMINOLOGY, build_prompt
 from .language_tool import LanguageToolClient, partition_proofreading_issues
 from .prompts import AUDIT_SCHEMA
@@ -16,13 +17,14 @@ class DocumentTransformer:
         self.client = client
         self.model, self.audit_model = model, audit_model
         self.proofreaders = proofreaders if proofreaders is not None else {
-            locale: LanguageToolClient(language=locale) for locale in ("es-ES", "en-GB")}
+            locale: LanguageToolClient(language=locale) for locale in ("es-ES", "en-GB", "en-US")}
         digests = {name: client.get_fresh_model_digest(name) for name in (model, audit_model)}
         if any(not re.fullmatch(r"[a-f0-9]{64}", value) for value in digests.values()):
             raise ValueError("Both installed local model digests must be known")
         if model == audit_model or len(set(digests.values())) != 2:
             raise ValueError("Writer and independent auditor must have distinct model digests")
-        self.config = {"prompt_version": DOCUMENT_PROMPT_VERSION, "models": digests,
+        self.config = {"prompt_version": DOCUMENT_PROMPT_VERSION, "evidence_contract": "trilingual-review-v2",
+                       "editorial_version": EDITORIAL_VERSION, "models": digests,
                        "writer": model, "auditor": audit_model, "max_repairs": 1,
                        "semantic_threshold": 0.95, "minimum_style_score": 5,
                        "terminology": TERMINOLOGY,
@@ -55,7 +57,7 @@ class DocumentTransformer:
         return [{"id": v["id"], "text": v["text"].strip()} for v in values]
 
     def transform(self, items, locale, context):
-        if locale not in ("es-ES", "en-GB") or locale not in self.proofreaders:
+        if locale not in ("es-ES", "en-GB", "en-US") or locale not in self.proofreaders:
             raise ValueError("A language-appropriate proofreader is required")
         if not items or len({i['id'] for i in items}) != len(items):
             raise ValueError("Source items must be nonempty and uniquely identified")
@@ -70,9 +72,11 @@ class DocumentTransformer:
             uncertainty |= generated.content["uncertain"]
             issues = [f"{source['id']}:{issue}" for source, target in zip(items, candidate)
                       for issue in literal_issues(source["text"], target["text"])]
+            issues.extend(f"{target['id']}:{issue}" for target in candidate
+                          for issue in editorial_issues(target['text'], locale))
             text = "\n\n".join(v["text"] for v in candidate)
             proofreading = self.proofreaders[locale].check(text)
-            expected = {"es", "es-ES"} if locale == "es-ES" else {"en-GB"}
+            expected = {"es", "es-ES"} if locale == "es-ES" else {locale}
             if proofreading.language not in expected:
                 raise ValueError("Proofreader locale does not match the transformation")
             blocking, advisory, ignored = partition_proofreading_issues(
@@ -107,3 +111,8 @@ class DocumentTransformer:
                 "issues": list(issues), "locale": locale, "attempts": attempts,
                 "input_hashes": {i["id"]: sha(i["text"]) for i in items},
                 "output_hashes": {key: sha(value) for key, value in replacements.items()}}
+
+    def review(self, items, replacements, locale, context):
+        """Audit an exact external candidate without generating or repairing it."""
+        from .document_review import review
+        return review(self, items, replacements, locale, context)

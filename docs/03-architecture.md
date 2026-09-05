@@ -54,7 +54,9 @@ A linguistic repair never applies LanguageTool replacement suggestions directly.
 
 The measured configuration rejects prompts above 12000 UTF-8 bytes and requests at most 2048 output tokens within a 16384-token context. The prompt budget includes instructions, constraints and candidate text, so the source-text allowance is smaller and varies by stage. Length-limited responses are rejected. The document workflow divides content instead of increasing this context.
 
-## Document workflow
+## Historical bilingual workflow
+
+The following diagram describes specification 004 and its retained artifacts. New CLI jobs use the approval-aware workflow below; old checkpoints are not silently migrated.
 
 ```mermaid
 flowchart TD
@@ -83,3 +85,50 @@ Each batch contains at most 12 source spans and 1800 UTF-8 source bytes. Complet
 Generated review-required candidates are local review artifacts, not external publication. Source-specific preparation ranges and documents never belong in the repository.
 
 Parser v2 removes approved editorial markers within each prose region before segmentation. Exact original text and cleaned model text have separate hashes. Only spacing directly affected by removal is normalized; protected code/links and existing line-ending suffixes remain intact. Identical original headings are compared across both completed languages; variants require review, not automatic replacement. A new parser/prompt/job version requires a new job instead of migrating prior model evidence.
+
+## Approved trilingual workflow
+
+```mermaid
+flowchart TD
+    Path[File-path CLI] --> Job[Revision-aware document service]
+    Job --> Store[Atomic local store and process lock]
+    Store --> Original[Unchanged original and configuration identity]
+    Original --> ES[Bounded es-ES generation and checks]
+    ES --> Baseline[Immutable generated Spanish baseline]
+    Baseline --> Editable[Editable Spanish copy]
+    Editable --> Map[Conservative wording-only span mapping]
+    Map --> Review[Review exact revision against original]
+    Review --> Snapshot[Immutable revision and separate findings]
+    Snapshot --> Gate{Explicit approval of exact revision}
+    Gate -->|Missing or stale| Wait[Await Spanish approval; no English generation]
+    Gate -->|Approved| GB[en-GB from approved Spanish]
+    Gate -->|Approved| US[en-US from same approved Spanish]
+    GB --> GBCheck[British proofreading and Spanish-grounded audits]
+    US --> USCheck[American proofreading and Spanish-grounded audits]
+    GBCheck --> OriginalCheck[Separate original-grounded audits]
+    USCheck --> OriginalCheck
+    Original --> OriginalCheck
+    OriginalCheck --> Output[Revision-specific outputs and independent quality status]
+    Editable -->|Changed after approval| Invalidate[Invalidate authority; retain outdated outputs]
+    Invalidate --> Map
+```
+
+Specification 005 adds `document_revision.py` for pure edit mapping, `document_review.py` for evidence-bearing checks without generation, and `editorial_job.py` for revision/approval orchestration. Store code owns filesystem access; the CLI only captures input and presents state. A review-required revision can be authorised for translation only with explicit acknowledgement; its automatic quality does not become accepted.
+
+Edits are scoped to unambiguous retained prose spans. Structural or ambiguous cross-boundary changes fail closed and require smaller wording edits or a new source job. These bounds preserve evidence identity; they are not a claim to support arbitrary document editing. Both English branches consume an immutable Spanish snapshot and are separately compared against the original. Positive audits still do not establish exhaustive cross-section equivalence.
+
+## Reproducible editorial calibration
+
+```mermaid
+flowchart LR
+    Candidate[Exact candidate prose] --> Editorial[Versioned deterministic editorial findings]
+    Editorial --> Repair[Bounded generation repair]
+    Editorial --> Review[Review-only findings]
+    Editorial --> Revalidate[Saved-evidence reconstruction]
+    Bank[Draft synthetic pairs] --> Evaluation[Finite local evaluator]
+    Evaluation --> Review
+    Evaluation --> Evidence[Immutable per-case artifacts and checkpoint]
+    Evidence --> Summary[Separate semantic, style and execution outcomes]
+```
+
+`document_editorial.py` supplies narrow es-ES wording checks to generation, review and evidence validation. They signal review, never change text automatically or determine its authorship. Model instructions separately compare claims in both directions. `calibration.py` orchestrates bounded synthetic evaluation using the local transformer and atomic store; the CLI renders progress. Authored expectations are used only to score retained results, never included in model input. A changed prompt/editorial version requires a new job.

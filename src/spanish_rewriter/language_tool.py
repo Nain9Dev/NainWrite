@@ -47,8 +47,8 @@ class LanguageToolClient:
         self.endpoint = endpoint
         self.timeout_seconds = timeout_seconds
         self.level = level
-        if language not in {"es", "es-ES", "en-GB"}:
-            raise ValueError("Supported proofreading languages: es, es-ES, en-GB")
+        if language not in {"es", "es-ES", "en-GB", "en-US"}:
+            raise ValueError("Supported proofreading languages: es, es-ES, en-GB, en-US")
         self.language = "es" if language == "es-ES" else language
 
     def check(self, text: str) -> ProofreadingResult:
@@ -93,7 +93,7 @@ class LanguageToolClient:
         if not isinstance(software, dict) or software.get("name") != "LanguageTool":
             raise LanguageToolError("Endpoint did not identify itself as LanguageTool")
         language = data.get("language")
-        allowed = {"es", "es-ES"} if self.language == "es" else {"en-GB"}
+        allowed = {"es", "es-ES"} if self.language == "es" else {self.language}
         if not isinstance(language, dict) or language.get("code") not in allowed:
             raise LanguageToolError(f"LanguageTool did not confirm {self.language} checking")
         matches = data.get("matches")

@@ -1,0 +1,79 @@
+{
+  "version": "corporate-controls-v1",
+  "review_status": "draft",
+  "purpose": "Preliminary paired semantic controls; expected labels are never sent to the auditors. No human gold approval or representative accuracy claim.",
+  "cases": [
+    {
+      "id": "CORP-001", "split": "development", "locale": "es-ES", "phenomenon": "state", "expected_equivalent": false,
+      "source": "The reference set is populated. Its contents have not yet been validated.",
+      "candidate": "El conjunto de referencia se está completando. Su contenido aún no se ha validado.",
+      "reason": "Existing populated state was changed to an ongoing population process."
+    },
+    {
+      "id": "CORP-002", "split": "development", "locale": "es-ES", "phenomenon": "state", "expected_equivalent": true,
+      "source": "The reference set is populated. Its contents have not yet been validated.",
+      "candidate": "El conjunto de referencia contiene datos. Su contenido aún no se ha validado.",
+      "reason": "Contains data preserves populated without inventing completeness or validation."
+    },
+    {
+      "id": "CORP-003", "split": "development", "locale": "es-ES", "phenomenon": "scope", "expected_equivalent": false,
+      "source": "The benchmark checks conformance rather than execution speed. The service includes benchmark hosting.",
+      "candidate": "Las pruebas comprueban la conformidad, no la velocidad de ejecución. El servicio incluye el alojamiento de pruebas de rendimiento.",
+      "reason": "Hosting was narrowed to performance tests despite explicit conformance context."
+    },
+    {
+      "id": "CORP-004", "split": "development", "locale": "es-ES", "phenomenon": "scope", "expected_equivalent": true,
+      "source": "The benchmark checks conformance rather than execution speed. The service includes benchmark hosting.",
+      "candidate": "Las pruebas comprueban la conformidad, no la velocidad de ejecución. El servicio incluye el alojamiento de estas pruebas.",
+      "reason": "The reference to these tests retains the stated conformance scope."
+    },
+    {
+      "id": "CORP-005", "split": "held_out_for_this_iteration", "locale": "es-ES", "phenomenon": "condition_direction", "expected_equivalent": false,
+      "source": "La autorización del cliente es necesaria, pero no suficiente, para iniciar el piloto.",
+      "candidate": "El piloto comenzará en cuanto el cliente lo autorice.",
+      "reason": "A necessary but insufficient condition became a sufficient trigger."
+    },
+    {
+      "id": "CORP-006", "split": "held_out_for_this_iteration", "locale": "es-ES", "phenomenon": "condition_direction", "expected_equivalent": true,
+      "source": "La autorización del cliente es necesaria, pero no suficiente, para iniciar el piloto.",
+      "candidate": "Para iniciar el piloto se necesita la autorización del cliente, aunque esa autorización no basta.",
+      "reason": "Necessary and insufficient are both retained."
+    },
+    {
+      "id": "CORP-007", "split": "held_out_for_this_iteration", "locale": "es-ES", "phenomenon": "negation_scope", "expected_equivalent": false,
+      "source": "No todos los informes necesitan una segunda revisión.",
+      "candidate": "Ningún informe necesita una segunda revisión.",
+      "reason": "Not all was changed to none."
+    },
+    {
+      "id": "CORP-008", "split": "held_out_for_this_iteration", "locale": "es-ES", "phenomenon": "negation_scope", "expected_equivalent": true,
+      "source": "No todos los informes necesitan una segunda revisión.",
+      "candidate": "Hay informes que no necesitan una segunda revisión.",
+      "reason": "Preserves the existence of reports not requiring another review."
+    },
+    {
+      "id": "CORP-009", "split": "held_out_for_this_iteration", "locale": "en-GB", "phenomenon": "locale_control", "expected_equivalent": true,
+      "source": "La organización analizará los resultados antes de autorizar la entrega.",
+      "candidate": "The organisation will analyse the results before authorising delivery.",
+      "reason": "British spelling with the original sequence retained."
+    },
+    {
+      "id": "CORP-010", "split": "held_out_for_this_iteration", "locale": "en-US", "phenomenon": "locale_control", "expected_equivalent": true,
+      "source": "La organización analizará los resultados antes de autorizar la entrega.",
+      "candidate": "The organization will analyze the results before authorizing delivery.",
+      "reason": "American spelling with the original sequence retained."
+    },
+    {
+      "id": "CORP-011", "split": "held_out_for_this_iteration", "locale": "en-GB", "phenomenon": "source_crosscheck", "expected_equivalent": false,
+      "source": "La entrega podría aplazarse si el cliente solicita cambios.",
+      "candidate": "Delivery will be postponed if the client requests changes.",
+      "reason": "Possible postponement became a definite conditional consequence."
+    },
+    {
+      "id": "CORP-012", "split": "held_out_for_this_iteration", "locale": "en-US", "phenomenon": "source_crosscheck", "expected_equivalent": false,
+      "source": "El informe recoge las limitaciones conocidas, no todas las limitaciones posibles.",
+      "candidate": "The report covers all possible limitations, not just known limitations.",
+      "reason": "The stated coverage limitation was reversed."
+    }
+  ]
+}
