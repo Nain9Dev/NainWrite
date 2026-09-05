@@ -24,7 +24,13 @@
 
 ## Publication
 
-- [A] Final source/privacy inspection and authorised commit/push pending.
+- [A] Reviewed all 18 publication files; no common credential patterns or files
+  above 5 MB found. Corpus text, reports, review sheets and local decoder remain
+  ignored. This is a bounded inspection, not a comprehensive security audit.
+- [A] Repository identity and private visibility verified. Implementation commit
+  `fb56ca799194d2c9506d062540a9ef5c9dcb44af` pushed to
+  `naindev/strict-es-quality-gates`; local and remote SHA matched and the tree was
+  clean. This handoff update records that verified publication.
 
 ## Preserved
 
@@ -48,5 +54,7 @@ the runtime has no new inference dependency. Original private draft SHA remains
 ## Resume state: 2026-09-06
 
 Source, completed comparison and unchanged base HEAD were rechecked after the
-user requested continuation. No model run remains active. Finish publication;
-do not claim maximum quality or weaken gates while human adjudication is pending.
+user requested continuation. The final suite passed 165 tests in 3.662 seconds;
+offline reconstruction matched the immutable comparison exactly. Publication is
+complete. No model run remains active. The next required input is independent
+human adjudication; do not claim maximum quality or weaken gates while pending.
