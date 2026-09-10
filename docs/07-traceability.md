@@ -131,3 +131,16 @@
 The complete software suite passed 193 tests after the modality regression.
 Generated test evidence remains under ignored `artifacts/` and `private/` paths.
 Known historical semantic and editorial failures are not cleared by this result.
+
+
+## Specification 013: contextual language review
+
+| Requirement | Evidence | Status / limitation |
+| --- | --- | --- |
+| CTX-001 | Unqualified source tests in es-ES/en-US/en-GB; retained synthetic exports checked | Question retained despite positive synthetic audits; no new model run |
+| CTX-002 | Qualified web/hotel/participant controls; wrong sense, unrelated keywords, quotes and coordinated senses | Direct qualification only; indirect context still needs human judgement |
+| CTX-003 | Generation/review replay and removed-finding rejection; existing prompt-budget regression | Shared versioned checks; historical job configuration cannot silently change |
+| CTX-004 | Job report contains a plain-Spanish question and technical finding; pauses before approval | A question is not an answer or final approval |
+
+Complete suite after specification 013: 201 tests passed. The new finding does
+not clear historical semantic failures or establish general ambiguity detection.

@@ -41,3 +41,15 @@ Record pass, correction or uncertainty separately for each dimension. Any substa
 `benchmark/corporate_review_controls.json` contains six deliberately invalid and six valid semantic pairs, all draft labels. Four development examples address previously observed failure classes; eight additional cases were kept out of this iteration's prompt implementation instructions. They are a small development evaluation, not an independently curated benchmark. After being inspected they are no longer unseen for future tuning.
 
 `tests/fixtures/corporate-review-smoke.md` is synthetic and contains no customer text. It tests a previously good sentence, status versus validation, technical scope, conditional timing and a protected product name. Structural/approval tests use synthetic approval events; actual local-model output must still be displayed to Aitor before the workflow continues to English.
+
+
+## Contextual review follow-up
+
+The owner confirmed that ambiguous terminology must be interpreted from context,
+not a universal domain assumption. Specification 013 adds a narrow source-grounded
+question for unqualified Spanish lodging terminology. Explicit web/hotel/person
+qualification supports matching translations; unrelated keywords and candidate-added
+qualifiers do not establish meaning. Reports retain the technical finding and a
+plain Spanish question. This is not general word-sense disambiguation; indirect
+context and other ambiguous terms still need human review. A changed prompt or
+contextual-rule identity requires a new job rather than editing old checkpoints.

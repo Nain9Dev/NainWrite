@@ -234,6 +234,21 @@ def _summary(job, state, manifest, batches, revision):
             for index, (result, crosscheck) in enumerate(zip(stage['results'], stage['crosschecks']), 1):
                 lines.append(f"- {locale} {index}, desde español: {result['status']}; contra original: "
                              f"{crosscheck['status']}. " + '; '.join(result['issues'] + crosscheck['issues']))
+    current_findings = [issue for review in revision['reviews'] for issue in review['issues']]
+    if complete:
+        current_findings.extend(issue for stage in revision['english'].values()
+                                for result in stage['results'] + stage['crosschecks']
+                                for issue in result['issues'])
+    questions = []
+    if any(issue.endswith(':source_ambiguity:alojamiento') for issue in current_findings):
+        questions.append('¿«Alojamiento» se refiere a un servicio web, a una estancia de personas '
+                         'o a otro significado? Aclara el pasaje original o aporta el contexto '
+                         'que permite decidir antes de aprobar la traducción.')
+    if any(issue.endswith(':contextual_sense_changed:alojamiento') for issue in current_findings):
+        questions.append('La traducción de «alojamiento» usa un sentido distinto del indicado '
+                         'en el original. Revisa ese pasaje antes de aprobarlo.')
+    if questions:
+        lines.extend(['', '## Dudas de contexto', ''] + ['- ' + question for question in questions])
     report_text = '\n'.join(lines) + '\n'
     publish(job, report, report_text)
     state['report_hashes'][report] = sha(report_text)

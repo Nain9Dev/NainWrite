@@ -28,3 +28,5 @@ The browser/OCR/export flow is implemented and has finite workstation evidence.
 DOCX, editable text inside images, arbitrary layout replication, full disconnected
 OS verification, sustained capacity and broad human linguistic acceptance remain
 unestablished. Main publication was explicitly authorised in the latest owner message.
+
+- `specs/013-contextual-language-review/spec.md`: `CTX-001` through `CTX-004`, source-grounded lodging ambiguity, versioned replay and readable context questions.

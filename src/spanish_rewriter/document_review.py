@@ -4,6 +4,7 @@ from dataclasses import asdict
 
 from .document import literal_issues, protected_literals, sha
 from .document_editorial import editorial_issues
+from .document_ambiguity import contextual_issues
 from .document_prompts import build_prompt
 from .language_tool import partition_proofreading_issues
 from .models import LanguageIssue
@@ -16,6 +17,8 @@ def _findings(evidence, items, candidate, locale, config):
               for issue in literal_issues(source["text"], target["text"])]
     issues.extend(f"{target['id']}:{issue}" for target in candidate
                   for issue in editorial_issues(target['text'], locale))
+    issues.extend(f"{source['id']}:{issue}" for source, target in zip(items, candidate)
+                  for issue in contextual_issues(source['text'], target['text'], locale))
     proof = evidence["proofreading"]
     allowed = {"es", "es-ES"} if locale == "es-ES" else {locale}
     if proof["language"] not in allowed or proof["software_name"] != "LanguageTool":

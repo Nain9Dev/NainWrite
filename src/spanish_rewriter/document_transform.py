@@ -5,6 +5,7 @@ import re
 
 from .document import FIDELITY_VERSION, literal_issues, protected_literals, sha
 from .document_editorial import EDITORIAL_VERSION, editorial_issues
+from .document_ambiguity import CONTEXTUAL_VERSION, contextual_issues
 from .document_prompts import DOCUMENT_PROMPT_VERSION, DOCUMENT_SCHEMA, TERMINOLOGY, build_prompt
 from .language_tool import LanguageToolClient, partition_proofreading_issues
 from .prompts import AUDIT_SCHEMA
@@ -25,6 +26,7 @@ class DocumentTransformer:
             raise ValueError("Writer and independent auditor must have distinct model digests")
         self.config = {"prompt_version": DOCUMENT_PROMPT_VERSION, "evidence_contract": "trilingual-review-v2",
                        "editorial_version": EDITORIAL_VERSION, "fidelity_version": FIDELITY_VERSION,
+                       "contextual_version": CONTEXTUAL_VERSION,
                        "models": digests,
                        "writer": model, "auditor": audit_model, "max_repairs": 1,
                        "semantic_threshold": 0.95, "minimum_style_score": 5,
@@ -75,6 +77,8 @@ class DocumentTransformer:
                       for issue in literal_issues(source["text"], target["text"])]
             issues.extend(f"{target['id']}:{issue}" for target in candidate
                           for issue in editorial_issues(target['text'], locale))
+            issues.extend(f"{source['id']}:{issue}" for source, target in zip(items, candidate)
+                          for issue in contextual_issues(source['text'], target['text'], locale))
             text = "\n\n".join(v["text"] for v in candidate)
             proofreading = self.proofreaders[locale].check(text)
             expected = {"es", "es-ES"} if locale == "es-ES" else {locale}

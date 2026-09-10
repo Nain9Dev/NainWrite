@@ -4,7 +4,7 @@ The active handoff is maintained in `specs/009-local-product-readiness/tasks.md`
 
 ## Current task
 
-- `[A]` Local intake, browser queue/export and observed modality regression: specifications 010-012. Active handoff: `specs/012-conditional-modality/tasks.md`; full product evidence: `specs/011-local-review-workbench/tasks.md`.
+- `[A]` Local intake, browser queue/export and observed modality regression: specifications 010-012. Active handoff: `specs/013-contextual-language-review/tasks.md`; full product evidence: `specs/011-local-review-workbench/tasks.md`.
 - `[M]` Aitor confirms manual review availability; actual ratings remain pending and an independent reader is no longer a committed dependency.
 
 - `[A]` Implement and verify the local Qwen3.8 Spanish rewriter: complete.

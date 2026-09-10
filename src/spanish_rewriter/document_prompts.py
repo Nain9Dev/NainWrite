@@ -4,7 +4,7 @@ import json
 
 from .ollama_client import MAX_PROMPT_BYTES
 
-DOCUMENT_PROMPT_VERSION = "trilingual-editorial-v10"
+DOCUMENT_PROMPT_VERSION = "trilingual-editorial-v11"
 TERMINOLOGY = {
     "es-ES": {"asset": "activo", "conformance": "conformidad", "profile": "perfil",
               "check": "comprobación", "deliverable": "entregable", "milestone": "hito",
@@ -52,6 +52,8 @@ Translate ordinary labels and repeated headings consistently, retaining proper n
 For en-GB use natural formal British usage; for en-US use natural formal American usage.
 Translate the supplied Spanish idiomatically without forcing differences in names or
 protected literals. Audit against the supplied source in any language.
+Resolve ambiguous words/headings only from source context, never candidate additions.
+Flag unresolved readings; do not invent clarifications.
 """
 
 
