@@ -55,3 +55,15 @@ on 2026-09-10. Source, tests and technical documentation are eligible; private
 inputs, generated results, local installations and models are excluded. Remote
 main was fetched and is an ancestor of the implementation branch. Publication
 and remote SHA verification are the final delivery steps.
+
+
+## Publication verified on 2026-09-10
+
+- `[A]` Implementation commit `fac926c94bfb21df4318c97bde470ad38aeb7c30`
+  was fast-forwarded to main and pushed to the private origin repository.
+- `[A]` `git ls-remote origin refs/heads/main` matched local HEAD exactly;
+  working tree was clean and the active branch was main.
+- `[A]` The publication included the eleven prior implementation commits and
+  the current workbench/fidelity changes, without force-pushing history.
+- `[A]` Private documents, generated evidence, models and local installations
+  remain ignored and were not included. This follow-up records delivery evidence.
