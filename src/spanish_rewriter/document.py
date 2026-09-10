@@ -9,6 +9,11 @@ from dataclasses import asdict, dataclass
 
 
 PARSER_VERSION = "document-spans-v2"
+FIDELITY_VERSION = "document-fidelity-v2"
+_QUOTED = re.compile(r'`+[^`]*`+|https?://\S+|«[^»]*»|“[^”]*”|"[^"\n]*"')
+_CONDITIONAL = re.compile(r'\b(?:podría(?:s|mos|is|n)?|could)\b', re.IGNORECASE)
+_POSSIBILITY = re.compile(r'\b(?:podría(?:s|mos|is|n)?|could|might|may|would\s+be\s+able\s+to)\b', re.IGNORECASE)
+_ABILITY = re.compile(r'\b(?:can|puedo|puedes|puede|podemos|podéis|pueden)\b', re.IGNORECASE)
 BATCH_BYTES = 1800
 MAX_ITEMS = 12
 _LITERALS = re.compile(
@@ -32,6 +37,11 @@ def protected_literals(text: str) -> list[str]:
 
 def literal_issues(source: str, candidate: str) -> list[str]:
     issues = []
+    source_prose, candidate_prose = _QUOTED.sub(' ', source), _QUOTED.sub(' ', candidate)
+    # This intentionally narrow review flag does not prove modal equivalence.
+    if (_CONDITIONAL.search(source_prose) and _ABILITY.search(candidate_prose)
+            and not _POSSIBILITY.search(candidate_prose)):
+        issues.append('conditional_modality_changed')
     if Counter(protected_literals(source)) != Counter(protected_literals(candidate)):
         issues.append("protected_literals_changed")
     # Syntax is retained by the assembler; inline syntax is the model's responsibility.

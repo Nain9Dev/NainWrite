@@ -3,7 +3,7 @@
 from dataclasses import asdict
 import re
 
-from .document import literal_issues, protected_literals, sha
+from .document import FIDELITY_VERSION, literal_issues, protected_literals, sha
 from .document_editorial import EDITORIAL_VERSION, editorial_issues
 from .document_prompts import DOCUMENT_PROMPT_VERSION, DOCUMENT_SCHEMA, TERMINOLOGY, build_prompt
 from .language_tool import LanguageToolClient, partition_proofreading_issues
@@ -24,7 +24,8 @@ class DocumentTransformer:
         if model == audit_model or len(set(digests.values())) != 2:
             raise ValueError("Writer and independent auditor must have distinct model digests")
         self.config = {"prompt_version": DOCUMENT_PROMPT_VERSION, "evidence_contract": "trilingual-review-v2",
-                       "editorial_version": EDITORIAL_VERSION, "models": digests,
+                       "editorial_version": EDITORIAL_VERSION, "fidelity_version": FIDELITY_VERSION,
+                       "models": digests,
                        "writer": model, "auditor": audit_model, "max_repairs": 1,
                        "semantic_threshold": 0.95, "minimum_style_score": 5,
                        "terminology": TERMINOLOGY,

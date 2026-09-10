@@ -29,6 +29,16 @@ class EditorialJobTests(unittest.TestCase):
     def gate(self):
         return run_job(self.job, self.service)
 
+    def test_dedicated_endpoint_cannot_silently_resume_shared_endpoint_job(self):
+        before = (self.job / 'checkpoint.json').read_bytes()
+        client = FakeClient()
+        client.base_url = 'http://127.0.0.1:11436'
+        dedicated = service(client)
+        with self.assertRaisesRegex(ValueError, 'configuration'):
+            run_job(self.job, dedicated)
+        self.assertEqual([], client.calls)
+        self.assertEqual(before, (self.job / 'checkpoint.json').read_bytes())
+
     def test_first_completion_requires_exact_spanish_approval(self):
         result = self.gate()
         self.assertEqual('awaiting_spanish_approval', result['phase'])
@@ -48,7 +58,7 @@ class EditorialJobTests(unittest.TestCase):
         self.assertEqual({'es-ES', 'en-GB', 'en-US'}, set(result['files']))
         rewrites = [data for _, data, _ in self.service.client.calls
                     if data['task'] == 'rewrite' and data['target_locale'].startswith('en-')]
-        self.assertEqual(['en-GB', 'en-US'], [d['target_locale'] for d in rewrites])
+        self.assertEqual(['en-US', 'en-GB'], [d['target_locale'] for d in rewrites])
         self.assertEqual(rewrites[0]['source_items'], rewrites[1]['source_items'])
         self.assertEqual('Un informe.', rewrites[0]['source_items'][0]['text'])
         originals = [data for _, data, _ in self.service.client.calls

@@ -1,0 +1,6 @@
+# Optional local document application dependencies; core rewriting remains stdlib-only.
+pdfplumber==0.11.9
+pypdfium2==5.13.0
+pypdf==6.10.0
+reportlab==4.4.9
+Pillow==12.3.0

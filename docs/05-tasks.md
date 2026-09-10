@@ -1,11 +1,11 @@
 # Project Tasks
 
-The active handoff is maintained in `specs/007-independent-auditor-evaluation/tasks.md`. Corporate calibration history remains in `specs/006-corporate-calibration/tasks.md`, trilingual implementation evidence in `specs/005-approved-trilingual-workflow/tasks.md`, historical bilingual evidence in `specs/004-document-rewriting/tasks.md`, and earlier strict-gate failures in `specs/003-strict-es-quality-gates/tasks.md`.
+The active handoff is maintained in `specs/009-local-product-readiness/tasks.md`. Independent-evaluation history remains in `specs/007-independent-auditor-evaluation/tasks.md`; the separate private sample remains pending approval in `specs/008-proposal-reading-sample/tasks.md`. Corporate calibration and earlier implementation evidence remain in their original specification handoffs.
 
 ## Current task
 
-- `[A]` External semantic baseline and per-auditor comparison: specification 007.
-- `[M]` Independent reader availability confirmed; actual blind ratings pending.
+- `[A]` Local intake, browser queue/export and observed modality regression: specifications 010-012. Active handoff: `specs/012-conditional-modality/tasks.md`; full product evidence: `specs/011-local-review-workbench/tasks.md`.
+- `[M]` Aitor confirms manual review availability; actual ratings remain pending and an independent reader is no longer a committed dependency.
 
 - `[A]` Implement and verify the local Qwen3.8 Spanish rewriter: complete.
 - `[A]` Implement and execute independent local proofreading and semantic quality gates: implementation and evaluation complete; strict model acceptance failed and remains open.
@@ -20,7 +20,7 @@ The active handoff is maintained in `specs/007-independent-auditor-evaluation/ta
 - `[M]` Review and correct the 30 draft references.
 - `[M]` Review the 30 model outputs in the generated human-review sheet.
 - `[M]` Review the corrected semantic draft labels and the observed unsupported-context false acceptance.
-- `[M]` Server-isolation work is deferred: Aitor explicitly requested leaving Ollama unchanged. The current named-document request does not establish general network isolation.
+- `[A]` Dedicated NainWrite listener and cloud-disabled startup verified after explicit authorisation on 2026-09-09. Shared Ollama remains unchanged; complete offline lifecycle and private-document workflow are not verified by this slice.
 - `[H]` Approve ADR-001 if JSONL and fail-closed validation should become canonical.
 - `[H]` Approve or reject proposed ADR-002.
 - `[H]` Approve or reject proposed ADR-003 after reviewing its measured tradeoffs.

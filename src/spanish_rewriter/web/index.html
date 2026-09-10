@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="nainwrite-token" content="__TOKEN__">
+  <title>NainWrite · Revisión de documentos</title>
+  <link rel="stylesheet" href="/app.css"><script src="/app.js" defer></script>
+</head>
+<body>
+<header><div><span class="brand">NainWrite</span><span class="local">Trabajo local</span></div><p>Redacción profesional con revisión del significado.</p></header>
+<main>
+<section class="toolbar" aria-label="Control de procesamiento">
+  <label>Modo de trabajo<select id="mode"><option value="limited">Limitado · CPU, 4 hilos</option><option value="intensive">Intensivo · aceleración disponible</option><option value="scheduled">Horario nocturno</option></select></label>
+  <label>Desde las<input id="night-start" type="number" min="0" max="23" value="22"></label>
+  <label>Hasta las<input id="night-end" type="number" min="0" max="23" value="7"></label>
+  <button id="save-settings" class="secondary">Aplicar modo</button><button id="pause" class="secondary">Pausar cola</button>
+  <p>La pausa y los cambios de modo se aplican entre operaciones. El modo limitado puede tardar bastante más.</p>
+</section>
+<div id="notice" role="status" aria-live="polite"></div>
+<div class="workspace">
+<aside>
+  <h1>Documentos</h1>
+  <form id="upload-form">
+    <label class="file-label">Añadir documentos<input id="uploads" type="file" accept=".pdf,.md,.txt" multiple required></label>
+    <details><summary>Imágenes locales del Markdown</summary><label>PNG o JPEG junto al archivo<input id="assets" type="file" accept=".png,.jpg,.jpeg" multiple></label></details>
+    <button type="submit">Añadir a la cola</button>
+  </form>
+  <nav id="documents" aria-label="Documentos en la cola"></nav>
+  <p class="muted">Se conservan los originales y las versiones. No se envían documentos a servicios de nube.</p>
+</aside>
+<article id="empty"><span class="eyebrow">Tu mesa de revisión</span><h2>Del documento original<br>al texto que quieres entregar.</h2><p>Añade un PDF, Markdown o TXT. Primero revisaremos su lectura; después podrás mejorar el español y aprobar las traducciones.</p><ol><li>Comprobar la extracción</li><li>Revisar el español de España</li><li>Traducir a Estados Unidos y Reino Unido</li><li>Aprobar las versiones finales</li></ol><p class="muted">Los controles automáticos ayudan a revisar. No garantizan equivalencia perfecta.</p></article>
+<article id="document" hidden>
+  <div class="document-heading"><div><span class="eyebrow" id="stage"></span><h2 id="title"></h2></div><button id="refresh" class="secondary">Actualizar</button></div>
+  <p id="progress" role="status"></p><p id="error" role="alert"></p>
+  <div class="actions"><button id="resume" class="secondary" hidden>Reanudar documento</button><button id="original" class="secondary" hidden>Descargar original</button></div>
+  <section id="extraction-section" hidden>
+    <h3>1. Revisión de la extracción</h3><p>Compara todas las páginas y corrige el texto, el orden, las tablas y las notas. Si una página está vacía, descríbela expresamente; no apruebes cifras o fragmentos ilegibles.</p>
+    <details><summary>Ver páginas originales y observaciones</summary><div id="pages"></div></details>
+    <label>Markdown extraído<textarea id="extraction" spellcheck="false" rows="16"></textarea></label>
+    <div id="extraction-actions"><button id="save-extraction" class="secondary">Guardar correcciones</button><label>Nota de revisión<input id="extraction-note" placeholder="Qué has comprobado o corregido"></label><label class="check"><input type="checkbox" id="complete">He comprobado todo el contenido y resuelto las dudas de extracción.</label><button id="approve-extraction">Aprobar extracción y redactar</button></div>
+  </section>
+  <section id="spanish-section" hidden>
+    <h3>2. Español de España</h3><p>Revisa la redacción contra el original. Guardar cambios requiere una nueva revisión antes de traducir.</p>
+    <label>Español editable<textarea id="spanish" spellcheck="true" lang="es-ES" rows="17"></textarea></label>
+    <div class="actions"><button id="save-spanish" class="secondary">Guardar cambios</button><button id="review-spanish" class="secondary">Revisar versión guardada</button></div>
+    <details><summary>Comparación con el original</summary><pre id="diff"></pre></details>
+    <details><summary>Hallazgos y evidencia de revisión</summary><pre id="review"></pre></details>
+    <div id="translation-actions"><label>Nota de aprobación<input id="spanish-note" placeholder="Tu valoración de la versión española"></label><label class="check"><input id="resolved" type="checkbox">He revisado esta versión y resuelto todas las dudas de significado.</label><label class="check"><input id="acknowledge" type="checkbox">He revisado los hallazgos automáticos que siguen registrados.</label><button id="translate">Aprobar español y generar las dos traducciones</button></div>
+  </section>
+  <section id="exports-section" hidden><h3>Versiones para revisar y descargar</h3><p>Descargar un candidato no equivale a aprobarlo. El ZIP incluye el Markdown y sus imágenes para editarlo fuera de la aplicación.</p><div id="exports"></div></section>
+</article>
+</div>
+</main>
+<footer>Español de España · Inglés de Estados Unidos · Inglés del Reino Unido</footer>
+</body></html>

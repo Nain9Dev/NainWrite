@@ -3,7 +3,7 @@
 ## BLK-008: Independent corporate editorial acceptance
 
 - Type: `[M]` independent reader and owner adjudication.
-- Status: Reader availability confirmed; actual ratings pending.
+- Status: Actual ratings pending. On 2026-09-09 Aitor confirmed only his own participation; independent reader availability is not a committed dependency. Owner review can proceed but cannot be labelled independent review.
 - Evidence: The 40-case external baseline completed without execution or contract
   errors. Both models detect all 20 external non-equivalence labels, but their
   conservative combination disagrees with 17/20 equivalence labels. Inspected
@@ -42,12 +42,12 @@
 - Impact: The corrected unassisted 22-case run rejected 16/17 invalid cases and accepted 5/5 valid controls. Both auditors accepted unsupported context in `SEMA-022`. The strict semantic gate failed; the historical 20-case assisted pass cannot override this evidence.
 - Resolution: Review the draft semantic labels, preserve the failing regression, and validate any next control on new held-out examples. The final v10 rewrite comparison completed with 28/30 automatically accepted per run; two proofreading rejections and additional editorial defects remain. See `docs/10-validation.md`. Never weaken a gate merely to obtain a pass.
 
-## BLK-005: Desktop-managed Ollama listener
+## BLK-005: NainWrite Ollama isolation
 
-- Type: `[M]`
-- Status: Deferred by Aitor on 2026-09-04; isolation not verified.
-- Impact: The desktop application's listener is `::` on port `11434`, not loopback-only. Earlier task-terminal settings do not establish the replacement process's configuration. Aitor requested leaving Ollama unchanged and subsequently authorised local-model processing of the named draft. That request is not general approval for other private documents or proof of network isolation.
-- Resolution: Do not restart Ollama or change firewall rules under the current instruction. Any later isolation work requires a separately coordinated interruption and listener verification. Current document-workflow calls must continue to use proxy-free loopback transport.
+- Type: `[A]`, authorised by Aitor on 2026-09-09.
+- Status: Dedicated startup and default client routing verified; full offline lifecycle remains unverified.
+- Evidence: New default clients use `127.0.0.1:11436`. A dedicated Ollama 0.33.3 process binds only that address and reports cloud disabled. Shared `::11434` remains with the same owner; an occupied-port launch is rejected without changing either owner. Installed model manifests match; no inference was run.
+- Limits: This is not global workstation isolation or authentication against local processes. No automatic startup, disconnected full workflow or LanguageTool recovery was tested. Previous jobs with a different endpoint identity require compatible handling; checkpoints must not be edited to bypass guards. See specification 009 and the runbook.
 
 ## BLK-006: Bilingual document delivery validation
 
@@ -66,3 +66,20 @@
 ### Specification-006 follow-up: 2026-09-05
 
 The selected document configuration fixes the three observed Spanish wording defects and detects 6/6 known semantic mutations in the fresh run. The software suite passes 153 tests and reviewed source is published. Editorial acceptance remains open: one valid known control receives spurious audit findings despite the auditor describing the translations as accurate; new style controls can also receive false semantic rejections; the separate short-text unsupported-context failure remains unresolved. Human review and broader independent calibration are still needed. See `specs/006-corporate-calibration/tasks.md` and the selected functional baseline in `docs/10-validation.md`.
+
+
+## 2026-09-09 operational follow-up
+
+Specifications 010-011 implement local OCR, browser review, queue and PDF/Markdown
+export. The launcher started stopped LanguageTool and dedicated Ollama successfully;
+the browser exercised extraction and exact Spanish approval, then both English
+variants after Aitor's explicit approval of the synthetic text. Shared Ollama PID
+8420 remained unchanged. This supersedes the earlier slice's statement that no
+inference or LanguageTool restart was tested. A completely disconnected OS test,
+40-page endurance run and broad editorial acceptance remain open.
+
+The first US smoke strengthened `podríamos` to `can` despite positive audits.
+Specification 012 adds a narrow deterministic review flag; it is not a complete
+solution to semantic drift. Final English approval remains pending. Historical
+jobs predating `document-fidelity-v2` retain their files but require a new import
+to use changed fidelity checks; never edit their checkpoint identities.

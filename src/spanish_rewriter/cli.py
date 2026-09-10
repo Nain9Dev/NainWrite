@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 from .language_tool import DEFAULT_LANGUAGE_TOOL_ENDPOINT, LanguageToolClient
-from .ollama_client import OllamaClient, OllamaError
+from .ollama_client import DEFAULT_OLLAMA_URL, OllamaClient, OllamaError
 from .service import DEFAULT_AUDIT_MODEL, DEFAULT_MODEL, SpanishRewriteService
 
 
@@ -22,7 +22,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--protected", action="append", default=[])
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--audit-model", default=DEFAULT_AUDIT_MODEL)
-    parser.add_argument("--ollama-url", default="http://127.0.0.1:11434")
+    parser.add_argument("--ollama-url", default=DEFAULT_OLLAMA_URL)
     parser.add_argument("--language-tool-url", default=DEFAULT_LANGUAGE_TOOL_ENDPOINT)
     parser.add_argument(
         "--language-tool-level", choices=("default", "picky"), default="default"

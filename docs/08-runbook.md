@@ -74,15 +74,33 @@ Use `--plain` only when the caller handles a non-zero exit. Exit code `0` means 
 
 ## Start the local services on the measured workstation
 
-The existing desktop-managed Ollama process must be left unchanged on Aitor's workstation. Reuse it; do not launch a second instance or treat the example below as a current instruction to change its configuration. Only start the existing LanguageTool installation if its port is free and it is stopped. The Ollama example is for a separately authorized future installation. These examples do not establish unattended startup.
+On 2026-09-09 Aitor authorised isolation without interrupting other projects.
+New default clients use the dedicated endpoint `http://127.0.0.1:11436`. Shared
+desktop Ollama on 11434 must remain unchanged. The launcher requires PowerShell
+7.4+ and uses child-only environment settings; it does not install dependencies,
+download models, preload GPU weights, modify global settings or enable auto-start.
 
-Ollama terminal:
+Start dedicated Ollama from the repository root:
 
 ```powershell
-$env:OLLAMA_HOST = '127.0.0.1:11434'
-$env:OLLAMA_NO_CLOUD = '1'
-ollama serve
+pwsh -NoProfile -File tools/start-local-ollama.ps1
 ```
+
+The hidden process remains running after the command returns. Keep its printed PID,
+start time and startup-log path. Readiness requires an owned loopback listener and
+the `Ollama cloud disabled: true` log marker. An occupied port causes refusal rather
+than restart or automatic reuse. Inspect the owner and verify an existing instance
+before reusing it. Logs remain under ignored `.tools/nainwrite-ollama/`.
+
+To reverse the startup, first compare the current 11436 listener owner, executable
+path and process start time with the launch result, then stop only that matching
+process with `Stop-Process -Id VERIFIED_PID`. Do not stop all processes named
+Ollama. A mismatch requires inspection, not termination. No global setting needs
+restoration. LanguageTool startup remains a separate operation.
+
+Official configuration reference checked on 2026-09-09:
+[Ollama FAQ](https://docs.ollama.com/faq), server environment and disabling cloud
+features. The verified installed executable was signed and reported version 0.33.3.
 
 LanguageTool terminal, from the repository root:
 
@@ -98,9 +116,13 @@ On another workstation, set the explicit Java path to its verified Java 17 insta
 Verify before processing a document:
 
 ```powershell
-ollama list
-Get-NetTCPConnection -State Listen -LocalPort 11434,8082
+Invoke-RestMethod -Uri http://127.0.0.1:11436/api/tags -NoProxy -MaximumRedirection 0
+Get-NetTCPConnection -State Listen -LocalPort 11436,8082
 ```
+
+No LanguageTool listener was present in the 2026-09-09 isolation preflight; the
+existing installation was left stopped. Dedicated Ollama readiness alone does not
+make the complete rewriting pipeline available.
 
 ## Repeat the document calibration
 
@@ -118,7 +140,13 @@ Prompt `trilingual-editorial-v10`, editorial rules `corporate-style-v3` and evid
 
 Both listeners must be loopback-only. A local endpoint is not an authentication boundary against other local applications; do not expose these ports through a proxy or tunnel.
 
-The latest observed desktop-managed Ollama listener was `::`, not loopback-only. Setting environment variables in a new terminal does not reconfigure an already running application-owned server. On 2026-09-04, Aitor explicitly required leaving that instance unchanged and authorised local processing of the named draft with this limitation understood. This is a narrow exception, not proof of isolation or blanket permission for other private documents. Future isolation work must be separately coordinated; do not run the restart commands above on the current instance. See `BLK-005` and [validation evidence](10-validation.md).
+The shared desktop listener remains `::11434`; NainWrite's dedicated instance does
+not change its exposure. New default calls no longer use it. Explicit CLI endpoint
+overrides require their own listener verification. Historical jobs include endpoint
+identity in saved configuration, so switching to 11436 may reject their resumption.
+Keep those jobs intact and use a compatible runtime or a separately specified
+migration; never edit checkpoints. No private document was processed during the
+isolation slice. See `BLK-005` and specification 009 for current evidence and limits.
 
 The application HTTP transport explicitly ignores proxies and rejects redirects. The strict Python service rejects configurations that disable proofreading or the second auditor. These controls do not protect against a compromised local service or operating system.
 
@@ -225,3 +253,73 @@ Use `--output-dir "D:/PrivateOutputs"` to choose the parent of the new unique jo
 Exit codes: `3` = normal pause awaiting Spanish approval; `0` = all three versions complete and automatically accepted; `2` = complete review-required candidates; `1` = incomplete or invalid job. The legacy `--both` option cannot bypass approval. Every generated document remains a candidate until reviewed by a person. Inspect the printed revision-specific report and files; local machine-readable evidence retains actual model digests and findings.
 
 Common Markdown headings, lists, tables with outer pipes, inline code/links and fenced code are covered. Reference-style links, unsupported HTML, unsafe multiline constructs and oversized protected spans stop processing. This is not a universal Markdown renderer or a PDF/DOCX converter. The CLI checks that the configured proofreading languages are available before private generation. If LanguageTool is stopped, start its existing local installation using the separate instructions above; do not restart Ollama.
+
+
+## Local browser workbench
+
+### Configured workstation
+
+Double-click `Start-NainWrite.cmd` or run `pwsh -NoProfile -File tools/open-workbench.ps1`.
+The browser is at `http://127.0.0.1:8765`. Repeated launch checks and reuses the
+existing local process. Work continues while the browser is closed and the
+computer remains awake. The launcher is manual; it installs no startup task.
+
+1. Add PDF, Markdown or TXT. Markdown images may be supplied as local PNG/JPEG
+   files; references must match their names. Remote images are rejected.
+2. Inspect every original PDF page and the extraction. Correct OCR, ordering,
+   tables and notes. Confirm completeness with a review note. Empty pages need
+   an explicit blank-page description; never approve unreadable numbers.
+3. Review the entire Spanish, differences and separate findings. Save manual
+   wording edits and run review again. Structural changes may require a new
+   import because the editorial mapping intentionally refuses ambiguity.
+4. Approve the exact Spanish and confirm that meaning doubts are resolved.
+   Automatic findings remain recorded; their acknowledgement never erases them.
+5. Review both English variants and download PDF, Markdown or ZIP with images.
+   Record final approval per exact locale revision. External file edits do not
+   update the retained version or its approval; import a revised document to
+   process it again. DOCX and an English editing/re-audit screen are deferred.
+
+Use **Pausar cola** to stop at the next model request or stage boundary. An
+in-flight request may finish first. **Continuar cola** permits queued work;
+paused/failed documents also have their own resume action. A restart recovers
+interrupted work as paused. Errors retain originals and checkpoints.
+
+Limited mode requests CPU inference with four threads, and can be slow. Intensive
+mode permits available model acceleration. Night mode uses local hours while the
+application is running; manual selection overrides it. Modes are request settings,
+not GPU/CPU utilisation guarantees. A sleeping computer cannot process the queue.
+
+### Dependencies and private data
+
+`requirements-documents.txt` pins the tested PDF libraries. Core, OCR and export
+perform no dependency downloads during processing. The tested installation uses
+an existing Python runtime with those libraries and a portable Tesseract under
+`.tools/tesseract/`, with `spa`, `eng` and `osd` in `tessdata/`. LanguageTool is under
+`.tools/languagetool/LanguageTool-6.9-SNAPSHOT/`; Java 17 is required. Locally
+installed custom Qwen and Gemma model aliases must exist before launch.
+
+Optional `.tools/workbench-runtime.json` contains only `python` and `java`
+absolute executable paths. Alternatively pass `-Python` and `-Java` to
+`tools/start-workbench.ps1`. No credentials are needed. New-machine provisioning
+is separate from document processing; the current launcher is not an installer.
+
+Data live under `private/workbench/`: original uploads, intake assets, revision
+snapshots, model evidence, queue state and exports. This folder, `.tools/`,
+`artifacts/` and `NainWrite-Documents/` are excluded from Git. Retention is indefinite;
+there is no automatic deletion or backup. Stop the application before manually
+backing up or removing its data. A per-document delete screen is not implemented.
+
+The HTTP service binds loopback and uses Host/Origin checks and a random request
+token. It is not authentication against another process running as your Windows
+user. Logs stay in `.tools/`. Dedicated Ollama uses `127.0.0.1:11436` with cloud
+features disabled; shared `11434` is neither stopped nor reconfigured.
+
+### Verification and limits
+
+The browser upload and approval workflow, real synthetic OCR, local-model Spanish
+and exported PDF were exercised on 2026-09-09. The PDF preview was inspected for
+clipping and checked for critical extracted text. Synthetic tests exercise both
+English variants, exact approvals, tamper rejection and persisted queue recovery.
+A fully disconnected operating-system test and sustained 40-page workload have
+not been measured. Known semantic benchmark failures remain open; generated
+files and high audit scores are not a guarantee of perfect writing or translation.

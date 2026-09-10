@@ -1,5 +1,10 @@
 # Independent Evaluation
 
+Current owner update, 2026-09-09: only Aitor is committed to manual review.
+The independent-reader availability below is historical. Owner ratings may proceed
+but must remain labelled owner review; independent and en-US/en-GB locale quality
+cannot be claimed from availability alone. Actual ratings remain pending.
+
 Research checked on 2026-09-05. The decision is to measure external semantic
 agreement now and obtain a separate blind human assessment of corporate es-ES.
 No reviewed source establishes a single best local model for this product.

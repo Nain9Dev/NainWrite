@@ -19,7 +19,7 @@ from spanish_rewriter.language_tool import (
     DEFAULT_LANGUAGE_TOOL_ENDPOINT,
     LanguageToolClient,
 )
-from spanish_rewriter.ollama_client import OllamaClient, OllamaError
+from spanish_rewriter.ollama_client import DEFAULT_OLLAMA_URL, OllamaClient, OllamaError
 from spanish_rewriter.service import DEFAULT_AUDIT_MODEL, DEFAULT_MODEL
 from spanish_rewriter.prompts import PROMPT_VERSION
 
@@ -35,7 +35,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--audit-model", default=DEFAULT_AUDIT_MODEL)
-    parser.add_argument("--ollama-url", default="http://127.0.0.1:11434")
+    parser.add_argument("--ollama-url", default=DEFAULT_OLLAMA_URL)
     parser.add_argument("--language-tool-url", default=DEFAULT_LANGUAGE_TOOL_ENDPOINT)
     parser.add_argument(
         "--language-tool-level", choices=("default", "picky"), default="default"

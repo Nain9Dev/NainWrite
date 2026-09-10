@@ -46,7 +46,22 @@ flowchart TD
 
 ## Operational boundary
 
-Both services run on the workstation. Ollama uses port `11434`; LanguageTool uses port `8082`. The unrelated Docker service on `8081` is untouched. Neither service requires a cloud account. A different model family is an independent implementation, not proof of statistically independent errors.
+Both services run on the workstation. New default NainWrite clients use dedicated Ollama on `127.0.0.1:11436`; LanguageTool uses port `8082`. Shared Ollama on `11434` and unrelated services on `11435` and `8081` are not managed by NainWrite. Neither NainWrite service requires a cloud account. A different model family is an independent implementation, not proof of statistically independent errors.
+
+```mermaid
+flowchart LR
+    Start[Scoped hidden launcher] --> Dedicated[Ollama 127.0.0.1:11436 cloud disabled]
+    CLI[Default NainWrite clients] --> Dedicated
+    Dedicated --> Models[Existing local model store]
+    Others[Other projects] --> Shared[Shared Ollama 11434 unchanged]
+    CLI --> LT[LanguageTool loopback 8082]
+```
+
+`tools/start-local-ollama.ps1` verifies listener ownership and the cloud-disabled
+startup marker. It does not preload models or alter the user's global environment.
+An occupied dedicated port is an error, not permission to kill its owner. Explicit
+CLI endpoint overrides remain operator configuration, not verified isolation.
+Old jobs retain their configuration identity and are not silently migrated.
 
 The default automatic gate requires semantic confidence of at least `0.95` and both style scores at `5/5` from each auditor. These are uncalibrated model judgements, not probabilities or guarantees of correctness. Rejected candidates remain available for human diagnosis but must not be automatically published.
 
@@ -151,3 +166,30 @@ flowchart LR
 ```
 
 `document_editorial.py` supplies narrow es-ES wording checks to generation, review and evidence validation. They signal review, never change text automatically or determine its authorship. Model instructions separately compare claims in both directions. `calibration.py` orchestrates bounded synthetic evaluation using the local transformer and atomic store; the CLI renders progress. Authored expectations are used only to score retained results, never included in model input. A changed prompt/editorial version requires a new job.
+
+
+## Local document workbench
+
+```mermaid
+flowchart TD
+    Browser[Local HTML and JavaScript] --> HTTP[Loopback HTTP adapter]
+    HTTP --> Service[Workbench application service]
+    Service --> Repository[Workbench and intake repositories]
+    Service --> Queue[Single worker with persisted state]
+    Queue --> Intake[Native PDF or local OCR extraction]
+    Intake --> Human[Exact extraction approval]
+    Human --> Spanish[Conservative Spanish job]
+    Spanish --> Approval[Exact human Spanish approval]
+    Approval --> English[US then UK English]
+    English --> Export[Local PDF and Markdown export]
+    Export --> Final[Per-locale human review]
+    Spanish --> Models[Dedicated local Ollama and LanguageTool]
+    English --> Models
+```
+
+`workbench.py` owns transitions and approval rules; `workbench_http.py` only
+adapts requests and responses. Browser code renders server state and captures
+input. `workbench_store.py` and `intake_store.py` own persistence and confinement;
+no database service is introduced. `pdf_intake.py` adapts local PDF/OCR tools and
+`document_export.py` renders an intentionally bounded Markdown subset. Durable
+editorial checkpoints remain the existing job system's responsibility.

@@ -13,6 +13,7 @@ htmlcov/
 /private/
 /inputs/
 /outputs/
+/NainWrite-Documents/
 .env
 .env.*
 !.env.example

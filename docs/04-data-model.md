@@ -241,3 +241,39 @@ erDiagram
 ```
 
 Each record holds either complete review evidence or an explicit local model execution error. Per-case files are immutable; checkpoint state allows validated completed records to be reused. `complete` means all cases were attempted, whereas `quality_gate_passed` requires all expected semantic/style outcomes and no execution errors. The fixed draft review status is never gold approval. Configuration includes the editorial-rule version as well as prompt/model identities.
+
+
+## Workbench records
+
+```mermaid
+erDiagram
+    WORKBENCH ||--o{ DOCUMENT : queues
+    DOCUMENT ||--o| INTAKE : retains
+    INTAKE ||--o{ PAGE : describes
+    INTAKE ||--o{ EXTRACTION_APPROVAL : snapshots
+    DOCUMENT ||--o| EDITORIAL_JOB : runs
+    DOCUMENT ||--o{ EXPORT : retains
+    EXPORT ||--o| FINAL_APPROVAL : identifies
+    DOCUMENT {
+        string id
+        string status
+        string action
+        string progress
+    }
+    EXPORT {
+        string locale
+        string text_sha256
+        string pdf_sha256
+        string bundle_sha256
+    }
+    FINAL_APPROVAL {
+        string revision
+        string note
+        string time
+    }
+```
+
+Workbench state is atomically replaced JSON. Original bytes, page previews,
+images, approved snapshots and exports are retained separately. Editing Spanish
+invalidates current exports and final approvals; old files remain on disk.
+Hashes detect accidental/tampered changes but do not authenticate the local user.

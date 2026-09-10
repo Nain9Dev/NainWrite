@@ -2,11 +2,11 @@
 
 ## Objective
 
-Build a local, reproducible evaluation workflow for Spanish rewriting that prioritizes semantic fidelity over stylistic variation.
+Build a local document rewriting workflow that prioritizes semantic fidelity over stylistic variation, produces reviewed es-ES first, and then en-US and en-GB. Professional publications, commercial proposals and client emails are the priority use cases.
 
 ## Current phase
 
-The project is creating and approving a Spanish-from-Spain benchmark before implementing a model runner or English translation.
+The CLI model runner and revision-gated translation workflow exist, but linguistic acceptance remains open. The completed 2026-09-09 interview defines the broader product in `specs/009-local-product-readiness/spec.md`: PDF/OCR input, PDF/Markdown delivery, local browser review and a background queue are future slices. Only dedicated Ollama isolation is implemented in this slice.
 
 ## Success condition
 

@@ -14,6 +14,7 @@ from .local_http import open_local
 
 MAX_PROMPT_BYTES = 12000
 MAX_OUTPUT_TOKENS = 2048
+DEFAULT_OLLAMA_URL = "http://127.0.0.1:11436"
 
 
 class OllamaError(RuntimeError):
@@ -25,7 +26,7 @@ class OllamaClient:
 
     def __init__(
         self,
-        base_url: str = "http://127.0.0.1:11434",
+        base_url: str = DEFAULT_OLLAMA_URL,
         timeout_seconds: float = 300.0,
     ) -> None:
         parsed = urlparse(base_url)

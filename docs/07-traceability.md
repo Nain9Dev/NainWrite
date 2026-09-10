@@ -84,3 +84,50 @@
 | REQ-107 | `test_external_metadata_and_labels_never_reach_models`; unchanged existing review-only validation | Labels withheld; runtime prompt/model settings unchanged |
 | REQ-108 | Error/abstention/disagreement/style/threshold tests; offline tamper rejection | Per-auditor and conservative semantic metrics separate from strict acceptance |
 | REQ-109 | `test_blind_packet_omits_labels_models_and_scores_and_quotes_source`; independent review protocol | Reader available; actual ratings and corporate es-ES approval pending |
+| 008-R1 | Explicit user programme confirmation and official guidance review | Programme retained; eligibility not certified |
+| 008-R2 | Original file SHA and Git ignore checks; ignored provenance record | Private source preserved; condensed input is a selected synopsis, not the full draft |
+| 008-R3 | Local job evidence and specification-008 handoff | Two generation batches and edited-revision audits complete; source ambiguity and semantic disagreement retained; not a clean accuracy measurement |
+| 008-R4 | Existing REQ-088/091 tests and actual job approval pause | No English output or human approval yet |
+| 008-R5 | Ignored PDF export manifest and rendered page inspection | One page, 414 words, 11 pt body, extracted text identical to edited Spanish |
+
+## Specification 009: decision record and dedicated isolation
+
+| Requirement | Evidence | Status / limitation |
+| --- | --- | --- |
+| READY-001 through READY-011 | Aitor's 2026-09-09 interview; specification 009 and plan | Product decisions recorded; full product behaviour not implemented or accepted |
+| ISO-001 | `IsolatedEndpointTests`; full existing suite | Dedicated defaults and unavailable-service rejection verified; no shared fallback |
+| ISO-002 | Live launcher: `127.0.0.1:11436`, owned PID and cloud-disabled startup marker; `/api/version`, `/api/tags`, `/api/ps` | Ollama 0.33.3, installed model digests match, no loaded model; no private inference or full offline test |
+| ISO-003 | Live repeated launch rejects occupied port; before/after listener owners unchanged | Dedicated 47016 and shared 8420 retained during verification; no global environment/firewall/GPU changes |
+| ISO-004 | `test_dedicated_endpoint_cannot_silently_resume_shared_endpoint_job` | Synthetic old-endpoint job rejected before generation; checkpoint unchanged; actual historical jobs not migrated |
+
+
+## Specifications 010-012: local document delivery
+
+| Requirement | Evidence | Status / limitation |
+| --- | --- | --- |
+| IN-001 | `IntakeTests`, original hashes, encrypted/unsupported input checks | Original retained; private data excluded from Git |
+| IN-002 | Every-page native PDF fixture, real OCR and missing-page checks | Every page previewed; failures remain in review |
+| IN-003 | Two-column order/heading regression and image/table/link fixture | Common layouts tested; complex layouts require correction |
+| IN-004 | Exact-hash, edited extraction, missing page and asset tamper tests | Current complete extraction and review note required |
+| IN-005 | Approved snapshot verification and changed-extraction workbench test | Unapproved or changed source cannot proceed |
+| IN-006 | Local image copy, remote/traversal rejection | Document image URLs are not fetched |
+| IN-007 | Real portable spa+eng Tesseract on synthetic scan | Local OCR executed; confidence is not semantic certainty |
+| WB-001 | Actual browser upload and complete extraction approval | MD exercised end-to-end; PDF/OCR tested separately |
+| WB-002 | `WorkbenchTests`, actual Spanish pause and UI inspection | Conservative edits and diff available; structural edits bounded |
+| WB-003 | Both-locale gate tests and real owner-approved synthetic translation | US generated first; final English approval pending |
+| WB-004 | `DocumentExportTests`, extracted PDF text and rendered mixed-export inspection | PDF/MD/asset ZIP verified; exact layout and DOCX deferred |
+| WB-005 | Persisted pause/restart tests and actual application restart | Checkpoint recovery tested; long forced-shutdown workload not measured |
+| WB-006 | Night/manual mode tests; actual intensive request run | Request options verified, no utilisation or latency guarantee |
+| WB-007 | `WorkbenchHTTPTests`: private token, Host, Origin, traversal | Loopback-only listener and local static UI verified |
+| WB-008 | Changed extraction/Spanish and tampered export tests | Current actions reject changed identities; old files retained |
+| WB-009 | Actual Spanish and final-review browser states | Generation and human approval shown separately |
+| WB-010 | Complete locale text and idempotent approval tests | Changed PDF blocks download and final approval |
+| WB-011 | Actual stopped startup and repeated `open-workbench.ps1 -NoBrowser` | Existing app reused; no duplicate worker or global startup task |
+| WB-012 | Three exact final approvals and edit-revocation regression | Generation or partial approval never marks ready |
+| MOD-001 | `ConditionalModalityTests`, positive synthetic auditors still blocked | Observed miss detected; real bounded repair retained the first finding and produced `could` |
+| MOD-002 | Conditional alternatives and code/quote exclusions | Not exhaustive tense, scope or modality equivalence |
+| MOD-003 | Configuration identity assertion and existing old-config rejection tests | New fidelity version prevents silent checkpoint reuse |
+
+The complete software suite passed 193 tests after the modality regression.
+Generated test evidence remains under ignored `artifacts/` and `private/` paths.
+Known historical semantic and editorial failures are not cleared by this result.

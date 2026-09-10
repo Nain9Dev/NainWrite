@@ -13,7 +13,7 @@ from .document_store import (canonical, digest, initialize_editable, job_lock, n
                              verify_artifact as _artifact, verify_artifact_hash)
 
 JOB_VERSION = "approved-trilingual-job-v1"
-ENGLISH = ("en-GB", "en-US")
+ENGLISH = ("en-US", "en-GB")
 
 
 def _name(revision, label, suffix):
