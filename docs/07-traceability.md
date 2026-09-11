@@ -144,3 +144,16 @@ Known historical semantic and editorial failures are not cleared by this result.
 
 Complete suite after specification 013: 201 tests passed. The new finding does
 not clear historical semantic failures or establish general ambiguity detection.
+
+
+## Specification 014: conditional scope
+
+| Requirement | Evidence | Status / limitation |
+| --- | --- | --- |
+| SCOPE-001 | Cross-sentence masking and swapped-scope regressions; review with positive synthetic audits | Positional sentence heuristic, not general alignment |
+| SCOPE-002 | Merged-sentence loss and valid conditional alternatives | Conservative count fallback can require human judgement |
+| SCOPE-003 | English month/date versus modal `may` controls; existing protected-mention cases | Recognised dates only; no universal temporal parser |
+| SCOPE-004 | Generation/replay tamper regression and configuration-version assertion | Shared fidelity-v3 checks; old jobs retain their original identity |
+
+The complete suite passed 207 tests on 2026-09-11. No new model benchmark or final
+human document approval is claimed for this change.

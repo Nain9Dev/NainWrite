@@ -30,3 +30,5 @@ OS verification, sustained capacity and broad human linguistic acceptance remain
 unestablished. Main publication was explicitly authorised in the latest owner message.
 
 - `specs/013-contextual-language-review/spec.md`: `CTX-001` through `CTX-004`, source-grounded lodging ambiguity, versioned replay and readable context questions.
+
+- `specs/014-modal-scope-review/spec.md`: `SCOPE-001` through `SCOPE-004`, bounded conditional scope, date/modal distinction and evidence replay.

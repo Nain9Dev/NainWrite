@@ -9,11 +9,13 @@ from dataclasses import asdict, dataclass
 
 
 PARSER_VERSION = "document-spans-v2"
-FIDELITY_VERSION = "document-fidelity-v2"
+FIDELITY_VERSION = "document-fidelity-v3"
 _QUOTED = re.compile(r'`+[^`]*`+|https?://\S+|«[^»]*»|“[^”]*”|"[^"\n]*"')
 _CONDITIONAL = re.compile(r'\b(?:podría(?:s|mos|is|n)?|could)\b', re.IGNORECASE)
 _POSSIBILITY = re.compile(r'\b(?:podría(?:s|mos|is|n)?|could|might|may|would\s+be\s+able\s+to)\b', re.IGNORECASE)
 _ABILITY = re.compile(r'\b(?:can|puedo|puedes|puede|podemos|podéis|pueden)\b', re.IGNORECASE)
+_MAY_DATE = re.compile(r'\b(?:in|by|before|after|on|during|until|through)\s+May\b'
+                       r'|\bMay\s+\d{1,2}\b|\b\d{1,2}\s+May\b', re.IGNORECASE)
 BATCH_BYTES = 1800
 MAX_ITEMS = 12
 _LITERALS = re.compile(
@@ -35,12 +37,27 @@ def protected_literals(text: str) -> list[str]:
     return [m.group().rstrip(".,;") for m in _LITERALS.finditer(text)]
 
 
+def _conditional_strengthened(source: str, candidate: str) -> bool:
+    source_prose, candidate_prose = _QUOTED.sub(' ', source), _QUOTED.sub(' ', candidate)
+    candidate_prose = _MAY_DATE.sub(' ', candidate_prose)
+
+    def strengthened(left, right):
+        return (len(_CONDITIONAL.findall(left)) > len(_POSSIBILITY.findall(right))
+                and bool(_ABILITY.search(right)))
+
+    if strengthened(source_prose, candidate_prose):
+        return True
+    source_sentences = re.split(r'(?<=[.!?])\s+', source_prose.strip())
+    target_sentences = re.split(r'(?<=[.!?])\s+', candidate_prose.strip())
+    # Positional alignment is only a review heuristic, not a semantic proof.
+    return (len(source_sentences) == len(target_sentences)
+            and any(strengthened(left, right)
+                    for left, right in zip(source_sentences, target_sentences)))
+
+
 def literal_issues(source: str, candidate: str) -> list[str]:
     issues = []
-    source_prose, candidate_prose = _QUOTED.sub(' ', source), _QUOTED.sub(' ', candidate)
-    # This intentionally narrow review flag does not prove modal equivalence.
-    if (_CONDITIONAL.search(source_prose) and _ABILITY.search(candidate_prose)
-            and not _POSSIBILITY.search(candidate_prose)):
+    if _conditional_strengthened(source, candidate):
         issues.append('conditional_modality_changed')
     if Counter(protected_literals(source)) != Counter(protected_literals(candidate)):
         issues.append("protected_literals_changed")
