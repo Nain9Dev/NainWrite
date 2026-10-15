@@ -51,8 +51,8 @@ def create_server(workbench, *, port=8765):
                 if parsed.path == '/':
                     text = (static_root / 'index.html').read_text(encoding='utf-8')
                     self._send(200, text.replace('__TOKEN__', self.server.token).encode('utf-8'), 'text/html; charset=utf-8')
-                elif parsed.path in {'/app.js', '/app.css'}:
-                    kind = 'text/javascript' if parsed.path.endswith('.js') else 'text/css'
+                elif parsed.path in {'/app.js', '/app.css', '/mock-workbench.js', '/favicon.svg'}:
+                    kind = 'text/javascript' if parsed.path.endswith('.js') else ('text/css' if parsed.path.endswith('.css') else 'image/svg+xml')
                     self._send(200, (static_root / parsed.path[1:]).read_bytes(), kind + '; charset=utf-8')
                 elif parsed.path == '/api/state':
                     self._json(200, workbench.summary())

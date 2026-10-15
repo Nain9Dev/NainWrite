@@ -1,6 +1,13 @@
 # NainWrite ES
 
+[![CI](https://github.com/Nain9Dev/nainwrite-es/actions/workflows/ci.yml/badge.svg)](https://github.com/Nain9Dev/nainwrite-es/actions/workflows/ci.yml)
+[![Demo Online](https://img.shields.io/badge/demo-online-blueviolet?style=flat&logo=githubpages&logoColor=white)](https://write.naindev.com/)
+![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
+![Inference](https://img.shields.io/badge/inference-local%20%26%20fail--closed-success)
+
 NainWrite ES is a local, fail-closed rewriting agent for natural, clear and professional Spanish from Spain (`es-ES`). It rewrites drafts produced by people or language models while preserving meaning, uncertainty, conditions, negations, attribution and protected literals.
+
+> **Interactive Online Demo:** Try the editorial review workbench directly at [write.naindev.com](https://write.naindev.com/) with sample contracts, technical proposals, diff analysis, and human approval gates without installing local models.
 
 ## Current pipeline
 
