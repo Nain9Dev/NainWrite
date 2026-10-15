@@ -12,23 +12,10 @@ permissions:
 jobs:
   test:
     name: Unit and Integration Tests
-    runs-on: ubuntu-latest
+    uses: Nain9Dev/.github/.github/workflows/reusable-python.yml@main
+    with:
+      python-version: "3.12"
+      requirements-file: "requirements-documents.txt"
+      test-command: "python -m unittest discover -s tests -v"
+      run-ruff: false
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python 3.12
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: "pip"
-          cache-dependency-path: "requirements-documents.txt"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements-documents.txt
-
-      - name: Run test suite
-        run: python -m unittest discover -s tests -v
