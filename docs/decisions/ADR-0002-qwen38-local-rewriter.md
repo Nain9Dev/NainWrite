@@ -1,4 +1,4 @@
-# ADR-002: Qwen3.8-27B as the Local Spanish Rewriter
+# ADR-0002: Qwen3.8-27B as the Local Spanish Rewriter
 
 Status: Proposed
 

@@ -167,7 +167,7 @@ Reproduction commands and service setup are in [the runbook](08-runbook.md). Int
 2. `[M]` Approve or correct the 30 proposed references and review model outputs independently against their sources. Approving a reference does not train a model.
 3. `[M]` Define approved technical terminology, including whether `endpoint` must remain literal in this product's register.
 4. `[A]` Specify and test a next semantic-control iteration against the observed blind spot and new held-out examples; do not promote a prompt solely because it passes known development cases.
-5. `[H]` Approve or reject ADR-003 only after reviewing the measured failures and added latency.
+5. `[H]` Approve or reject ADR-0003 only after reviewing the measured failures and added latency.
 6. `[M]` Server-isolation changes are deferred by Aitor; leave the current Ollama instance unchanged. The named-draft exception does not establish general network isolation.
 
 Unattended external publication and blanket claims of error-free rewriting remain outside validated scope. GitHub preserves tracked source, synthetic banks and documentation, not local model weights, runtimes, private documents or ignored generated evidence.

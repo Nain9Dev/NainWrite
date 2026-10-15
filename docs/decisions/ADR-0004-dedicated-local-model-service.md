@@ -1,4 +1,4 @@
-# ADR-004: Dedicated Local Model Service
+# ADR-0004: Dedicated Local Model Service
 
 Status: Proposed
 

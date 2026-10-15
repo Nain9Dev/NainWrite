@@ -92,6 +92,8 @@ Exit code `0` means every configured automated gate passed. Exit code `2` means 
 
 ## Verification
 
+The software contract is validated by 207 automated tests across 30 test suites, executed on every push via [GitHub Actions CI](.github/workflows/ci.yml):
+
 ```powershell
 python -m unittest discover -s tests -v
 python tools/validate_bank.py
@@ -111,6 +113,8 @@ The document path uses its own versioned corporate instructions and reproducible
 - [Charter](docs/00-charter.md)
 - [Requirements](docs/01-requirements.md)
 - [Architecture](docs/03-architecture.md)
+- [Architecture Decision Records (ADRs)](docs/decisions/README.md)
+- [Security Policy](SECURITY.md)
 - [Traceability](docs/07-traceability.md)
 - [Runbook](docs/08-runbook.md)
 - [Primary-source research](docs/09-research.md)

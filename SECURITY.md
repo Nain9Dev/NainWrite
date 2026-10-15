@@ -17,6 +17,13 @@ The client disables HTTP proxies and refuses redirects, sending text only to con
 
 Checksums detect corruption and inconsistent saved evidence; they are not signatures against a local attacker who can rewrite every artifact. Approval records express local workflow authority, not authenticated identity. Documents are treated as untrusted text; processing does not execute their instructions or open their links.
 
-## Reporting a vulnerability
+## Reporting a Vulnerability
 
-Report vulnerabilities privately to the repository owner. Do not open a public issue containing sensitive text, credentials or exploit details.
+If you discover a security vulnerability in NainWrite ES, please report it responsibly rather than opening a public issue.
+
+Send an email to **aitor.mendoza@naindev.com** with:
+- Description of the vulnerability and its potential impact.
+- Steps to reproduce or proof of concept.
+- Remediation suggestions if available.
+
+Reports will receive an initial response within 48 hours.

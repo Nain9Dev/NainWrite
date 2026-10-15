@@ -1,4 +1,4 @@
-# ADR-003: Independent Local Language Quality Gates
+# ADR-0003: Independent Local Language Quality Gates
 
 Status: Proposed
 

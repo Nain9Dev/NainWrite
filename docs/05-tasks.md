@@ -21,9 +21,10 @@ The active handoff is maintained in `specs/014-modal-scope-review/tasks.md`. Ind
 - `[M]` Review the 30 model outputs in the generated human-review sheet.
 - `[M]` Review the corrected semantic draft labels and the observed unsupported-context false acceptance.
 - `[A]` Dedicated NainWrite listener and cloud-disabled startup verified after explicit authorisation on 2026-09-09. Shared Ollama remains unchanged; complete offline lifecycle and private-document workflow are not verified by this slice.
-- `[H]` Approve ADR-001 if JSONL and fail-closed validation should become canonical.
-- `[H]` Approve or reject proposed ADR-002.
-- `[H]` Approve or reject proposed ADR-003 after reviewing its measured tradeoffs.
+- `[H]` Approve ADR-0001 if JSONL and fail-closed validation should become canonical.
+- `[H]` Approve or reject proposed ADR-0002.
+- `[H]` Approve or reject proposed ADR-0003 after reviewing its measured tradeoffs.
+- `[H]` Approve or reject proposed ADR-0004 and ADR-0005.
 
 ## Later tasks
 

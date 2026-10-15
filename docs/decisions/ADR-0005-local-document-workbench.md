@@ -1,4 +1,4 @@
-# ADR-005: Local Document Workbench
+# ADR-0005: Local Document Workbench
 
 Status: Proposed
 

@@ -1,4 +1,4 @@
-# ADR-001: JSONL and Fail-Closed Benchmark Validation
+# ADR-0001: JSONL and Fail-Closed Benchmark Validation
 
 Status: Proposed
 
