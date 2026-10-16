@@ -55,37 +55,56 @@ function updateEnvBadge() {
 }
 
 async function api(path, body) {
+  const started = performance.now();
+  let result;
+
   if (useMock) {
-    return mockDispatch(path, body);
-  }
+    result = await mockDispatch(path, body);
+  } else {
+    try {
+      const response = await fetch(path, {
+        method: body ? 'POST' : 'GET',
+        headers: {
+          'X-NainWrite-Token': token,
+          ...(body ? { 'Content-Type': 'application/json' } : {})
+        },
+        body: body ? JSON.stringify(body) : undefined
+      });
 
-  try {
-    const response = await fetch(path, {
-      method: body ? 'POST' : 'GET',
-      headers: {
-        'X-NainWrite-Token': token,
-        ...(body ? { 'Content-Type': 'application/json' } : {})
-      },
-      body: body ? JSON.stringify(body) : undefined
-    });
-
-    if (response.status === 404 || !response.ok) {
-      if (response.status === 404) {
-        useMock = true;
-        updateEnvBadge();
-        return mockDispatch(path, body);
+      if (response.status === 404 || !response.ok) {
+        if (response.status === 404) {
+          useMock = true;
+          updateEnvBadge();
+          result = await mockDispatch(path, body);
+        } else {
+          const error = await response.json().catch(() => ({}));
+          throw new Error(error.error || 'No se pudo completar la operación');
+        }
+      } else {
+        result = await response.json();
       }
-      const error = await response.json().catch(() => ({}));
-      throw new Error(error.error || 'No se pudo completar la operación');
+    } catch (err) {
+      // Si la conexión falla (offline / hosting estático), conmuta al motor en memoria
+      useMock = true;
+      updateEnvBadge();
+      result = await mockDispatch(path, body);
     }
-
-    return response.json();
-  } catch (err) {
-    // Si la conexión falla (offline / hosting estático), conmuta al motor en memoria
-    useMock = true;
-    updateEnvBadge();
-    return mockDispatch(path, body);
   }
+
+  const duration = Math.max(1, Math.round(performance.now() - started));
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("nain:telemetry", {
+      detail: {
+        type: body ? "EditorialCommand" : "Query",
+        name: `${body ? "POST" : "GET"} ${path}`,
+        latencyMs: duration,
+        status: 200,
+        payload: { path, action: body?.action || path, runtime: useMock ? "InBrowserMockWorkbench" : "LocalPythonOllama" }
+      }
+    }));
+  }
+
+  return result;
 }
 
 async function action(act, data = {}) {
