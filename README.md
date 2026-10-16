@@ -1,7 +1,16 @@
-# NainWrite ES
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="docs/assets/banner-light.svg">
+  <img alt="NainWrite Architectural Blueprint" src="docs/assets/banner-dark.svg" width="100%">
+</picture>
+
+# NainWrite ES — Fail-Closed Spanish Rewriting Workbench
 
 [![CI](https://github.com/Nain9Dev/nainwrite-es/actions/workflows/ci.yml/badge.svg)](https://github.com/Nain9Dev/nainwrite-es/actions/workflows/ci.yml)
 [![Demo Online](https://img.shields.io/badge/demo-online-blueviolet?style=flat&logo=githubpages&logoColor=white)](https://write.naindev.com/)
+[![Ecosystem Status](https://img.shields.io/badge/status-100%25%20operational-success)](https://status.naindev.com)
+[![Engineering Handbook](https://img.shields.io/badge/paved%20road-Python%20%2B%20Ollama-blue)](https://github.com/Nain9Dev/engineering-handbook)
+[![Cost](https://img.shields.io/badge/cost-0.00_%E2%82%AC-22c55e)](https://github.com/Nain9Dev/engineering-handbook/blob/main/governance/zero-cost-philosophy.md)
 ![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
 ![Inference](https://img.shields.io/badge/inference-local%20%26%20fail--closed-success)
 
