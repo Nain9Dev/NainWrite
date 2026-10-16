@@ -26,6 +26,48 @@ NainWrite ES is a local, fail-closed rewriting agent for natural, clear and prof
 4. Local LanguageTool checks spelling, grammar and typography. One constrained linguistic repair is allowed; it repeats the invariant and language checks.
 5. Qwen and a separately configured Gemma auditor assess meaning and style. Both must pass before the result is `accepted`; otherwise it is `review_required`.
 
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as User / Client
+    participant Orchestrator as NainWrite Engine
+    participant LLM1 as Rewriter (Qwen 2.5/3.8)
+    participant Invariant as Invariant Verifier
+    participant LangTool as LanguageTool Engine
+    participant LLM2 as Dual Auditor (Qwen + Gemma)
+
+    User->>Orchestrator: Ingest Draft (PDF/MD/TXT) + Protected Invariants
+    Orchestrator->>LLM1: Request Structured es-ES Rewrite
+    LLM1-->>Orchestrator: Candidate Rewrite
+    
+    Orchestrator->>Invariant: Verify Invariants & Negations
+    alt Invariant Drift Detected
+        Invariant-->>Orchestrator: Drift Detected
+        Orchestrator->>LLM1: 1x Constrained Repair Pass
+        LLM1-->>Orchestrator: Repaired Candidate
+    end
+
+    Orchestrator->>LangTool: Grammar, Typography & Orthography Check
+    alt Linguistic Faults Detected
+        LangTool-->>Orchestrator: Rule Violations
+        Orchestrator->>LLM1: 1x Constrained Linguistic Repair Pass
+        LLM1-->>Orchestrator: Repaired Candidate
+    end
+
+    par Dual Auditor Consensus
+        Orchestrator->>LLM1: Qwen Semantic Equivalence Audit
+        Orchestrator->>LLM2: Gemma Independent Style & Invariance Audit
+    end
+    
+    alt Both Auditors Pass
+        LLM1-->>Orchestrator: Equivalence Verified
+        LLM2-->>Orchestrator: Style & Integrity Verified
+        Orchestrator-->>User: Status: ACCEPTED (Fail-Closed Validated)
+    else Auditor Divergence or Flaw
+        Orchestrator-->>User: Status: REVIEW_REQUIRED (Human Approval Gate)
+    end
+```
+
 Automated acceptance is not proof of perfect equivalence. Legal, contractual, financial and other high-impact text requires human approval.
 
 Current validation is preliminary: the corrected unassisted semantic bank exposes one false acceptance (`SEMA-022`), and some valid rewrites still trigger proofreading review. The strict acceptance gate has not passed. See [measured validation results](docs/10-validation.md) before using the agent.
