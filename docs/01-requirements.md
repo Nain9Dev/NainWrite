@@ -32,3 +32,5 @@ unestablished. Main publication was explicitly authorised in the latest owner me
 - `specs/013-contextual-language-review/spec.md`: `CTX-001` through `CTX-004`, source-grounded lodging ambiguity, versioned replay and readable context questions.
 
 - `specs/014-modal-scope-review/spec.md`: `SCOPE-001` through `SCOPE-004`, bounded conditional scope, date/modal distinction and evidence replay.
+
+- `specs/016-client-visual-redesign/spec.md`: `UI-001` through `UI-010`, landing with an animated showcase, four-stage stepper, word-level comparison with a literal check, NainDev visual system, DOM contract and static file rule of the loopback server.

@@ -157,3 +157,21 @@ not clear historical semantic failures or establish general ambiguity detection.
 
 The complete suite passed 207 tests on 2026-09-11. No new model benchmark or final
 human document approval is claimed for this change.
+
+## Client visual redesign (specification 016)
+
+| Requirement | Evidence | Limit |
+| --- | --- | --- |
+| UI-001 | `tests/web/showcase.test.mjs` (frames for detect, rewrite and verify rebuild both texts); browser pass at 1280 and 375 px | An illustration over bundled sentences, not a model run |
+| UI-002 | Browser pass: four value cards of at most twelve words | Copy awaits the owner's review (T-008) |
+| UI-003 | `tests/test_web_client.py` (no inline handlers or styles); the real loopback server rendered the page with the CSP and showed only the workbench | |
+| UI-004 | Browser pass: the stepper and the panel followed extraction, Spanish and final review for the three seeded documents | Statuses queued, paused and failed use what the document holds |
+| UI-005, UI-006 | `tests/web/diff.test.mjs` (12 tests: tokeniser, word comparison, rebuild of both texts, long-text fallback, literals) | A visual aid over two strings; it never replaces the server review |
+| UI-007 | `app.css` tokens; browser pass | System font fallbacks, no web fonts |
+| UI-008 | `tests/test_web_client.py > test_editorial_element_ids_are_present` | |
+| UI-009 | Overflow measured under phone emulation at 375 px: 0 px; focus ring and reduced-motion rules in `app.css` | axe and Lighthouse not run |
+| UI-010 | `tests/test_web_client.py` (every `.js`, `.css` and `.svg` served; traversal refused) | |
+
+Run the browser-side tests with `node --test "tests/web/*.test.mjs"` (no dependency). The full
+Python suite has 11 failures that are not from this change: they also occur on an untouched
+checkout (document intake and export need the optional PDF packages).

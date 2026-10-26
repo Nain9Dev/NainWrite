@@ -1,9 +1,12 @@
 'use strict';
 
 import { mockDispatch, mockWorkbench } from "./mock-workbench.js";
+import { countChanges, diffWords, literalPresence } from "./diff.js";
+import { mountShowcase } from "./showcase.js";
 
 const $ = (id) => document.getElementById(id);
 const token = document.querySelector('meta[name="nainwrite-token"]')?.content || 'demo-token';
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const isStaticHost = () => {
   if (typeof window === "undefined") return false;
@@ -36,12 +39,36 @@ const locales = {
   'en-GB': 'Inglés del Reino Unido'
 };
 
+const STEPS = ['Extracción', 'Español', 'Traducción', 'Aprobación'];
+
+/**
+ * Index of the stage a document is in, 0 to 3, or 4 once it is ready (UI-004). Derived from the
+ * status and, for the statuses that do not say it (queued, paused, failed), from what the
+ * document already holds.
+ */
+function stageIndex(record) {
+  if (record.status === 'ready') return 4;
+  if (record.status === 'final_review') return 3;
+  if (record.status === 'spanish_review' || record.status === 'spanish_edited') return 1;
+  if (record.status === 'extraction_review') return 0;
+  if (record.exports && Object.keys(record.exports).length) return 3;
+  if (record.result) return 1;
+  return 0;
+}
+
+let noticeTimer = null;
+
 function notify(text) {
   const node = $('notice');
-  if (node) node.textContent = text;
+  if (!node) return;
+  node.textContent = text;
+  clearTimeout(noticeTimer);
+  // A message that nobody dismisses would stay for ever: the toast clears itself.
+  if (text) noticeTimer = setTimeout(() => { node.textContent = ''; }, 8000);
 }
 
 function updateEnvBadge() {
+  document.documentElement.classList.toggle('app--local', !useMock);
   const badge = document.querySelector('.local');
   if (!badge) return;
   if (useMock) {
@@ -50,6 +77,7 @@ function updateEnvBadge() {
     badge.classList.add('local--demo');
   } else {
     badge.textContent = 'Trabajo local';
+    badge.removeAttribute('title');
     badge.classList.remove('local--demo');
   }
 }
@@ -156,6 +184,45 @@ async function guard(callback) {
   }
 }
 
+function pips(index) {
+  const bar = document.createElement('span');
+  bar.className = 'pips';
+  bar.setAttribute('aria-hidden', 'true');
+  for (let step = 0; step < STEPS.length; step += 1) {
+    const pip = document.createElement('i');
+    if (step < index) pip.className = 'is-done';
+    else if (step === index) pip.className = 'is-active';
+    bar.append(pip);
+  }
+  return bar;
+}
+
+function renderStepper(index) {
+  $('stepper').replaceChildren(
+    ...STEPS.map((name, step) => {
+      const item = document.createElement('li');
+      const number = document.createElement('span');
+      number.setAttribute('aria-hidden', 'true');
+      number.textContent = step < index ? '✓' : String(step + 1);
+      const label = document.createElement('b');
+      label.textContent = name;
+      item.append(number, label);
+      if (step < index) {
+        item.className = 'is-done';
+        // The tick is decorative; a screen reader needs the word.
+        const done = document.createElement('span');
+        done.className = 'visually-hidden';
+        done.textContent = ' (hecho)';
+        label.append(done);
+      } else if (step === index) {
+        item.className = 'is-active';
+        item.setAttribute('aria-current', 'step');
+      }
+      return item;
+    })
+  );
+}
+
 async function refreshState() {
   state = await api('/api/state');
   $('pause').textContent = state.paused ? 'Continuar cola' : 'Pausar cola';
@@ -174,16 +241,67 @@ async function refreshState() {
     const status = document.createElement('span');
     status.textContent = (labels[record.status] || record.status) + ' · ' + record.progress;
 
-    b.append(name, status);
+    b.append(name, status, pips(stageIndex(record)));
     nav.append(b);
   }
 
   if (selected && state.documents[selected]) {
     $('progress').textContent = state.documents[selected].progress;
     $('stage').textContent = labels[state.documents[selected].status] || state.documents[selected].status;
+    renderStepper(stageIndex(state.documents[selected]));
     if (current && !dirty && current.status !== state.documents[selected].status) {
       await select(selected);
     }
+  }
+}
+
+/** The side-by-side reading of original and Spanish, computed here from the two texts (UI-005, UI-006). */
+function renderComparison() {
+  const original = current.intake?.text ?? '';
+  const spanish = current.spanish ?? '';
+  const runs = diffWords(original, spanish);
+
+  $('compare').replaceChildren(
+    ...runs.map((run) => {
+      if (run.type === 'equal') return document.createTextNode(run.text);
+      const node = document.createElement(run.type === 'del' ? 'del' : 'ins');
+      node.textContent = run.text;
+      return node;
+    })
+  );
+  const changes = countChanges(runs);
+  $('change-count').textContent = changes ? String(changes) : '';
+
+  const rows = literalPresence(original, spanish);
+  $('literals').replaceChildren(
+    ...rows.map((row) => {
+      const item = document.createElement('li');
+      item.className = row.present ? '' : 'is-missing';
+      item.textContent = (row.present ? '✓ ' : '✗ ') + row.literal;
+      item.title = row.present ? 'Aparece igual en el español' : 'No aparece igual en el español: revísalo';
+      return item;
+    })
+  );
+
+  const missing = rows.filter((row) => !row.present).length;
+  const verdict = $('verdict');
+  verdict.replaceChildren();
+  if (rows.length) {
+    const chip = document.createElement('span');
+    chip.className = missing ? 'chip chip--warn' : 'chip';
+    chip.textContent = missing
+      ? `Revisa ${missing} ${missing === 1 ? 'cifra que no aparece' : 'cifras que no aparecen'} igual en el español`
+      : `Cifras y fechas intactas: ${rows.length} de ${rows.length}`;
+    verdict.append(chip);
+  }
+}
+
+function showTab(name) {
+  for (const tab of document.querySelectorAll('[data-tab]')) {
+    const active = tab.dataset.tab === name;
+    tab.setAttribute('aria-selected', String(active));
+    tab.tabIndex = active ? 0 : -1;
+    $('panel-' + tab.dataset.tab).hidden = !active;
   }
 }
 
@@ -203,11 +321,15 @@ async function select(key) {
   $('stage').textContent = labels[current.status] || current.status;
   $('progress').textContent = current.progress;
   $('error').textContent = current.error || '';
+  renderStepper(stageIndex(current));
   $('resume').hidden = !current.actions.resume;
   $('original').hidden = !current.intake;
-  $('extraction-section').hidden = !current.intake;
-  $('spanish-section').hidden = !current.result;
-  $('exports-section').hidden = !Object.keys(current.exports || {}).length;
+  // Only the panel of the stage the document is in (UI-004): the earlier ones stay in the stepper,
+  // and the page stops growing into one long scroll as a document advances.
+  const stage = stageIndex(current);
+  $('extraction-section').hidden = !current.intake || stage !== 0;
+  $('spanish-section').hidden = !current.result || stage !== 1;
+  $('exports-section').hidden = !Object.keys(current.exports || {}).length || stage < 3;
 
   if (current.intake) {
     $('extraction').value = current.intake.text;
@@ -244,6 +366,8 @@ async function select(key) {
     $('resolved').checked = false;
     $('acknowledge').checked = false;
     $('spanish-note').value = '';
+    renderComparison();
+    showTab('changes');
   }
 
   const exports = $('exports');
@@ -297,7 +421,7 @@ async function select(key) {
             note: input.value
           });
           await select(selected);
-        })
+        }, 'primary')
       );
     }
 
@@ -340,6 +464,21 @@ $('upload-form').addEventListener('submit', (event) => {
     notify('Documentos añadidos. La extracción se procesará en la cola.');
   });
 });
+
+// Drag and drop onto the upload area: the dropped files go through the same form as a chosen file.
+{
+  const zone = $('upload-form');
+  const over = (on) => zone.classList.toggle('is-over', on);
+  zone.addEventListener('dragover', (event) => { event.preventDefault(); over(true); });
+  zone.addEventListener('dragleave', () => over(false));
+  zone.addEventListener('drop', (event) => {
+    event.preventDefault();
+    over(false);
+    if (!event.dataTransfer?.files?.length) return;
+    $('uploads').files = event.dataTransfer.files;
+    zone.requestSubmit();
+  });
+}
 
 $('pause').onclick = () => guard(() => action('settings', { paused: !state.paused }));
 $('save-settings').onclick = () =>
@@ -418,6 +557,42 @@ $('translate').onclick = () =>
     await select(selected);
   });
 
+// Tabs of the Spanish review: click, and the arrow keys move between them.
+for (const tab of document.querySelectorAll('[data-tab]')) {
+  tab.addEventListener('click', () => showTab(tab.dataset.tab));
+  tab.addEventListener('keydown', (event) => {
+    const tabs = [...document.querySelectorAll('[data-tab]')];
+    const at = tabs.indexOf(tab);
+    const next = event.key === 'ArrowRight' ? tabs[(at + 1) % tabs.length] : event.key === 'ArrowLeft' ? tabs[(at - 1 + tabs.length) % tabs.length] : null;
+    if (!next) return;
+    event.preventDefault();
+    showTab(next.dataset.tab);
+    next.focus();
+  });
+}
+
+// Landing actions and the reset button (no inline handlers: the local CSP forbids them).
+const scrollTo = (node) => node.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+
+$('cta-sample').onclick = () =>
+  guard(async () => {
+    const first = Object.keys(state?.documents || {})[0];
+    if (first) await select(first);
+    scrollTo($('workbench'));
+  });
+
+$('cta-upload').onclick = () => {
+  scrollTo($('workbench'));
+  $('uploads').focus({ preventScroll: true });
+};
+
+$('reset-demo').onclick = () => {
+  mockWorkbench.reset();
+  location.reload();
+};
+
+mountShowcase($('showcase'), { reducedMotion });
+
 // Arranque inicial
 guard(async () => {
   updateEnvBadge();
@@ -427,12 +602,16 @@ guard(async () => {
     $('night-start').value = state.night_start;
     $('night-end').value = state.night_end;
   }
+  // El panel de cola es útil de entrada en el trabajo local; en la demo se queda plegado.
+  $('queue-settings').open = !useMock;
   // En modo demo, autoseleccionar el primer documento para una experiencia instantánea
   if (useMock && Object.keys(state.documents || {}).length > 0) {
     const firstKey = Object.keys(state.documents)[0];
     await select(firstKey);
   }
 });
+
+updateEnvBadge();
 
 setInterval(() => refreshState().catch((error) => notify(error.message)), 3000);
 

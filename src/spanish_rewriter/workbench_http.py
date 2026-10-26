@@ -5,12 +5,25 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import mimetypes
 from pathlib import Path
+import re
 import secrets
 from urllib.parse import parse_qs, urlsplit
 
+# Static files the client may load from its own directory, by suffix (UI-010). Anything else, and
+# anything that resolves outside the directory, keeps answering the JSON 404.
+STATIC_TYPES = {'.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml'}
+STATIC_NAME = re.compile(r'[A-Za-z0-9_-][A-Za-z0-9._-]*\.(?:js|css|svg)')
+
 
 def create_server(workbench, *, port=8765):
-    static_root = Path(__file__).parent / 'web'
+    static_root = (Path(__file__).parent / 'web').resolve()
+
+    def static_file(path):
+        name = path[1:]
+        if not STATIC_NAME.fullmatch(name):
+            return None
+        candidate = (static_root / name).resolve()
+        return candidate if candidate.parent == static_root and candidate.is_file() else None
 
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *args):
@@ -51,9 +64,9 @@ def create_server(workbench, *, port=8765):
                 if parsed.path == '/':
                     text = (static_root / 'index.html').read_text(encoding='utf-8')
                     self._send(200, text.replace('__TOKEN__', self.server.token).encode('utf-8'), 'text/html; charset=utf-8')
-                elif parsed.path in {'/app.js', '/app.css', '/mock-workbench.js', '/favicon.svg'}:
-                    kind = 'text/javascript' if parsed.path.endswith('.js') else ('text/css' if parsed.path.endswith('.css') else 'image/svg+xml')
-                    self._send(200, (static_root / parsed.path[1:]).read_bytes(), kind + '; charset=utf-8')
+                elif static_file(parsed.path):
+                    asset = static_file(parsed.path)
+                    self._send(200, asset.read_bytes(), STATIC_TYPES[asset.suffix] + '; charset=utf-8')
                 elif parsed.path == '/api/state':
                     self._json(200, workbench.summary())
                 elif parsed.path == '/api/document':
