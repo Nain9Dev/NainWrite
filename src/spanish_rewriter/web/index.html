@@ -4,161 +4,226 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="nainwrite-token" content="__TOKEN__">
-  <title>NainWrite · Revisión y reescritura de documentos</title>
-  <meta name="description" content="Motor determinista de reescritura editorial para español de España (es-ES) con puertas de revisión humana y preservación semántica.">
+  <meta name="theme-color" content="#EDF1F6">
+  <title>NainWrite · Español claro, con cada cifra intacta</title>
+  <meta name="description" content="Reescritura editorial para español de España con verificación determinista de cifras y fechas, traducción a inglés US y UK y aprobación humana en cada paso.">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./app.css">
-  <link rel="stylesheet" href="https://brand.naindev.com/tokens.css">
   <script src="https://www.naindev.com/assets/js/ecosystem-bar.js?v=2.1.0" defer></script>
   <script type="module" src="./app.js"></script>
 </head>
 <body>
 <nain-ecosystem-bar current-project="NainWrite"></nain-ecosystem-bar>
-<header>
-  <div class="header-inner">
-    <div class="header-brand">
-      <span class="brand">NainWrite</span>
-      <span class="local">Trabajo local</span>
-    </div>
-    <div class="header-actions">
-      <a class="header-link" href="https://github.com/Nain9Dev/NainWrite" target="_blank" rel="noopener">
-        <span>Código en GitHub</span>
-      </a>
-      <button class="secondary btn-reset" type="button" onclick="window.NainWrite.resetDemo()">Reiniciar demo</button>
-    </div>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#top" aria-label="NainWrite, inicio">
+      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 18 11 6M10 18l7-12M16 18l4-7"/></svg>
+      <span>NainWrite</span>
+    </a>
+    <span class="local" title="">Trabajo local</span>
+    <nav class="topbar-actions" aria-label="Enlaces">
+      <a class="link" href="https://github.com/Nain9Dev/NainWrite" target="_blank" rel="noopener">Código en GitHub</a>
+      <button id="reset-demo" class="ghost" type="button">Reiniciar demo</button>
+    </nav>
   </div>
-  <p>Redacción profesional con revisión del significado y verificación determinista de invariantes.</p>
 </header>
 
-<main>
-<section class="toolbar" aria-label="Control de procesamiento">
-  <label>Modo de trabajo
-    <select id="mode">
-      <option value="limited">Limitado · CPU, 4 hilos</option>
-      <option value="intensive">Intensivo · aceleración disponible</option>
-      <option value="scheduled">Horario nocturno</option>
-    </select>
-  </label>
-  <label>Desde las<input id="night-start" type="number" min="0" max="23" value="22"></label>
-  <label>Hasta las<input id="night-end" type="number" min="0" max="23" value="7"></label>
-  <button id="save-settings" class="secondary" type="button">Aplicar modo</button>
-  <button id="pause" class="secondary" type="button">Pausar cola</button>
-  <p>La pausa y los cambios de modo se aplican entre operaciones. El modo limitado opera en CPU sin requerir aceleración GPU.</p>
+<main id="top">
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-copy">
+    <span class="eyebrow">Reescritura editorial · es-ES, en-US, en-GB</span>
+    <h1 id="hero-title">Español claro, con cada cifra intacta.</h1>
+    <p class="lead">Mejora un documento técnico o legal sin cambiar lo que dice. Tú apruebas cada paso.</p>
+    <div class="cta">
+      <button id="cta-sample" class="primary" type="button">Probar con un documento de ejemplo</button>
+      <button id="cta-upload" class="secondary" type="button">Subir mi documento</button>
+    </div>
+    <p class="note">Demo en el navegador: no se envía nada a ningún servidor.</p>
+  </div>
+
+  <figure id="showcase" class="showcase" aria-label="Ejemplo animado de cómo trabaja NainWrite">
+    <ol class="phases">
+      <li data-showcase-step><span>1</span> Detecta cifras</li>
+      <li data-showcase-step><span>2</span> Reescribe</li>
+      <li data-showcase-step><span>3</span> Verifica</li>
+    </ol>
+    <div class="stage" data-showcase-stage data-phase="verify">
+      <p class="sentence" data-showcase-text lang="es-ES"></p>
+      <p class="result" data-showcase-result hidden></p>
+    </div>
+    <figcaption>
+      <span>Ilustración con frases de ejemplo: no es una ejecución real del modelo.</span>
+      <button class="ghost small" type="button" data-showcase-toggle aria-pressed="false">Pausar animación</button>
+    </figcaption>
+    <p class="visually-hidden" role="status" aria-live="polite" data-showcase-live></p>
+  </figure>
 </section>
 
-<div id="notice" role="status" aria-live="polite"></div>
+<section class="values" aria-label="Qué aporta">
+  <article class="value"><h2>Significado intacto</h2><p>Cifras, fechas y negaciones se comprueban una a una.</p></article>
+  <article class="value"><h2>Español de España natural</h2><p>Sin calcos del inglés, con la ortotipografía de la RAE.</p></article>
+  <article class="value"><h2>Inglés US y UK</h2><p>Dos variantes generadas desde el español ya aprobado.</p></article>
+  <article class="value"><h2>Decide una persona</h2><p>Nada se entrega sin la aprobación de quien revisa.</p></article>
+</section>
 
-<div class="workspace">
-<aside>
-  <h1>Documentos</h1>
-  <form id="upload-form">
-    <label class="file-label">Añadir documentos
-      <input id="uploads" type="file" accept=".pdf,.md,.txt" multiple required>
-    </label>
-    <details>
-      <summary>Imágenes locales del Markdown</summary>
-      <label>PNG o JPEG junto al archivo
-        <input id="assets" type="file" accept=".png,.jpg,.jpeg" multiple>
+<section id="workbench" class="workbench" aria-labelledby="workbench-title">
+  <h2 id="workbench-title" class="section-title">Mesa de trabajo</h2>
+
+  <details class="settings" id="queue-settings">
+    <summary>Cola y rendimiento</summary>
+    <div class="toolbar">
+      <label>Modo de trabajo
+        <select id="mode">
+          <option value="limited">Limitado · CPU, 4 hilos</option>
+          <option value="intensive">Intensivo · aceleración disponible</option>
+          <option value="scheduled">Horario nocturno</option>
+        </select>
       </label>
-    </details>
-    <button type="submit">Añadir a la cola</button>
-  </form>
-  <nav id="documents" aria-label="Documentos en la cola"></nav>
-  <p class="muted">Se conservan los originales y todas las revisiones intermedias. Sin telemetría ni servicios de nube.</p>
-</aside>
-
-<article id="empty">
-  <span class="eyebrow">Mesa de trabajo editorial</span>
-  <h2>Del borrador técnico o legal<br>al texto listo para entregar.</h2>
-  <p>Añade un PDF, Markdown o TXT. Primero revisaremos su extracción; después podrás mejorar el español y autorizar las variantes en inglés.</p>
-  <ol>
-    <li><strong>Comprobar la extracción:</strong> revisión de cifras, tablas y notas al pie.</li>
-    <li><strong>Revisar el español de España:</strong> eliminación de calcos manteniendo el 100% del significado.</li>
-    <li><strong>Traducir a inglés (US y UK):</strong> adaptación terminológica y ortográfica regional.</li>
-    <li><strong>Aprobar las versiones finales:</strong> puerta de revisión humana antes de la entrega.</li>
-  </ol>
-  <p class="muted">Los controles automáticos auditan invariantes; la aprobación final pertenece al revisor humano.</p>
-</article>
-
-<article id="document" hidden>
-  <div class="document-heading">
-    <div>
-      <span class="eyebrow" id="stage"></span>
-      <h2 id="title"></h2>
+      <label>Desde las<input id="night-start" type="number" min="0" max="23" value="22"></label>
+      <label>Hasta las<input id="night-end" type="number" min="0" max="23" value="7"></label>
+      <button id="save-settings" class="secondary" type="button">Aplicar modo</button>
+      <button id="pause" class="secondary" type="button">Pausar cola</button>
+      <p class="muted">La pausa y los cambios de modo se aplican entre operaciones. El modo limitado opera en CPU sin requerir aceleración GPU.</p>
     </div>
-    <button id="refresh" class="secondary" type="button">Actualizar</button>
+  </details>
+
+  <div id="notice" class="toast" role="status" aria-live="polite"></div>
+
+  <div class="workspace">
+    <aside class="sidebar">
+      <h3>Documentos</h3>
+      <form id="upload-form" class="dropzone">
+        <label class="file-label">Añadir documentos
+          <span class="hint">Arrastra aquí un PDF, Markdown o TXT, o elígelo.</span>
+          <input id="uploads" type="file" accept=".pdf,.md,.txt" multiple required>
+        </label>
+        <details>
+          <summary>Imágenes locales del Markdown</summary>
+          <label>PNG o JPEG junto al archivo
+            <input id="assets" type="file" accept=".png,.jpg,.jpeg" multiple>
+          </label>
+        </details>
+        <button type="submit" class="primary">Añadir a la cola</button>
+      </form>
+      <nav id="documents" aria-label="Documentos en la cola"></nav>
+      <p class="muted">Se conservan los originales y todas las revisiones intermedias. Sin telemetría ni servicios de nube.</p>
+    </aside>
+
+    <article id="empty" class="panel">
+      <span class="eyebrow">Mesa de trabajo editorial</span>
+      <h3>Del borrador técnico o legal al texto listo para entregar.</h3>
+      <p>Añade un PDF, Markdown o TXT. Primero revisaremos su extracción; después podrás mejorar el español y autorizar las variantes en inglés.</p>
+      <ol class="how">
+        <li><strong>Comprobar la extracción:</strong> revisión de cifras, tablas y notas al pie.</li>
+        <li><strong>Revisar el español de España:</strong> eliminación de calcos manteniendo el 100 % del significado.</li>
+        <li><strong>Traducir a inglés (US y UK):</strong> adaptación terminológica y ortográfica regional.</li>
+        <li><strong>Aprobar las versiones finales:</strong> puerta de revisión humana antes de la entrega.</li>
+      </ol>
+      <p class="muted">Los controles automáticos auditan invariantes; la aprobación final pertenece al revisor humano.</p>
+    </article>
+
+    <article id="document" class="panel" hidden>
+      <div class="document-heading">
+        <div>
+          <span class="eyebrow" id="stage"></span>
+          <h3 id="title"></h3>
+        </div>
+        <button id="refresh" class="secondary small" type="button">Actualizar</button>
+      </div>
+
+      <ol id="stepper" class="stepper" aria-label="Etapas del documento"></ol>
+
+      <p id="progress" class="progress" role="status"></p>
+      <p id="error" class="error" role="alert"></p>
+      <div class="actions">
+        <button id="resume" class="secondary" type="button" hidden>Reanudar documento</button>
+        <button id="original" class="secondary" type="button" hidden>Descargar original</button>
+      </div>
+
+      <section id="extraction-section" class="stage-panel" hidden>
+        <h4>1 · Revisión de la extracción</h4>
+        <p>Compara todas las páginas y corrige el texto, el orden, las tablas y las notas. Si una página está vacía, descríbela expresamente; no apruebes cifras o fragmentos ilegibles.</p>
+        <details>
+          <summary>Ver páginas originales y observaciones</summary>
+          <div id="pages"></div>
+        </details>
+        <label>Markdown extraído
+          <textarea id="extraction" spellcheck="false" rows="14"></textarea>
+        </label>
+        <div id="extraction-actions" class="gate">
+          <button id="save-extraction" class="secondary" type="button">Guardar correcciones</button>
+          <label>Nota de revisión
+            <input id="extraction-note" placeholder="Qué has comprobado o corregido">
+          </label>
+          <label class="check">
+            <input type="checkbox" id="complete"> He comprobado todo el contenido y resuelto las dudas de extracción.
+          </label>
+          <button id="approve-extraction" class="primary" type="button">Aprobar extracción y redactar</button>
+        </div>
+      </section>
+
+      <section id="spanish-section" class="stage-panel" hidden>
+        <h4>2 · Español de España</h4>
+        <p>Revisa la redacción contra el original. Guardar cambios requiere una nueva revisión antes de traducir.</p>
+
+        <div class="verdict" id="verdict" role="status"></div>
+
+        <div class="tabs" role="tablist" aria-label="Vistas del español">
+          <button class="tab" role="tab" type="button" id="tab-changes" aria-controls="panel-changes" aria-selected="true" data-tab="changes">Cambios <span id="change-count" class="count"></span></button>
+          <button class="tab" role="tab" type="button" id="tab-edit" aria-controls="panel-edit" aria-selected="false" tabindex="-1" data-tab="edit">Editar</button>
+          <button class="tab" role="tab" type="button" id="tab-evidence" aria-controls="panel-evidence" aria-selected="false" tabindex="-1" data-tab="evidence">Evidencia</button>
+        </div>
+
+        <div id="panel-changes" class="tab-panel" role="tabpanel" aria-labelledby="tab-changes">
+          <p class="legend"><del>Original</del> <ins>Español revisado</ins></p>
+          <div id="compare" class="compare" lang="es-ES"></div>
+          <h5>Cifras y fechas del original</h5>
+          <ul id="literals" class="literals"></ul>
+        </div>
+
+        <div id="panel-edit" class="tab-panel" role="tabpanel" aria-labelledby="tab-edit" hidden>
+          <label>Español editable
+            <textarea id="spanish" spellcheck="true" lang="es-ES" rows="16"></textarea>
+          </label>
+          <div class="actions">
+            <button id="save-spanish" class="secondary" type="button">Guardar cambios</button>
+            <button id="review-spanish" class="secondary" type="button">Revisar versión guardada</button>
+          </div>
+        </div>
+
+        <div id="panel-evidence" class="tab-panel" role="tabpanel" aria-labelledby="tab-evidence" hidden>
+          <h5>Comparación con el original (diff unificado)</h5>
+          <pre id="diff"></pre>
+          <h5>Hallazgos y evidencia de revisión determinista</h5>
+          <pre id="review"></pre>
+        </div>
+
+        <div id="translation-actions" class="gate">
+          <label>Nota de aprobación
+            <input id="spanish-note" placeholder="Tu valoración de la versión española">
+          </label>
+          <label class="check">
+            <input id="resolved" type="checkbox"> He revisado esta versión y resuelto todas las dudas de significado.
+          </label>
+          <label class="check">
+            <input id="acknowledge" type="checkbox"> He revisado los hallazgos automáticos que siguen registrados.
+          </label>
+          <button id="translate" class="primary" type="button">Aprobar español y generar las dos traducciones</button>
+        </div>
+      </section>
+
+      <section id="exports-section" class="stage-panel" hidden>
+        <h4>3 · Versiones para revisar y descargar</h4>
+        <p>Descargar un candidato no equivale a aprobarlo. El ZIP incluye el Markdown y sus imágenes para editarlo fuera de la aplicación.</p>
+        <div id="exports" class="exports"></div>
+      </section>
+    </article>
   </div>
-  <p id="progress" role="status"></p>
-  <p id="error" role="alert"></p>
-  <div class="actions">
-    <button id="resume" class="secondary" type="button" hidden>Reanudar documento</button>
-    <button id="original" class="secondary" type="button" hidden>Descargar original</button>
-  </div>
-
-  <section id="extraction-section" hidden>
-    <h3>1. Revisión de la extracción</h3>
-    <p>Compara todas las páginas y corrige el texto, el orden, las tablas y las notas. Si una página está vacía, descríbela expresamente; no apruebes cifras o fragmentos ilegibles.</p>
-    <details>
-      <summary>Ver páginas originales y observaciones</summary>
-      <div id="pages"></div>
-    </details>
-    <label>Markdown extraído
-      <textarea id="extraction" spellcheck="false" rows="16"></textarea>
-    </label>
-    <div id="extraction-actions">
-      <button id="save-extraction" class="secondary" type="button">Guardar correcciones</button>
-      <label>Nota de revisión
-        <input id="extraction-note" placeholder="Qué has comprobado o corregido">
-      </label>
-      <label class="check">
-        <input type="checkbox" id="complete"> He comprobado todo el contenido y resuelto las dudas de extracción.
-      </label>
-      <button id="approve-extraction" type="button">Aprobar extracción y redactar</button>
-    </div>
-  </section>
-
-  <section id="spanish-section" hidden>
-    <h3>2. Español de España</h3>
-    <p>Revisa la redacción contra el original. Guardar cambios requiere una nueva revisión antes de traducir.</p>
-    <label>Español editable
-      <textarea id="spanish" spellcheck="true" lang="es-ES" rows="17"></textarea>
-    </label>
-    <div class="actions">
-      <button id="save-spanish" class="secondary" type="button">Guardar cambios</button>
-      <button id="review-spanish" class="secondary" type="button">Revisar versión guardada</button>
-    </div>
-    <details open>
-      <summary>Comparación con el original (Diff unificado)</summary>
-      <pre id="diff"></pre>
-    </details>
-    <details open>
-      <summary>Hallazgos y evidencia de revisión determinista</summary>
-      <pre id="review"></pre>
-    </details>
-    <div id="translation-actions">
-      <label>Nota de aprobación
-        <input id="spanish-note" placeholder="Tu valoración de la versión española">
-      </label>
-      <label class="check">
-        <input id="resolved" type="checkbox"> He revisado esta versión y resuelto todas las dudas de significado.
-      </label>
-      <label class="check">
-        <input id="acknowledge" type="checkbox"> He revisado los hallazgos automáticos que siguen registrados.
-      </label>
-      <button id="translate" type="button">Aprobar español y generar las dos traducciones</button>
-    </div>
-  </section>
-
-  <section id="exports-section" hidden>
-    <h3>Versiones para revisar y descargar</h3>
-    <p>Descargar un candidato no equivale a aprobarlo. El ZIP incluye el Markdown y sus imágenes para editarlo fuera de la aplicación.</p>
-    <div id="exports"></div>
-  </section>
-</article>
-</div>
+</section>
 </main>
 
-<footer>
+<footer class="footer">
   NainWrite ES · Español de España · Inglés de Estados Unidos · Inglés del Reino Unido · Arquitectura determinista
 </footer>
 </body>
