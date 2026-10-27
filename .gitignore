@@ -24,3 +24,4 @@ htmlcov/
 *.gguf
 *.safetensors
 *.bin
+.claude/
