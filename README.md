@@ -6,6 +6,9 @@
 
 # NainWrite ES — Fail-Closed Spanish Rewriting Workbench
 
+[![English](https://img.shields.io/badge/Language-English-blue?style=flat-square)](README.md)
+[![Español](https://img.shields.io/badge/Idioma-Espa%C3%B1ol-emerald?style=flat-square)](README.es.md)
+[![Architecture Tests](https://img.shields.io/badge/Architecture%20Tests-AST%20enforced-80FF00?style=flat-square&logo=python&logoColor=white)](tests/test_architecture.py)
 [![CI](https://github.com/Nain9Dev/nainwrite-es/actions/workflows/ci.yml/badge.svg)](https://github.com/Nain9Dev/nainwrite-es/actions/workflows/ci.yml)
 [![Demo Online](https://img.shields.io/badge/demo-online-blueviolet?style=flat&logo=githubpages&logoColor=white)](https://write.naindev.com/)
 [![Ecosystem Status](https://img.shields.io/badge/status-100%25%20operational-success)](https://status.naindev.com)
