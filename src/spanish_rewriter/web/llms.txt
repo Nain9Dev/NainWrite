@@ -1,0 +1,9 @@
+# NainWrite
+
+> Editorial rewriting for Spanish from Spain with deterministic checks that keep every figure and date intact, translation to US and UK English, and human approval at each step.
+
+## Links
+
+- [Live demo](https://write.naindev.com/): interactive demo in Spanish
+- [Source repository](https://github.com/Nain9Dev/NainWrite): code, specs and documentation
+- [NainDev](https://www.naindev.com/): main site of the author, Aitor Nain
