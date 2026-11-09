@@ -171,6 +171,8 @@ human document approval is claimed for this change.
 | UI-008 | `tests/test_web_client.py > test_editorial_element_ids_are_present` | |
 | UI-009 | Overflow measured under phone emulation at 375 px: 0 px; focus ring and reduced-motion rules in `app.css` | axe and Lighthouse not run |
 | UI-010 | `tests/test_web_client.py` (every `.js`, `.css` and `.svg` served; traversal refused) | |
+| SEO-001, SEO-002 | `tests/test_web_client.py > test_page_declares_one_canonical_url_matching_the_cname_host` | The HTTP to HTTPS redirect is a Cloudflare setting, not covered by a repository test |
+| SEO-003 | `tests/test_web_client.py > test_markup_is_compatible_with_the_local_content_security_policy` | |
 
 Run the browser-side tests with `node --test "tests/web/*.test.mjs"` (no dependency). The full
 Python suite has 11 failures that are not from this change: they also occur on an untouched

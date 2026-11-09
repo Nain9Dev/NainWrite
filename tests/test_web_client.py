@@ -33,6 +33,12 @@ class WebClientMarkupTests(unittest.TestCase):
         found = set(re.findall(r'\sid="([^"]+)"', self.html))
         self.assertEqual(set(), REQUIRED_IDS - found)
 
+    def test_page_declares_one_canonical_url_matching_the_cname_host(self):
+        links = re.findall(r'<link\s+rel="canonical"\s+href="([^"]+)"', self.html)
+        self.assertEqual(1, len(links), 'exactly one canonical link is required')
+        host = (WEB / 'CNAME').read_text(encoding='utf-8').strip()
+        self.assertEqual(f'https://{host}/', links[0])
+
     def test_markup_is_compatible_with_the_local_content_security_policy(self):
         self.assertIsNone(re.search(r'\son[a-z]+="', self.html), 'inline event handlers are blocked by CSP')
         self.assertIsNone(re.search(r'\sstyle="', self.html), 'inline style attributes are blocked by CSP')
