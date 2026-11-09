@@ -173,6 +173,11 @@ human document approval is claimed for this change.
 | UI-010 | `tests/test_web_client.py` (every `.js`, `.css` and `.svg` served; traversal refused) | |
 | SEO-001, SEO-002 | `tests/test_web_client.py > test_page_declares_one_canonical_url_matching_the_cname_host` | The HTTP to HTTPS redirect is a Cloudflare setting, not covered by a repository test |
 | SEO-003 | `tests/test_web_client.py > test_markup_is_compatible_with_the_local_content_security_policy` | |
+| SEO-004 | `tests/test_web_client.py > test_single_description_has_a_sensible_length` | |
+| SEO-005 | `tests/test_web_client.py > test_page_declares_open_graph_and_twitter_cards` | The image is the shared NainDev cover, not a product-specific one |
+| SEO-006 | `tests/test_web_client.py > test_json_ld_describes_the_application_and_its_author`, `test_page_links_the_author_and_has_one_h1` | |
+| SEO-007 | `tests/test_web_client.py > WebClientDiscoverabilityFileTests` | Publication is by the Pages artifact, not covered by a repository test |
+| SEO-008 | `tests/test_web_client.py > test_markup_is_compatible_with_the_local_content_security_policy` | |
 
 Run the browser-side tests with `node --test "tests/web/*.test.mjs"` (no dependency). The full
 Python suite has 11 failures that are not from this change: they also occur on an untouched
