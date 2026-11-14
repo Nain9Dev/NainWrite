@@ -1,0 +1,18 @@
+{
+  "id": "./",
+  "name": "NainWrite",
+  "short_name": "NainWrite",
+  "description": "Reescritura editorial para español de España con verificación determinista de cifras y fechas, traducción a inglés US y UK y aprobación humana en cada paso.",
+  "lang": "es",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#edf1f6",
+  "theme_color": "#edf1f6",
+  "icons": [
+    { "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
