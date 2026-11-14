@@ -178,6 +178,9 @@ human document approval is claimed for this change.
 | SEO-006 | `tests/test_web_client.py > test_json_ld_describes_the_application_and_its_author`, `test_page_links_the_author_and_has_one_h1` | |
 | SEO-007 | `tests/test_web_client.py > WebClientDiscoverabilityFileTests` | Publication is by the Pages artifact, not covered by a repository test |
 | SEO-008 | `tests/test_web_client.py > test_markup_is_compatible_with_the_local_content_security_policy` | |
+| PWA-001, PWA-002 | `tests/test_pwa_install.py > test_manifest_names_the_app_and_opens_it_standalone`, `test_manifest_description_and_theme_match_the_page` | Publication is by the Pages artifact (`test_pages_artifact_publishes_the_whole_web_folder`); the live install is checked by hand |
+| PWA-003 | `tests/test_pwa_install.py > test_declared_icons_exist_at_their_declared_size` | Maskable safe zone checked by eye at generation time, not by a test |
+| PWA-004 | `tests/test_pwa_install.py > test_page_links_the_manifest_and_carries_the_ios_tags` | |
 
 Run the browser-side tests with `node --test "tests/web/*.test.mjs"` (no dependency). The full
 Python suite has 11 failures that are not from this change: they also occur on an untouched

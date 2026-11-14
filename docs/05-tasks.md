@@ -5,6 +5,7 @@ The active handoff is maintained in `specs/014-modal-scope-review/tasks.md`. Ind
 ## Current task
 
 - `[A]` Local intake, browser queue/export and observed modality regression: specifications 010-012. Active handoff: `specs/014-modal-scope-review/tasks.md`; full product evidence: `specs/011-local-review-workbench/tasks.md`.
+- `[M]` Installable web client: implemented in `specs/next-pwa-install/`; after the deploy, Aitor installs it on Android and iOS (T-006).
 - `[M]` Aitor confirms manual review availability; actual ratings remain pending and an independent reader is no longer a committed dependency.
 
 - `[A]` Implement and verify the local Qwen3.8 Spanish rewriter: complete.
